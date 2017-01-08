@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+
+
+<div class="border">
+This is the {{page_name}} page. I'd like the layout to be {{layout}}.
+</div>
+
+
+<section>
+ <a href="{{url_for('index')}}?page_title=Something Else"  >Click this link to call it something else </a>.
+</section>
+
+{% endblock %}

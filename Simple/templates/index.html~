@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--Put a Link on the Subheader Using d3, to add another way to navigate -->
+<!--This is done dynamically with javascript (d3) rather than 
+      with the direct python-to-flask syntax used for the header
+      in the layout template, because the url_for() flask syntax
+      requires a static rather than variable argument: 
+      url_for('.index'), not url_for({{page_name}}  -->
+<script>
+   d3.select("#subref")
+       .attr("href", "{{url}}")
+;
+</script>
+
+
+<!--Now Put in the Content-->
+
+<div class="border">
+This is the {{page_name}} page. I'd like the layout to be {{layout}}.
+</div>
+
+
+<section>
+ <a href="{{url_for('index')}}?page_title=Something Else"  >Click this link to call it something else </a>.
+</section>
+
+{% endblock %}

@@ -1,0 +1,44 @@
+<!doctype html>
+<head>
+  <title>{{project_name}} {{page_title}}</title>
+
+ <!--CSS-->
+ <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+
+ <!--D3-->
+ <script src="https://d3js.org/d3.v4.min.js"></script>
+ <!--jQuery -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+ <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
+ <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script>
+
+</head>
+
+<body>
+
+<!--Define Common Elements that Appear on All Pages -->
+<!-- Page Header and embedded Subheader, showing 2 ways to set links -->
+<!-- Header link is set here using the Flask url_for method and a static page name ->
+<!-- Subheader link is dynamically defined in the python views.py file and passed as url argument -->
+<div id="header">
+  <h1><a href="{{url_for('index')}}"> {{project_name}} </a> </h1>
+  <div id="subheader"> <a href="{{url}}" id="subref" > {{page_title}} </a> </div>
+</div>
+
+
+<!-- This is where all the content from your python-enabled views goes -->
+<!-- Put the page content between the jinja2 block tags -->
+
+   {% block body %}
+
+
+   {% endblock %}
+
+<!-- local scripts for this app-->
+  <!--script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script-->
+
+ 
+ 
+</body>
+</html>
