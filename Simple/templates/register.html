@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block body %}
+
+Use Flask to build forms:
+<a href= "http://flask.pocoo.org/docs/0.12/patterns/wtforms/"
+target= _blank >
+The official documentation
+</a>
+<br>
+<a href= "https://code.tutsplus.com/tutorials/intro-to-flask-adding-a-contact-page--net-28982" target= _blank >
+a nice visual representation
+</a>
+But -- note that parts are out of date.  See official documentation.
+
+
+
+{% from "_formhelpers.html" import render_field %}
+
+<form method=post>
+  <dl>
+    {{ render_field(form.username) }}
+    {{ render_field(form.email) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.confirm) }}
+    {{ render_field(form.accept_tos) }}
+  </dl>
+  <p><input type=submit value=Register>
+</form>
+
+{% endblock %}
