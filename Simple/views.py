@@ -11,59 +11,42 @@ from sqlalchemy.engine import reflection
 
 import pandas as pd
 
+#==========================================================================
+##Import Python Functions Specific to this Application
+##These functions are in a separate file for both readability and portability
+#==========================================================================
+import app_functions
+from app_functions import fatal, readPgpass, getPgDBnames
+
 #===========================================================================        
-##Set project level variables
+##Set Application-Level Static Variables Defined When the Server is Started
 #===========================================================================        
-project_name = os.getcwd().split('/')[-1]
+app_name = os.getcwd().split('/')[-1]
 user = getpass.getuser()
-dbName = project_name
-dbName= 'GeekIllustratedDOM'
+dbName = app_name
 
 #===========================================================================        
-##Define deg=bugging functions
-#===========================================================================        
-def fatal(*L):
-     print >>sys.stderr, ''.join(L)
-     raise SystemExit
-#===========================================================================        
-##Connect to application metadata database
-#===========================================================================        
-protocol = 'postgresql'
-URL_FORMAT = "%s://%s:%s@%s/%s"
-fname = "/Users/"+user+"/.pgpass"
-f = open(fname, 'rb')
-for a in f.readlines():
-  host, port, database, username, password = a.rstrip().split(':')
-  if (database == dbName):
-      engineURL = URL_FORMAT % (protocol, username, password, host, database)
-  elif (database == '*'):
-      engineURL = URL_FORMAT % (protocol, username, password, host, dbName)
-  else:
-      engineURL = ''
-try:
-   engine = create_engine(engineURL)
-   meta = engine.connect()
-except exc.SQLAlchemyError as detail:
-   print(engineURL)
-   fatal("Could not query : %s" % detail)
-
-#===========================================================================        
-##Define the Functions that Render the Views (HTML pages)                                                
+##Define the Functions that Render the Views (HTML pages) 
 #===========================================================================        
 #Define the home (index) page with a single slash, and define the page as a render function 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    page_name='index'; 
     if request.args.get('page_title') is None:
-        page_title='';
+        page_title=''; page_name='index';
         url = url_for('index');
     else:
         page_title = request.args.get('page_title');
-        url = url_for('index')+"?page_title="+page_title;
+        if request.args.get('page_name') is None:
+            page_name = page_title;
+        else:
+            page_name = request.args.get('page_name')
+        url = url_for('index')+"?page_title="+page_title+"&page_name="+page_name;
+
     #Open the web page                                                         
     return render_template('index.html', 
-                           project_name = project_name, page_name=page_name, 
+                           project_name = app_name, 
+                           page_name=page_name, 
                            page_title=page_title,
-                           url = url, basename=project_name
+                           url = url
                            )
 
