@@ -1,10 +1,18 @@
 {% extends "layout.html" %}
 {% block body %}
 
+<ul>
+{% for o in pageresult %}
+<li> <!--{{ o[0] }} {{ o[1] }} --> {{ o[2] }} </li>
+{% endfor %}
+</ul>
+
+
 
 <section>
- <a href="{{url_for('register')}}?page_title=Register"  >Click for Register </a>.
+ <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
 </section>
+
 
 <section>
  <a href="{{url_for('index')}}?page_title=Something Else"  >Click this link to call it something else </a>.

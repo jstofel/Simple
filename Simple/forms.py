@@ -17,3 +17,8 @@ class RegistrationForm(Form):
     ])
     confirm = PasswordField('Repeat Password')
     accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
+
+class AddPage(Form):
+  page_name = TextField("Page Name")
+  page_title = TextField("Page Title")
+  submit = SubmitField("Send")
