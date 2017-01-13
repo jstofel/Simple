@@ -38,35 +38,26 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 #Define the home (index) page with a single slash, and define the page as a render function 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    #Determine what page has been requested
+    #Determine if a page has been requested
     if request.args.get('page_title') is None:
-        page_title=''; page_name='index';
-        url = url_for('index');
-        #We want to get the information out of the page table
-        #And send it to the page to render
         isql = "select * from public.page";
-        dbURL = readPgpass(app_name, user)
-        engine = create_engine(dbURL)
-        conn = engine.connect()
-        pageresult = conn.execute(isql)
-
+        page_title = '';
+        page_name = '';
     else:
-        pageresult = []
-        page_title = request.args.get('page_title');
-        if request.args.get('page_name') is None:
-            page_name = page_title;
-        else:
-            page_name = request.args.get('page_name')
-        url = url_for('index')+"?page_title="+page_title+"&page_name="+page_name;
-
+        isql = "select * from public.page where page_title = '%s' " % request.args.get('page_title').strip() ;
+        page_title = request.args.get('page_title').strip() ;
+    #Get the information out of the page table
+    #And send it to the page to render
+    dbURL = readPgpass(app_name, user)
+    engine = create_engine(dbURL)
+    conn = engine.connect()
+    pageresult = conn.execute(isql)
+    #Note:  the pagesults is a SQLalchemy ResultProxy object, that behaves like a dict, but read the manual...
     #Open the web page                                                         
     return render_template('index.html', 
-                           show_link=1,
                            project_name = app_name, 
-                           page_name=page_name, 
                            page_title=page_title,
-                           url = url, pageresult = pageresult
-                           
+                           pageresult = pageresult
                            )
 
 @app.route('/add_page', methods=['GET', 'POST'])
@@ -82,7 +73,7 @@ def add_page():
         flash('You want to add page '+new_page_name+" with title "+new_page_title)
     
         return redirect(url_for('index'))
-    if request.method == 'GET':
+    if request.args.get('new_page_name_1') is not None:
         new_page_name = request.args.get('new_page_name_1');
         new_page_title = request.args.get('new_page_title_1');
         newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s')" % (new_page_name.strip(), new_page_title.strip());  
@@ -92,13 +83,24 @@ def add_page():
         engine = create_engine(dbURL)
         conn = engine.connect()
         conn.execute(newsql)
+
+    isql = "select * from public.page where page_title = '%s' " % 'Add Page' ;
+    page_title = 'Add Page' ;
+    #Get the information out of the page table
+    #And send it to the page to render
+    dbURL = readPgpass(app_name, user)
+    engine = create_engine(dbURL)
+    conn = engine.connect()
+    pageresult = conn.execute(isql)
+
     return render_template('add_page.html',
                            form=form,
                            show_link=0,
                            project_name = app_name, 
                            page_name=page_name, 
                            page_title=page_title,
-                           url = url
+                           url = url,
+                           pageresult = pageresult
                            )
 
 @app.route('/form_page', methods=['GET', 'POST'])

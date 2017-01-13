@@ -23,11 +23,7 @@
 <!-- Subheader link is dynamically defined in the python views.py file and passed as url argument -->
 <div id="header">
   <h1><a href="{{url_for('index')}}"> {{project_name}} </a> </h1>
-  {% if 0 %}
-     <div id="subheader"> <a href="{{url}}" id="subref" > {{page_title}} </a> </div>
-  {% else %}
-     <div id="subheader">  {{page_title}} </div>
-  {% endif %}
+     <div id="subheader"> {{  pageresult.fetchone()[2] }} </div>
 </div>
 
 <!--Add a place to put flashed messaged-->

@@ -3,19 +3,21 @@
 
 <ul>
 {% for o in pageresult %}
-<li> <!--{{ o[0] }} {{ o[1] }} --> {{ o[2] }} </li>
+<!-- pageresult is a SQL Alchemy ResultProxy object. See the manual for how to access in detail, 
+    but can treat as list of lists, of which each element is a field: page_id, page_name, page_title --> 
+<li>  
+ <a href="{{url_for('index')}}?page_title={{ o[2] }}&page_name={{ o[1] }} "> {{ o[1] }}  </a>
+</li>
 {% endfor %}
 </ul>
 
 
-
+{% if pageresult.rowcount > 1 %}
 <section>
  <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
 </section>
 
 
-<section>
- <a href="{{url_for('index')}}?page_title=Something Else"  >Click this link to call it something else </a>.
-</section>
+{% endif %}
 
 {% endblock %}
