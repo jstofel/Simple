@@ -1,23 +1,98 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<ul>
-{% for o in pageresult %}
-<!-- pageresult is a SQL Alchemy ResultProxy object. See the manual for how to access in detail, 
-    but can treat as list of lists, of which each element is a field: page_id, page_name, page_title --> 
-<li>  
- <a href="{{url_for('index')}}?page_title={{ o[2] }}&page_name={{ o[1] }} "> {{ o[1] }}  </a>
-</li>
-{% endfor %}
-</ul>
+<!--This is the template for page content. It has the following parameters:
+pageresult:  a SQl Alxchemy ResultProxy object. This is the result of a sql
+             query on the Page table, containing data that is 'like' the 
+	     columns and rows of a table. See the manual for all methods to 
+	     access data from this object. The specific methods used in this
+	     template are:
+	     1. fetchone() is used in the layout template to get the page title
+	          from the first record in the object (the title of the index page)
+		  and put it in the subheader. This method moves the cursor to the
+		  next record, so the next method (the jinja for loop) starts there
+	     2. for o in pageresult:  gets each remaining row in turn. Used to
+	          display the list of the rest of the pages (after the index page).
+	     3. rowcount: counts the number of rows in the object
+	     See documentation for, say, the fetchone method, at 
+http://docs.sqlalchemy.org/en/latest/core/connections.html?highlight=fetchone#sqlalchemy.engine.ResultProxy.fetchone
+Note that the ResultProxy object "Wraps a DB-API cursor object to provide easier access to row columns."
+and the methods are DBA-API cursor methods... They seem to only go forward, not backward on stay in place.
+-->
 
-
+<!--Show the Index Page: Where the User Has Not Yet Selected a Page-->
 {% if pageresult.rowcount > 1 %}
-<section>
- <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
-</section>
+  <!--p> There are {{pageresult.rowcount}} rows in the object. The first one was pulled off for the index title. </p-->
+  <ol>
+   {% for o in pageresult %}
+    <li>  
+     <a href="{{url_for('index')}}?page_title={{ o[2] }}&page_name={{ o[1] }} "> {{ o[1] }}  </a>
+    </li>
+   {% endfor %}
+  </ol>
+  <section>
+    <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
+  </section>
+{% else %}
+
+<!-- Show the Page the User Has Requested -->
+<!-- Note: there are no longer any records in the pageresult cursor, as we have moved through them all and it has closed -->
+
+<!--Put in a Markdown Editor -->
+<!-- It has a Show/Hide Button, a Div with instructions, an Editor div that lets you write, and a Target div 
+     that shows what you've written, all closed out by a div to clear the floats.
+     The functionality of this Markdown editor comes from the ShowDown library
+     at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
+
+<div id="BUTTON" class=""  style='float:left; width:48%; height:3rem '>
+<input type='button' id='hideshow' value='Open Editor'>
+</div>
+
+<div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
+ Edit the content in the textarea below using markdown styling, and see how it renders on the left.
+</div>
+
+<div id="targetDiv" class=""  style='float:left; width:80%;' ></div>
+
+<div id="editorDiv"  class="" style='float:left;width:30%; display:none; '>
+
+<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()" >
+
+</textarea>
+</div>
+
+<div id="clearDiv" style='float:none'> </div>
+<script>
+
+<!-- Add functionality to the show/hide button -->
+jQuery(document).ready(function(){
+jQuery('#hideshow').on('click', function(event) {
+             /* Note: for some reason giving a string as argument makes a fade, no arg is a pop */
+             jQuery('#editorDiv').toggle();
+             jQuery('#INSTRUCTIONS').toggle();
+             if ( $(this).val() == 'Close Editor' ) {
+                 $(this).val('Open Editor');
+                 $('#targetDiv').width('80%');
+             } else {
+                 $(this).val('Close Editor');
+                 $('#targetDiv').width('48%');
+            }
+        });
+    });
+
+   <!--Run the load conditions -->
+   window.onload = function(){
+     runConverter();
+   }
+
+
+</script>
+
+
 
 
 {% endif %}
+
+
 
 {% endblock %}

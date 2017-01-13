@@ -18,9 +18,10 @@
 <body>
 
 <!--Define Common Elements that Appear on All Pages -->
-<!-- Page Header and embedded Subheader, showing 2 ways to set links -->
-<!-- Header link is set here using the Flask url_for method and a static page name ->
-<!-- Subheader link is dynamically defined in the python views.py file and passed as url argument -->
+<!-- project_name is passed as an argument from the view definition function ->
+<!-- page title is 3rd element (0-based) of first row (fetchone) of SQL Alchemy ResultProxy object-->  
+<!-- See the index.html template for more uses of the ResultProxy object  -->
+
 <div id="header">
   <h1><a href="{{url_for('index')}}"> {{project_name}} </a> </h1>
      <div id="subheader"> {{  pageresult.fetchone()[2] }} </div>
@@ -45,8 +46,21 @@
 
    {% endblock %}
 
+
+
+  <!-- Load Local Javascript Scripts ---------                                                                                  
+    Javascript is loaded at the end of the body because:                                                                        
+    The browser executes the external script as soon as it loads it.                                                            
+    Execution binds the events to the elements (classes) you have defined.                                                      
+    If this happens before the browser processes your <body> tag, the elements                                                  
+    are not yet part of the DOM so nothing is attached.                                                                         
+  -->
+
 <!-- local scripts for this app-->
-  <!--script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script-->
+  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+
+ <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
+ <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script>
 
  
  
