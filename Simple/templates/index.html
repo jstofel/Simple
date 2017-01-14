@@ -45,7 +45,8 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
 
 <div id="BUTTON" class=""  style='float:left; width:48%; height:3rem '>
-<input type='button' id='hideshow' value='Open Editor'>
+<input type='button' id='hideshow' value='Open Editor' style='width:9rem' >
+<input type='button' id='saveit' value='Save' style='display:none' >
 </div>
 
 <div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
@@ -66,19 +67,45 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 
 <!-- Add functionality to the show/hide button -->
 jQuery(document).ready(function(){
+
 jQuery('#hideshow').on('click', function(event) {
-             /* Note: for some reason giving a string as argument makes a fade, no arg is a pop */
              jQuery('#editorDiv').toggle();
              jQuery('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
                  $(this).val('Open Editor');
                  $('#targetDiv').width('80%');
+                 $('#saveit').hide()
              } else {
                  $(this).val('Close Editor');
                  $('#targetDiv').width('48%');
+                 $('#saveit').show()
             }
         });
     });
+
+jQuery('#saveit').on('click', function(event) {
+             //Put the code to write to db here
+                /*This may require a redirect - or, the SAVE button
+                   should be the forms SUBMIT button... and have to 
+                   make sure that the targetDiv has a textarea in it
+                   too (not editable by the user) .  Hm.... */
+
+             //This refreshes the page with the same inputs as original
+             // Interesting that it has a slight fade, not a pop...
+               location.reload()
+
+             //This section returns to the initial (nonediting) state
+             // without going through the server
+                jQuery('#editorDiv').toggle();
+                jQuery('#INSTRUCTIONS').toggle();
+                $('#targetDiv').width('80%');
+                $(this).hide()
+                $('#hideshow').val('Open Editor')
+    });
+
+
+
+
 
    <!--Run the load conditions -->
    window.onload = function(){
