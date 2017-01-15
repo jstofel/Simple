@@ -49,7 +49,7 @@ def index():
 
     #Determine if a page has been requested
     if request.args.get('page_title') is None:
-        psql = "select * from public.page";
+        psql = "select * from public.page order by page_id";
         pageresult   = conn.execute(psql);
         page_title = '';
         page_name = '';
