@@ -30,22 +30,18 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 	   onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
   </div>
 
+{% from "_formhelpers.html" import render_field %}
+
   <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
     <form id = "addPage" target="{{url_for('index')}}" method=POST>
-      <div style='float:right'>  {{ form.submit }} </div>
-      NAME {{ form.new_page_name }} 
-      TITLE {{form.new_page_title }}
+       <div style='float:right'>  {{ form.submit }} </div>
+       <br>
+       <dl>
+       {{ render_field(form.new_page_name) }} 
+       {{ render_field(form.new_page_title) }}
+       </dl>
     </form>
-<!--
-    <form id = "addPage" target="{{url_for('index')}}" method=POST>
-      <div style='float:right'>  <input type='Submit' value = 'Save' style='width:9rem' > </div>
-      <div style='clear:both'>
-      <div style='width:5rem'> Name </div>   <textarea rows='1' cols='25' name = 'new_page_name' style='resize:none' > </textarea>
-      <div style='width:5rem'> Title </div>  <textarea rows='3' cols='25' name = 'new_page_title'></textarea> 
 
-      </div>
-    </form>
--->
   </div>
 </div>
 
@@ -57,10 +53,6 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
     </li>
    {% endfor %}
   </ol>
-
-  <section>
-    <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
-  </section>
 
 
 {% else %}

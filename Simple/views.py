@@ -57,15 +57,15 @@ def index():
     if request.method == 'POST':
         new_page_name = form.new_page_name.data
         new_page_title = form.new_page_title.data
-        #flash('You want to add page '+new_page_name+" with title "+new_page_title)
-        newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s')" % (new_page_name.strip(), new_page_title.strip());  
-        page_title = newsql;
-        #make the database connection to PG
-        dbURL = readPgpass(app_name, user)
-        engine = create_engine(dbURL)
-        conn = engine.connect()
-        conn.execute(newsql)
-        return redirect(url_for('index'))
+        if (len(new_page_name.strip()) > 0):
+            newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s')" % (new_page_name.strip(), new_page_title.strip());  
+
+            #make the database connection to PG
+            dbURL = readPgpass(app_name, user)
+            engine = create_engine(dbURL)
+            conn = engine.connect()
+            conn.execute(newsql)
+            return redirect(url_for('index'))
     #Open the web page                                                         
     return render_template('index.html', 
                            project_name = app_name, 
