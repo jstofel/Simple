@@ -72,9 +72,9 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 <div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 </div>
-<div id="targetDiv" class=""  style='float:left; width:80%;' ></div>
+<div id="targetDiv" class=""  style='float:left; width:80%;' > {{content_html}} </div>
 <div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
-<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()" ></textarea>
+<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()" > {{content_markdown}} </textarea>
 </div>
 <div style='float:none'> </div>
 

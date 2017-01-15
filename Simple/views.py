@@ -47,16 +47,19 @@ def index():
     #Determine if a page has been requested
     if request.args.get('page_title') is None:
         psql = "select * from public.page";
-        pageresult   = conn.execute(psql)
-        contentresult = []
+        pageresult   = conn.execute(psql);
+        content_markdown = ''; content_html = ''; 
         page_title = '';
         page_name = '';
     else:
         psql = "select * from public.page where page_title = '%s' " % request.args.get('page_title').strip() ;
-        csql = "select * from public.content c join public.page_content pc on c.content_id = pc.content_id join public.page p on p.page_id = pc.page_id where page_title = '%s' " % request.args.get('page_title').strip() ;
+        csql = "select content_md, content_ht from public.content c join public.page_content pc on c.content_id = pc.content_id join public.page p on p.page_id = pc.page_id where page_title = '%s' " % request.args.get('page_title').strip() ;
         page_title = request.args.get('page_title').strip() ;
-        pageresult = conn.execute(psql)
-        contentresult = conn.execute(csql)
+        pageresult = conn.execute(psql);
+        contentresult = conn.execute(csql);
+        resultlist = contentresult.fetchone()
+        content_markdown = resultlist[0];
+        content_html = resultlist[1];
 
     #Get a WTF form to Add Page (from the forms.py script)
     form = AddPage(request.form)
@@ -81,7 +84,8 @@ def index():
                            project_name = app_name, 
                            page_title=page_title,
                            pageresult = pageresult,
-                           contentresult=contentresult,
+                           content_html = content_html,
+                           content_markdown = content_markdown,
                            form=form
                            )
 
