@@ -38,22 +38,30 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 #Define the home (index) page with a single slash, and define the page as a render function 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    #Determine if a page has been requested
-    if request.args.get('page_title') is None:
-        isql = "select * from public.page";
-        page_title = '';
-        page_name = '';
-    else:
-        isql = "select * from public.page where page_title = '%s' " % request.args.get('page_title').strip() ;
-        page_title = request.args.get('page_title').strip() ;
-    #Get the information out of the page table
-    #And send it to the page to render
+    #Connect to app database so you can get information on pages and content (pageresult and contentresult) out of the database
+    #Note: results from query is SQLalchemy ResultProxy object that needs specific methods to access data: read the manual...
     dbURL = readPgpass(app_name, user)
     engine = create_engine(dbURL)
     conn = engine.connect()
-    pageresult = conn.execute(isql)
-    #Note:  the pagesults is a SQLalchemy ResultProxy object, that behaves like a dict, but read the manual...
+
+    #Determine if a page has been requested
+    if request.args.get('page_title') is None:
+        psql = "select * from public.page";
+        pageresult   = conn.execute(psql)
+        contentresult = []
+        page_title = '';
+        page_name = '';
+    else:
+        psql = "select * from public.page where page_title = '%s' " % request.args.get('page_title').strip() ;
+        csql = "select * from public.content c join public.page_content pc on c.content_id = pc.content_id join public.page p on p.page_id = pc.page_id where page_title = '%s' " % request.args.get('page_title').strip() ;
+        page_title = request.args.get('page_title').strip() ;
+        pageresult = conn.execute(psql)
+        contentresult = conn.execute(csql)
+
+    #Get a WTF form to Add Page (from the forms.py script)
     form = AddPage(request.form)
+
+    #Find out if you have any results to write back
     if request.method == 'POST':
         new_page_name = form.new_page_name.data
         new_page_title = form.new_page_title.data
@@ -66,11 +74,14 @@ def index():
             conn = engine.connect()
             conn.execute(newsql)
             return redirect(url_for('index'))
-    #Open the web page                                                         
+
+
+    #All done?  Open the web page!                                                         
     return render_template('index.html', 
                            project_name = app_name, 
                            page_title=page_title,
                            pageresult = pageresult,
+                           contentresult=contentresult,
                            form=form
                            )
 

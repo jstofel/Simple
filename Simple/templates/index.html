@@ -23,16 +23,16 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 <!--Show the Index Page: Where the User Has Not Yet Selected a Page-->
 {% if pageresult.rowcount > 1 %}
 
-
-<div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
-  <div style='float:right; width=90%'>
+ <div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
+   <div style='float:right; width=90%'>
     <input type='button' id='showAddPage' value='Add Page' style='width:9rem' 
 	   onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
-  </div>
+   </div>
 
-{% from "_formhelpers.html" import render_field %}
+   <!-- Add a form to add a new page -->
+   {% from "_formhelpers.html" import render_field %}
 
-  <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
+   <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
     <form id = "addPage" target="{{url_for('index')}}" method=POST>
        <div style='float:right'>  {{ form.submit }} </div>
        <br>
@@ -41,10 +41,10 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
        {{ render_field(form.new_page_title) }}
        </dl>
     </form>
+   </div>
+ </div>
 
-  </div>
-</div>
-
+  <!-- Show ordered list of page names -->
   <!--p> There are {{pageresult.rowcount}} rows in the object. The first one was pulled off for the index title. </p-->
   <ol>
    {% for o in pageresult %}
@@ -60,7 +60,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 <!-- Show the Page the User Has Requested -->
 <!-- Note: there are no longer any records in the pageresult cursor, as we have moved through them all and it has closed -->
 
-<!--Put in a Markdown Editor -->
+<!--Put in a Markdown Editor to accept content-->
 <!-- It has a Show/Hide Button, a Div with instructions, an Editor div that lets you write, and a Target div 
      that shows what you've written, all closed out by a div to clear the floats.
      The functionality of this Markdown editor comes from the ShowDown library
@@ -78,18 +78,15 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 </div>
 <div style='float:none'> </div>
 
+
+
 <!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
 <script>
 jQuery(document).ready(function(){
 
-jQuery('#showAddPage').on('click', function(event) {
-             jQuery('#addPageFormDiv').toggle();
-             jQuery('#showAddPage').toggle();
-    });
-
 jQuery('#showEditContent').on('click', function(event) {
-             jQuery('#editorDiv').toggle();
-             jQuery('#INSTRUCTIONS').toggle();
+             $('#editorDiv').toggle();
+             $('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
                  $(this).val('Open Editor');
                  $('#targetDiv').width('80%');
@@ -102,7 +99,7 @@ jQuery('#showEditContent').on('click', function(event) {
         });
     });
 
-jQuery('#saveit').on('click', function(event) {
+  jQuery('#saveit').on('click', function(event) {
              //Put the code to write to db here
                 /*This may require a redirect - or, the SAVE button
                    should be the forms SUBMIT button... and have to 
@@ -116,7 +113,8 @@ jQuery('#saveit').on('click', function(event) {
 
     });
 
-   <!--Run the load conditions -->
+   //Run the load conditions
+   //The runConverter function takes the input conent, translates it, and writes it to the target div
    window.onload = function(){
      runConverter();
    }
