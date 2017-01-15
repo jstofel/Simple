@@ -26,11 +26,18 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 
 <div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
   <div style='float:right; width=90%'>
-    <input type='button' id='showAddPage' value='Add Page' style='width:9rem' >
+    <input type='button' id='showAddPage' value='Add Page' style='width:9rem' 
+	   onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
   </div>
 
   <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
-    <form target="{{url_for('index')}}" method=POST>
+    <form id = "addPage" target="{{url_for('index')}}" method=POST>
+      <div style='float:right'>  {{ form.submit }} </div>
+      NAME {{ form.new_page_name }} 
+      TITLE {{form.new_page_title }}
+    </form>
+<!--
+    <form id = "addPage" target="{{url_for('index')}}" method=POST>
       <div style='float:right'>  <input type='Submit' value = 'Save' style='width:9rem' > </div>
       <div style='clear:both'>
       <div style='width:5rem'> Name </div>   <textarea rows='1' cols='25' name = 'new_page_name' style='resize:none' > </textarea>
@@ -38,6 +45,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 
       </div>
     </form>
+-->
   </div>
 </div>
 
@@ -53,6 +61,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
   <section>
     <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
   </section>
+
 
 {% else %}
 
@@ -77,16 +86,8 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 </div>
 <div style='float:none'> </div>
 
-
-
-{% endif %}
-
-
-
+<!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
 <script>
-
-
-<!-- Add JQ functionality to show/hide buttons -->
 jQuery(document).ready(function(){
 
 jQuery('#showAddPage').on('click', function(event) {
@@ -123,10 +124,6 @@ jQuery('#saveit').on('click', function(event) {
 
     });
 
-
-
-
-
    <!--Run the load conditions -->
    window.onload = function(){
      runConverter();
@@ -136,7 +133,7 @@ jQuery('#saveit').on('click', function(event) {
 </script>
 
 
-
+{% endif %}
 
 
 

@@ -19,6 +19,6 @@ class RegistrationForm(Form):
     accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
 class AddPage(Form):
-  page_name = TextField("Page Name")
-  page_title = TextField("Page Title")
-  submit = SubmitField("Send")
+  new_page_name = TextField("Page Name")
+  new_page_title = TextField("Page Title")
+  submit = SubmitField("Save")
