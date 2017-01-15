@@ -22,6 +22,25 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 
 <!--Show the Index Page: Where the User Has Not Yet Selected a Page-->
 {% if pageresult.rowcount > 1 %}
+
+
+<div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
+  <div style='float:right; width=90%'>
+    <input type='button' id='showAddPage' value='Add Page' style='width:9rem' >
+  </div>
+
+  <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
+    <form target="{{url_for('index')}}" method=POST>
+      <div style='float:right'>  <input type='Submit' value = 'Save' style='width:9rem' > </div>
+      <div style='clear:both'>
+      <div style='width:5rem'> Name </div>   <textarea rows='1' cols='25' name = 'new_page_name' style='resize:none' > </textarea>
+      <div style='width:5rem'> Title </div>  <textarea rows='3' cols='25' name = 'new_page_title'></textarea> 
+
+      </div>
+    </form>
+  </div>
+</div>
+
   <!--p> There are {{pageresult.rowcount}} rows in the object. The first one was pulled off for the index title. </p-->
   <ol>
    {% for o in pageresult %}
@@ -30,9 +49,11 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
     </li>
    {% endfor %}
   </ol>
+
   <section>
     <a href="{{url_for('add_page')}}"  >Click to Open Add Page Form </a>
   </section>
+
 {% else %}
 
 <!-- Show the Page the User Has Requested -->
@@ -43,32 +64,37 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
      that shows what you've written, all closed out by a div to clear the floats.
      The functionality of this Markdown editor comes from the ShowDown library
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
-
 <div id="BUTTON" class=""  style='float:left; width:48%; height:3rem '>
-<input type='button' id='hideshow' value='Open Editor' style='width:9rem' >
+<input type='button' id='showEditContent' value='Open Editor' style='width:9rem' >
 <input type='button' id='saveit' value='Save' style='display:none' >
 </div>
-
 <div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 </div>
-
 <div id="targetDiv" class=""  style='float:left; width:80%;' ></div>
-
-<div id="editorDiv"  class="" style='float:left;width:30%; display:none; '>
-
-<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()" >
-
-</textarea>
+<div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
+<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()" ></textarea>
 </div>
+<div style='float:none'> </div>
 
-<div id="clearDiv" style='float:none'> </div>
+
+
+{% endif %}
+
+
+
 <script>
 
-<!-- Add functionality to the show/hide button -->
+
+<!-- Add JQ functionality to show/hide buttons -->
 jQuery(document).ready(function(){
 
-jQuery('#hideshow').on('click', function(event) {
+jQuery('#showAddPage').on('click', function(event) {
+             jQuery('#addPageFormDiv').toggle();
+             jQuery('#showAddPage').toggle();
+    });
+
+jQuery('#showEditContent').on('click', function(event) {
              jQuery('#editorDiv').toggle();
              jQuery('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
@@ -94,13 +120,7 @@ jQuery('#saveit').on('click', function(event) {
              // Interesting that it has a slight fade, not a pop...
                location.reload()
 
-             //This section returns to the initial (nonediting) state
-             // without going through the server
-                jQuery('#editorDiv').toggle();
-                jQuery('#INSTRUCTIONS').toggle();
-                $('#targetDiv').width('80%');
-                $(this).hide()
-                $('#hideshow').val('Open Editor')
+
     });
 
 
@@ -118,7 +138,7 @@ jQuery('#saveit').on('click', function(event) {
 
 
 
-{% endif %}
+
 
 
 
