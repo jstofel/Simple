@@ -40,6 +40,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
        {{ render_field(form.new_page_name) }} 
        {{ render_field(form.new_page_title) }}
        </dl>
+       <input type = "hidden" name="page_id" value="{{page_id}}" >
     </form>
    </div>
  </div>
@@ -49,90 +50,10 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
   <ol>
    {% for o in pageresult %}
     <li>  
-     <a href="{{url_for('index')}}?page_id={{o[0]}}"> {{ o[1] }}  </a>
+     <a href="{{url_for('content')}}?page_id={{o[0]}}"> {{ o[1] }}  </a>
     </li>
    {% endfor %}
   </ol>
-
-
-{% else %}
-
-<!-- Show the Page the User Has Requested -->
-<!-- Note: there are no longer any records in the pageresult cursor, as we have moved through them all and it has closed -->
-
-<!--Put in a Markdown Editor to accept content-->
-<!-- It has a Show/Hide Button, a Div with instructions, an Editor div that lets you write, and a Target div 
-     that shows what you've written, all closed out by a div to clear the floats.
-     The functionality of this Markdown editor comes from the ShowDown library
-     at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
-
-<form id="editContentForm"
-      action="{{url_for('index')}}"
-      method="GET" >
-
-<div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
-<input type='button' id='showEditContent' value='Open Editor' style='width:9rem' >
-<input type='submit' id='saveit' value='Save' style='display:none' >
-<input type = "hidden" name="page_id" value="{{page_id}}" >
-</div>
-
-<div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
- Edit the content in the textarea below using markdown styling, and see how it renders on the left.
-</div>
-
-<div id="targetDiv" class=""  style='float:left; width:80%;'>{{content_html}}</div>
-
-<div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
-<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()">{{content_markdown}}</textarea>
-</div>
-
-</form>
-
-<div style='float:none'> </div>
-
-
-
-<!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
-<script>
-jQuery(document).ready(function(){
-
-jQuery('#showEditContent').on('click', function(event) {
-             $('#editorDiv').toggle();
-             $('#INSTRUCTIONS').toggle();
-             if ( $(this).val() == 'Close Editor' ) {
-                 $(this).val('Open Editor');
-                 $('#targetDiv').width('80%');
-                 $('#saveit').hide()
-             } else {
-                 $(this).val('Close Editor');
-                 $('#targetDiv').width('48%');
-                 $('#saveit').show()
-            }
-        });
-    });
-
-  jQuery('#saveit').on('click', function(event) {
-             //Put the code to write to db here
-                /*This may require a redirect - or, the SAVE button
-                   should be the forms SUBMIT button... and have to 
-                   make sure that the targetDiv has a textarea in it
-                   too (not editable by the user) .  Hm.... */
-
-             //This refreshes the page with the same inputs as original
-             // Interesting that it has a slight fade, not a pop...
-               location.reload()
-
-
-    });
-
-   //Run the load conditions
-   //The runConverter function takes the input conent, translates it, and writes it to the target div
-   window.onload = function(){
-     runConverter();
-   }
-
-
-</script>
 
 
 {% endif %}
