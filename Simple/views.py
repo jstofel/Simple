@@ -48,15 +48,15 @@ def index():
     content_markdown = ''; content_html = ''; 
 
     #Determine if a page has been requested
-    if request.args.get('page_title') is None:
+    if request.args.get('page_id') is None:
         psql = "select * from public.page order by page_id";
         pageresult   = conn.execute(psql);
-        page_title = '';
-        page_name = '';
+        page_id = 0;
     else:
-        psql = "select * from public.page where page_title = '%s' " % request.args.get('page_title').strip() ;
-        csql = "select content_md, content_ht from public.content c join public.page_content pc on c.content_id = pc.content_id join public.page p on p.page_id = pc.page_id where page_title = '%s' " % request.args.get('page_title').strip() ;
-        page_title = request.args.get('page_title').strip() ;
+        page_id = request.args.get('page_id');
+        psql = "select * from public.page where page_id = %s " % request.args.get('page_id') ;
+        csql = "select content_md, content_ht from public.content c join public.page_content pc on c.content_id = pc.content_id join public.page p on p.page_id = pc.page_id where pc.page_id = %s " % request.args.get('page_id') ;
+
         pageresult = conn.execute(psql);
         contentresult = conn.execute(csql);
         if contentresult.rowcount > 0 :
@@ -85,7 +85,7 @@ def index():
     #All done?  Open the web page!                                                         
     return render_template('index.html', 
                            project_name = app_name, 
-                           page_title=page_title,
+                           page_id=page_id,
                            pageresult = pageresult,
                            content_html = content_html,
                            content_markdown = content_markdown,

@@ -33,7 +33,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
    {% from "_formhelpers.html" import render_field %}
 
    <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
-    <form id = "addPage" target="{{url_for('index')}}" method=POST>
+    <form id = "addPage" action="{{url_for('index')}}" method=POST>
        <div style='float:right'>  {{ form.submit }} </div>
        <br>
        <dl>
@@ -49,7 +49,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
   <ol>
    {% for o in pageresult %}
     <li>  
-     <a href="{{url_for('index')}}?page_title={{ o[2] }}&page_name={{ o[1] }} "> {{ o[1] }}  </a>
+     <a href="{{url_for('index')}}?page_id={{o[0]}}"> {{ o[1] }}  </a>
     </li>
    {% endfor %}
   </ol>
@@ -65,17 +65,29 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
      that shows what you've written, all closed out by a div to clear the floats.
      The functionality of this Markdown editor comes from the ShowDown library
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
-<div id="BUTTON" class=""  style='float:left; width:48%; height:3rem '>
+
+<form id="editContentForm"
+      action="{{url_for('index')}}"
+      method="GET" >
+
+<div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
 <input type='button' id='showEditContent' value='Open Editor' style='width:9rem' >
-<input type='button' id='saveit' value='Save' style='display:none' >
+<input type='submit' id='saveit' value='Save' style='display:none' >
+<input type = "hidden" name="page_id" value="{{page_id}}" >
 </div>
+
 <div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 </div>
+
 <div id="targetDiv" class=""  style='float:left; width:80%;'>{{content_html}}</div>
+
 <div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
 <textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()">{{content_markdown}}</textarea>
 </div>
+
+</form>
+
 <div style='float:none'> </div>
 
 
