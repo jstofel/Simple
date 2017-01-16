@@ -61,20 +61,19 @@ def index():
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
             if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s')" % (new_page_name.strip(), new_page_title.strip());  
+                newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), new_page_title.strip());  
                 conn.execute(newsql)
-                #return redirect(url_for('index'))
+                #Refresh Page so you can see what you have just done
+                return redirect(url_for('index'))
 
 
-    #All done?  Open the web page!                                                         
+    #No results to write back?  Open the web page !                                                         
     return render_template('index.html', 
                            project_name = app_name, 
                            page_id=page_id,
                            pageresult = pageresult,
                            form=form
                            )
-
-
 
 #Define the content page 
 @app.route('/content', methods=['GET', 'POST'])
@@ -88,7 +87,8 @@ def content():
         engine = create_engine(dbURL)
         conn = engine.connect()
         #Initialize parameters
-        content_markdown = ''; content_html = ''; page_id = 0; content_id = 0;
+        page_id = request.args.get('page_id')
+        content_markdown = ''; content_html = ''; content_id = 0;
 
         #Define the WTF form used
         form = UpdateContent(request.form)
@@ -100,28 +100,48 @@ def content():
         csql += "join public.page p on p.page_id = pc.page_id ";
         csql += "where pc.page_id = %s " % request.args.get('page_id') ;
 
+        #The pageresult has one record - corresponding to page_id
         pageresult = conn.execute(psql);
-        contentresult = conn.execute(csql);
+        #The contentresult has 0 or more records, depending on how many content sections
+        #    we have added.  The contentresult (like all ResultProxies) are cursor objects,
+        #    and right now I only know how to access and discard each row! (ie, not like a
+        #    dataframe or data table object that persists and can be repeatedly accessed
 
+        #This should get all results, even empty ones, and put them in a dataframe
+        contentresult = conn.execute(csql);
+        fetchall = contentresult.fetchall()
+        pagecontents = pd.DataFrame(fetchall)
+
+        #This gets just the first row of non-empty results
+        contentresult = conn.execute(csql);
         if contentresult.rowcount > 0 :
             resultlist = contentresult.fetchone()
             content_id = resultlist[0];
             content_markdown = resultlist[1];
             content_html = resultlist[2];
 
-        #Get any data that has been submitted in the form
-        content_id = form.content_id.data
+            #flash("Content id for page_id" + str(page_id) + " is "+str(content_id))
+
+        #Get content that has been submitted via the form
+        #Note -- this still just handles one content per form. Somehow the content_id is not being properly passed through the renderer
         new_content_md = form.content_md.data
         new_content_ht = form.content_ht.data
-        if new_content_ht is not None:
-            if len(new_content_ht.strip() > 0):
+        if new_content_md is not None:
+            if (len(new_content_md.strip()) > 0):
                 if (content_id > 0):
                     contsql = "update public.content set content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, content_id); 
                 else:
                     contsql = "insert into public.content (content_md, content_ht) VALUES ";
-                    contsql += "('%s', '%s')" % (conent_md, content_ht);
+                    contsql += "('%s', '%s')" % (content_md, content_ht);
+
+            #Show what you are trying to do
+            #flash(contsql)
+
+            #Do it
             conn.execute(contsql)
-            #return redirect(url_for('index')?page_id=page_id)
+
+            #Refresh the page to show the new content
+            return redirect(url_for('content', page_id = page_id ))
 
 
     #All done?  Open the web page!                                                         
@@ -129,6 +149,7 @@ def content():
                            project_name = app_name, 
                            page_id=page_id,
                            pageresult=pageresult,
+                           pagecontents=pagecontents,
                            content_id = content_id,
                            content_html = content_html,
                            content_markdown = content_markdown,
@@ -136,72 +157,6 @@ def content():
                            )
 
 
-
-@app.route('/add_page', methods=['GET', 'POST'])
-def add_page():
-    from sqlalchemy import create_engine, engine, exc
-    page_name = 'add_page'
-    page_title = 'Add Page'
-    url = ''
-    form = AddPage(request.form)
-    if request.method == 'POST':
-        new_page_name = form.page_name.data
-        new_page_title = form.page_title.data
-        flash('You want to add page '+new_page_name+" with title "+new_page_title)
-    
-        return redirect(url_for('index'))
-    if request.args.get('new_page_name_1') is not None:
-        new_page_name = request.args.get('new_page_name_1');
-        new_page_title = request.args.get('new_page_title_1');
-        newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s')" % (new_page_name.strip(), new_page_title.strip());  
-        page_title = newsql;
-        #make the database connection to PG
-        dbURL = readPgpass(app_name, user)
-        engine = create_engine(dbURL)
-        conn = engine.connect()
-        conn.execute(newsql)
-
-    isql = "select * from public.page where page_title = '%s' " % 'Add Page' ;
-    page_title = 'Add Page' ;
-    #Get the information out of the page table
-    #And send it to the page to render
-    dbURL = readPgpass(app_name, user)
-    engine = create_engine(dbURL)
-    conn = engine.connect()
-    pageresult = conn.execute(isql)
-
-    return render_template('add_page.html',
-                           form=form,
-                           show_link=0,
-                           project_name = app_name, 
-                           page_name=page_name, 
-                           page_title=page_title,
-                           url = url,
-                           pageresult = pageresult
-                           )
-
-@app.route('/form_page', methods=['GET', 'POST'])
-def form_page():
-    #Determine what page has been requested
-    page_nav = pageNav(request.args)
-    page_name = page_nav[0]
-    page_title = page_nav[1]
-    url = page_nav[2]
-
-    #form = AddPage(request.form)
-    #if request.method == 'POST':
-    #    new_page_name = form.page_name.data
-    #    new_page_name = form.page_title.data
-    #    flash('Want to add page '+new_page_name)
-    #
-    #    return redirect(url_for('index'))
-    return render_template('form_page.html', 
-                           show_link=0,
-                           project_name = app_name, 
-                           page_name=page_name, 
-                           page_title=page_title,
-                           url = url
-                           )
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

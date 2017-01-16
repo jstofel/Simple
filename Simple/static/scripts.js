@@ -42,8 +42,10 @@ for (i = 0; i < acc.length; i++) {
 function runConverter() {
     var text = document.getElementById('sourceTA').value,
 	target = document.getElementById('targetDiv'),
+	targetTA = document.getElementById('targetTA'),
 	converter = new showdown.Converter(),
 	html = converter.makeHtml(text);
 
     target.innerHTML = html;
+    targetTA.innerHTML = html;
 }

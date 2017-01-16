@@ -12,13 +12,14 @@
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
 
 <form id="editContentForm"
-      action="{{url_for('content')}}"
-      method="GET" >
+      action="{{url_for('content', page_id = page_id)}}"
+      method="POST" >
 
 <div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
 <input type='button' id='showEditContent' value='Open Editor' style='width:9rem' >
 <input type='submit' id='saveit' value='Save' style='display:none' >
 <input type = "hidden" name="page_id" value="{{page_id}}" >
+<input type = "hidden" name="content_id" value="{{content_id}}" > <!-- note: this is not yet working. currently only handling one content per page-->
 </div>
 
 <div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
@@ -28,7 +29,8 @@
 <div id="targetDiv" class=""  style='float:left; width:80%;'>{{content_html}}</div>
 
 <div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
-<textarea id="sourceTA" rows="40" cols="40"   onInput="runConverter()">{{content_markdown}}</textarea>
+<textarea id="sourceTA" name="content_md" rows="40" cols="40"   onInput="runConverter()">{{content_markdown}}</textarea>
+<textarea id="targetTA" name="content_ht" rows="40" cols="40" style='display:none'>{{content_html}}</textarea>
 </div>
 
 </form>
@@ -56,7 +58,8 @@ jQuery('#showEditContent').on('click', function(event) {
         });
     });
 
-  jQuery('#saveit').on('click', function(event) {
+
+  jQuery('#JClick').on('click', function(event) {
              //Put the code to write to db here
                 /*This may require a redirect - or, the SAVE button
                    should be the forms SUBMIT button... and have to 
@@ -66,9 +69,9 @@ jQuery('#showEditContent').on('click', function(event) {
              //This refreshes the page with the same inputs as original
              // Interesting that it has a slight fade, not a pop...
                location.reload()
-
-
     });
+
+
 
    //Run the load conditions
    //The runConverter function takes the input conent, translates it, and writes it to the target div
