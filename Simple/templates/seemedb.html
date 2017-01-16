@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  {% if not session.logged_in %}
+     <a href="{{ url_for('.login') }}">Log In </a>
+  {% else %}
+          <!-- a href="{{ url_for('.logout') }}">Log Out </a -->
+
+ <!--Show Form to Choose a Database--> 
+  <div>
+    <form action="{{ url_for('seemedb') }}" method="POST">
+            <select  name="database" width="300px">
+              {% for o in dbnames %}
+	        {% if o[0] == dbname %}
+                   <option name="{{ o[0] }}" SELECTED >{{ o[0] }}</option>
+	        {% else %}
+                   <option name="{{ o[0] }}" >{{ o[0] }}</option>
+		{% endif %}
+              {% endfor %}
+             </select>
+              <input class="button1" type="submit" value="Select">
+	      <input type = "hidden" name = "page_id" value = {{page_id}} >
+    </form>
+
+<!-- If A Database with at Least one Schema with Tables Has Been Chosen, then Show Info About it --> 
+{% if numschema > 0 %}      
+       <h2 style="font-style:normal" > {{dbname}} </h2>
+        <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
+
+
+  <!-- Show What is in the FK list of Dictionaries -->
+  <!-- Options: ['name', 'referred_columns', 'referred_table', 'constrained_columns', 'table', 'referred_schema', 'options', 'schema'] -->
+  <table border=1>
+    <tr><th>Schema</th><th>Table</th><th>Constrained Column</th><th>Referred Columns</th><th>Referred Table</th><th>Referred Schema</th></tr>
+      {% for d in allFK  %}
+         <tr><td> {{d['schema']}} <td>{{d['table']}} </td><td> {{d['constrained_columns']}} </td>
+             <td> {{d['referred_columns']}} </td><td> {{d['referred_table']}} </td><td> {{d['referred_schema']}} </td></tr>
+      {% endfor %}
+  </table>
+
+  <!-- Show schemas as accordian. Schemas are in a pandas dataframe -->
+       {% for index, row in allSchemas.iterrows() %}
+         <button class="accordion">{{ row['schema'] }}</button>
+	 <div class="panel">
+	   {% for index, rowT in allTables.iterrows() %}
+	     {% if rowT['schema'] == row['schema'] %}
+	       {{ rowT['table'] }} <br>
+	     {% endif %}
+	   {% endfor %}
+	 </div>
+       {% endfor %}
+
+
+ {% endif %}
+</div>
+
+
+  {% endif %}
+
+ {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+ {% endfor %}
+
+{% endblock %}

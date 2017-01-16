@@ -50,7 +50,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
   <ol>
    {% for o in pageresult %}
     <li>  
-     <a href="{{url_for('content')}}?page_id={{o[0]}}"> {{ o[1] }}  </a>
+     <a href="/{{o[3]}}?page_id={{o[0]}}"> {{ o[1] }}</a>  
     </li>
    {% endfor %}
   </ol>

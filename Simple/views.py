@@ -16,7 +16,7 @@ import pandas as pd
 ##These functions and forms are in separate files for readability and portability
 #==========================================================================
 import app_functions
-from app_functions import fatal, readPgpass, getPgDBnames, pageNav
+from app_functions import fatal, readPgpass, getPgDBnames, pageNav, getSchemas, getTables
 
 import forms
 from forms import ContactForm, RegistrationForm, AddPage, UpdateContent
@@ -30,7 +30,6 @@ dbName = app_name
 
 # set the secret key.  keep this really secret:
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
-
 
 #===========================================================================        
 ##Define the Functions that Render the Views (HTML pages) 
@@ -61,7 +60,7 @@ def index():
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
             if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title) Values ('%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), new_page_title.strip());  
+                newsql = "insert into public.page (page_name, page_title, page_target) Values ('%s', '%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
                 conn.execute(newsql)
                 #Refresh Page so you can see what you have just done
                 return redirect(url_for('index'))
@@ -157,6 +156,62 @@ def content():
                            )
 
 
+#==================================================
+#Define the SeeMeDB page                                                                                                  
+#=================================================
+@app.route('/seemedb', methods=['GET', 'POST'])
+def seemedb():
+    #Connect to app database
+    dbURL = readPgpass(app_name, user)
+    engine = create_engine(dbURL)
+    conn = engine.connect()
+
+    #Set the session as always logged in, for now                                                                              
+    session['logged_in'] = True
+    #initialize the variables
+    numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = ''; dbname = 'postgres'; 
+    allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = '';
+
+    #Get the name of all datbases in the Postgresql instance, connecting using the pg default db                           
+    dbnames = getPgDBnames(user)
+
+    #Get information out of form, if it has been sent (eg, list of schemas if a database name has been supplied
+    if request.method == 'POST':
+        page_id = request.form['page_id']
+        dbname = request.form['database']
+        schema_list = getSchemas(dbname, user)
+        numschema = len(schema_list)
+    else:
+        page_id = request.args.get('page_id') 
+
+    
+
+    #Get the page info
+    psql = "select * from public.page where page_id = %s " % page_id ;
+    pageresult = conn.execute(psql);
+
+
+    #Get data frame of all tables by schema                                                                                
+    if (numschema > 0):
+        returnList = getTables(dbname, user)
+        allTables = returnList[0]
+        allSchemas = returnList[1]
+        allFK = returnList[2]
+        num_tables = len(allTables)
+        numschema = len(allSchemas)
+        num_allFK = len(allFK)
+
+    #Open the web page with the variables set (found) by the python code                                                   
+    return render_template('seemedb.html', 
+                           project_name = app_name, 
+                           pageresult=pageresult, page_id = page_id ,
+                           dbname=dbname, username=user, numschema=numschema,
+                           dbnames=dbnames, numdb=numdb, note=note,
+                           schema_list = schema_list, allTables = allTables,
+                           allSchemas = allSchemas, allFK = allFK, num_allFK = num_allFK,
+                           num_tables=num_tables
+                           )
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -182,3 +237,14 @@ def register():
                            page_title=page_title,
                            url = url
                            )
+
+
+
+#=================================================================================                                                                                                   
+#Define the logout page                                                                                                                                                              
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('index'))
+
+
