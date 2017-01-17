@@ -13,7 +13,7 @@
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
 
 <form id="editContentForm"
-      action="{{url_for('content', page_id = page_id)}}"
+      action="/{{page_target}}?page_id={{page_id}}"
       method="POST" >
 
 <div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>

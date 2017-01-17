@@ -55,6 +55,9 @@ def index():
         psql = "select * from public.page order by page_id";
         pageresult = conn.execute(psql);
 
+        #Pull the page title off the first row (that is the app subtitle). The rest of the rows are passed to the view for parsing.
+        page_title = pageresult.fetchone()[2]
+
         #Find out if you have any results to write back
         if request.method == 'POST':
             new_page_name = form.new_page_name.data
@@ -70,6 +73,7 @@ def index():
     return render_template('index.html', 
                            project_name = app_name, 
                            page_id=page_id,
+                           page_title=page_title,
                            pageresult = pageresult,
                            form=form
                            )
@@ -93,18 +97,30 @@ def content():
         form = UpdateContent(request.form)
 
         #Get what is in the database
+
+        #Page Info
         psql = "select * from public.page where page_id = %s " % request.args.get('page_id') ;
+
+        #The pageresult has one record - corresponding to page_id. Variables are page_id, page_name, page_title, and page_target
+        pageresult = conn.execute(psql);
+        #Get the paramters out of it
+        pageparam = pageresult.fetchone()
+        page_id = pageparam[0]
+        page_name = pageparam[1]
+        page_title = pageparam[2]
+        page_target = pageparam[3]
+
+        # Content Info
         csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
         csql += "join public.page_content pc on c.content_id = pc.content_id ";
         csql += "join public.page p on p.page_id = pc.page_id ";
         csql += "where pc.page_id = %s " % request.args.get('page_id') ;
 
-        #The pageresult has one record - corresponding to page_id
-        pageresult = conn.execute(psql);
         #The contentresult has 0 or more records, depending on how many content sections
         #    we have added.  The contentresult (like all ResultProxies) are cursor objects,
         #    and right now I only know how to access and discard each row! (ie, not like a
         #    dataframe or data table object that persists and can be repeatedly accessed
+
 
         #This should get all results, even empty ones, and put them in a dataframe
         contentresult = conn.execute(csql);
@@ -158,7 +174,9 @@ def content():
     return render_template('content.html', 
                            project_name = app_name, 
                            page_id=page_id,
-                           pageresult=pageresult,
+                           page_name=page_name,
+                           page_title = page_title,
+                           page_target = page_target,
                            pagecontents=pagecontents,
                            content_id = content_id,
                            content_html = content_html,
@@ -172,13 +190,69 @@ def content():
 #=================================================
 @app.route('/seemedb', methods=['GET', 'POST'])
 def seemedb():
+
+    #=========================================
+    #== The code for getting the App Metadata
+    #=========================================
+
     #Connect to app database
     dbURL = readPgpass(app_name, user)
     engine = create_engine(dbURL)
     conn = engine.connect()
 
+    #Get the page id out of the GET parameters
+    if request.args.get('page_id') is None:
+        return redirect(url_for('index'))
+    else:
+        page_id = request.args.get('page_id')
+
+    #Get the detailed page info (name, title, target)
+    psql = "select * from public.page where page_id = %s " % page_id ;
+    pageresult = conn.execute(psql);
+    #Get the paramters out of it
+    pageparam = pageresult.fetchone()
+    page_name = pageparam[1]
+    page_title = pageparam[2]
+    page_target = pageparam[3]
+
+    #Get the Page Content
+    csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
+    csql += "join public.page_content pc on c.content_id = pc.content_id ";
+    csql += "join public.page p on p.page_id = pc.page_id ";
+    csql += "where pc.page_id = %s " % str(page_id) ;
+
+    #The contentresult has 0 or more records, depending on how many content sections
+    #    we have added.  The contentresult (like all ResultProxies) are cursor objects,
+    #    and right now I only know how to access and discard each row! (ie, not like a
+    #    dataframe or data table object that persists and can be repeatedly accessed
+
+
+    #This should get all results, even empty ones, and put them in a dataframe
+    contentresult = conn.execute(csql);
+    fetchall = contentresult.fetchall()
+    pagecontents = pd.DataFrame(fetchall)
+
+    #This gets just the first row of non-empty results
+    contentresult = conn.execute(csql);
+    if contentresult.rowcount > 0 :
+        resultlist = contentresult.fetchone()
+        content_id = resultlist[0];
+        content_markdown = resultlist[1];
+        content_html = resultlist[2];
+    else:
+        content_id = 0
+        content_markdown = ''
+        content_html = ''
+    #flash("Content id for page_id " + str(page_id) + " is "+str(content_id))
+    #flash("The actual content is " + content_markdown);
+
+
+    #======================================
+    #The code for showing Database info
+    #======================================
     #Set the session as always logged in, for now                                                                              
     session['logged_in'] = True
+
     #initialize the variables
     numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = ''; dbname = 'postgres'; 
     allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = '';
@@ -186,20 +260,11 @@ def seemedb():
     #Get the name of all datbases in the Postgresql instance, connecting using the pg default db                           
     dbnames = getPgDBnames(user)
 
-    #Get information out of form, if it has been sent (eg, list of schemas if a database name has been supplied
+    #Get Database info the User has selected
     if request.method == 'POST':
-        page_id = request.form['page_id']
         dbname = request.form['database']
         schema_list = getSchemas(dbname, user)
         numschema = len(schema_list)
-    else:
-        page_id = request.args.get('page_id') 
-
-    
-
-    #Get the page info
-    psql = "select * from public.page where page_id = %s " % page_id ;
-    pageresult = conn.execute(psql);
 
 
     #Get data frame of all tables by schema                                                                                
@@ -215,7 +280,13 @@ def seemedb():
     #Open the web page with the variables set (found) by the python code                                                   
     return render_template('seemedb.html', 
                            project_name = app_name, 
-                           pageresult=pageresult, page_id = page_id ,
+                           page_id = page_id ,
+                           page_name = page_name,
+                           page_title = page_title,
+                           page_target = page_target,
+                           content_id = content_id,
+                           content_html = content_html,
+                           content_markdown = content_markdown,
                            dbname=dbname, username=user, numschema=numschema,
                            dbnames=dbnames, numdb=numdb, note=note,
                            schema_list = schema_list, allTables = allTables,
