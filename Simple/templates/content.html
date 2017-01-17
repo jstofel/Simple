@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+
 {% block body %}
 
 
@@ -16,13 +17,13 @@
       method="POST" >
 
 <div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
-<input type='button' id='showEditContent' value='Open Editor' style='width:9rem' >
+<input type='button' id='showEditContent' value='Open Editor' style='width:8rem' >
 <input type='submit' id='saveit' value='Save' style='display:none' >
 <input type = "hidden" name="page_id" value="{{page_id}}" >
 <input type = "hidden" name="content_id" value="{{content_id}}" > <!-- note: this is not yet working. currently only handling one content per page-->
 </div>
 
-<div id="INSTRUCTIONS"  class="" style='float:left; width:40% ; height:3rem; display:none; '>
+<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 </div>
 

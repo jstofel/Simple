@@ -118,8 +118,12 @@ def content():
             content_id = resultlist[0];
             content_markdown = resultlist[1];
             content_html = resultlist[2];
-
-            #flash("Content id for page_id" + str(page_id) + " is "+str(content_id))
+        else:
+            content_id = 0
+            content_markdown = ''
+            content_html = ''
+        #flash("Content id for page_id " + str(page_id) + " is "+str(content_id))
+        #flash("The actual content is " + content_markdown);
 
         #Get content that has been submitted via the form
         #Note -- this still just handles one content per form. Somehow the content_id is not being properly passed through the renderer
@@ -128,16 +132,23 @@ def content():
         if new_content_md is not None:
             if (len(new_content_md.strip()) > 0):
                 if (content_id > 0):
-                    contsql = "update public.content set content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, content_id); 
+                    contsql = "update public.content set "
+                    contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id)); 
+                    #flash(contsql)
+                    conn.execute(contsql)
                 else:
+                    #flash("Trying to update with " + new_content_md )
+                    #flash("Also "+ new_content_ht)
                     contsql = "insert into public.content (content_md, content_ht) VALUES ";
-                    contsql += "('%s', '%s')" % (content_md, content_ht);
-
-            #Show what you are trying to do
-            #flash(contsql)
-
-            #Do it
-            conn.execute(contsql)
+                    contsql += "('%s', '%s')" % (new_content_md, new_content_ht);
+                    xsql = "insert into public.page_content (page_id, content_id) VALUES (%s, %s)" % (str(page_id), '1') 
+                    xsql = "insert into public.page_content (select %s as page_id, max(content_id) as content_id from public.content) " % str(page_id);
+                    #flash(contsql)
+                    #flash(xsql)
+                    #Note: this is not the most ironclad process. I do the insert on the content table, then do the insert on the 
+                    #  linking table, using the new content_id that was just created by the insert.   
+                    conn.execute(contsql)
+                    conn.execute(xsql)
 
             #Refresh the page to show the new content
             return redirect(url_for('content', page_id = page_id ))

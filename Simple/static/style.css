@@ -18,6 +18,20 @@ div.border {border-style: solid; border-width: 1px; background-color:lightblue;m
      background: rgba(0,0,0,0) }
 
 
+/* ===========================Dropdown Selector ====================================*/
+/**http://stackoverflow.com/questions/1895476/how-to-style-a-select-dropdown-with-css-only-without-javascript**/
+
+select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;
+   font-size:1.2rem;
+   padding: 0.2rem;
+}
+select::-ms-expand { /* for IE 11 */
+    display: none;
+}
+
 /* ========================== CSS for Javascript functions =============================*/
 
 /***For the Try It editor**http://fellowtuts.com/html-css/make-a-html-css-js-try-it-yourself-editor/  **/
@@ -31,7 +45,7 @@ textarea.tryit, iframe.tryit {
     }
 
 input[type=button] {
-    padding:5px 15px; 
+    padding:5px 5px; 
     background:#ccc; 
     border:0 none;
     cursor:pointer;
@@ -42,7 +56,7 @@ input[type=button] {
 }
 
 input[type=deadbutton] {
-    padding:5px 15px; 
+    padding:5px 5px; 
     /*background:#ccc; */ 
     border:0 none;
     cursor:arrow;
@@ -54,7 +68,7 @@ input[type=deadbutton] {
 
 
 input[type=submit] {
-    padding:5px 15px; 
+    padding:5px 5px; 
     background:#ccc; 
     border:0 none;
     cursor:pointer;
@@ -62,7 +76,7 @@ input[type=submit] {
     border-radius: 5px; 
      font-size: 1.2rem;
      font-style: bold;
-     width:9rem;
+     width:8rem;
 }
 
 
@@ -111,6 +125,7 @@ div.panel.hide {
 html { font-size: 15px; }
 
 body { width: 87.5%;
+       /*width: 100%;*/
        /*margin-left: auto; */
        margin-right: auto;
        /*padding-left: 12.5%;*/
@@ -119,8 +134,8 @@ body { width: 87.5%;
        background-color: #fffff8;
        /*background-color: #ffffff;*/
        color: #111;
-       /*max-width: 1400px;*/
-       max-width: 800px;
+       max-width: 1300px;
+       /*max-width: 800px;*/
        counter-reset: sidenote-counter; }
 
 h1 { font-weight: 400;

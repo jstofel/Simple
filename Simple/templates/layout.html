@@ -27,7 +27,8 @@
      <div id="subheader"> {{  pageresult.fetchone()[2] }} </div>
 </div>
 
-<!--Add a place to put flashed messaged-->
+<!--Add a place to put flashed messages. 
+    These are messages you can create in the views.py script, and are handy for debugging-->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -41,11 +42,26 @@
 <!-- This is where all the content from your python-enabled views goes -->
 <!-- Put the page content between the jinja2 block tags -->
 
+<div  >
+<!-- p>HEY!  This is supposed to be pink.</p -->
+
+<!--Word Content on Left -->
+<div class='' style='float:left; width:58%'>
    {% block body %}
+
+   {% endblock %}
+</div>
+
+<!--Picture Content on Right --> 
+<div class='' style='float:right; width:40%'>
+   {% block viz %}
 
 
    {% endblock %}
+</div>
 
+
+</div>
 
 
   <!-- Load Local Javascript Scripts ---------                                                                                  
