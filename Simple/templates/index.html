@@ -45,16 +45,16 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
    </div>
  </div>
 
-  <!-- Show ordered list of page names -->
-  <!--p> There are {{pageresult.rowcount}} rows in the object. The first one was pulled off for the index title. </p-->
+  <!-- Show ordered list of page names out of the pageInfo dataframe. The 0th record is the index title, so not included in list-->
   <ol>
-   {% for o in pageresult %}
-    <li>  
-     <a href="/{{o[3]}}?page_id={{o[0]}}"> {{ o[1] }}</a>  
-    </li>
-   {% endfor %}
+  {% for i in pageInfo.index %}
+   {% if i > 0 %}
+     <li>  
+      <a href="/{{pageInfo[3][i]}}?page_id={{pageInfo[0][i]}}"> {{ pageInfo[1][i] }}</a>  
+     </li>
+   {% endif %}
+  {% endfor %}
   </ol>
-
 
 {% endif %}
 

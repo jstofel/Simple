@@ -35,17 +35,17 @@ app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 #  Metadata Functions
 #===========================================================================        
 
-def getPageID():
+def getPageID(form):
     if request.args.get('page_id') is not None:
         page_id = request.args.get('page_id')
     elif form.page_id.data is not None:
         page_id = form.page_id.data
     else:
         page_id = 0
-    return page_id
+    return str(page_id)
 
-def getPageInfo(page_id):
-    if page_id > 0:
+def getPageInfo(page_id, conn):
+    if int(page_id) > 0:
         psql = "select * from public.page where page_id = %s " % (page_id);
     else:
         psql = "select * from public.page order by page_id";    
@@ -54,8 +54,8 @@ def getPageInfo(page_id):
     pageInfo = pd.DataFrame(fetchall)
     return pageInfo
 
-def getPageContent(page_id):
-    if (page_id is None) or (page_id == 0) :
+def getPageContent(page_id, conn):
+    if (page_id is None) or (int(page_id) == 0) :
         fatal("getPageContent function requires a numeric page_id argument > 0")
     csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
     csql += "join public.page_content pc on c.content_id = pc.content_id ";
@@ -66,13 +66,13 @@ def getPageContent(page_id):
     pageContent = pd.DataFrame(fetchall)
     return pageContent
     
-def postPageContent(page_id, content_id, target):    
+def postPageContent(page_id, content_id, target, conn):    
     #Get content that has been submitted via the form
     new_content_md = form.content_md.data
     new_content_ht = form.content_ht.data
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):
-            if (content_id > 0):
+            if (int(content_id) > 0):
                 contsql = "update public.content set "
                 contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id)); 
                 #flash(contsql)
@@ -99,28 +99,32 @@ def postPageContent(page_id, content_id, target):
 #Define the home (index) page with a single slash, and define the page as a render function 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    #Determine if a page has been requested
-    if request.args.get('page_id') is not None:
-        return redirect(url_for('index', page_id=request.args.get('page_id')))
-    else:
-        #Define the WTF form used
+        #Define the form used on the page
         form = AddPage(request.form)
 
-        #Initialize parameters
-        page_id = 0;
+        #Get Page Id
+        page_id = getPageID(form)
 
         #Connect to app database so you can get information on pages and content (pageresult and contentresult) out of the database
         #Note: results from query is SQLalchemy ResultProxy object that needs specific methods to access data: read the manual...
         dbURL = readPgpass(app_name, user)
         engine = create_engine(dbURL)
         conn = engine.connect()
+
+        #=======Get Info on Page and Return as Result Proxy
         psql = "select * from public.page order by page_id";
         pageresult = conn.execute(psql);
 
         #Pull the page title off the first row (that is the app subtitle). The rest of the rows are passed to the view for parsing.
         page_title = pageresult.fetchone()[2]
 
-        #Find out if you have any results to write back
+        #=======Get the Page Info as a DataFrame
+        pageInfo = getPageInfo(page_id, conn)
+        #flash("The pageInfo df has "+str(len(pageInfo.index))+" records in it")
+        #title is pageInfo[2][i] name is pageInfo[1][i]
+
+        #=============================================
+        #Find out if you have any results to write backk
         if request.method == 'POST':
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
@@ -129,37 +133,44 @@ def index():
                 conn.execute(newsql)
                 #Refresh Page so you can see what you have just done
                 return redirect(url_for('index'))
-
+        #==============
 
     #No results to write back?  Open the web page !                                                         
-    return render_template('index.html', 
+        return render_template('index.html', 
                            project_name = app_name, 
                            page_id=page_id,
                            page_title=page_title,
                            pageresult = pageresult,
+                           pageInfo = pageInfo,
                            form=form
                            )
 
 #Define the content page 
 @app.route('/content', methods=['GET', 'POST'])
 def content():
-    #Determine if a page has been requested
-    if request.args.get('page_id') is None:
-        return redirect(url_for('index'))
-    else:
-        #Connect to app database
-        dbURL = readPgpass(app_name, user)
-        engine = create_engine(dbURL)
-        conn = engine.connect()
+   #Define the WTF form used
+   form = UpdateContent(request.form)
+
+   #Get Page Id
+   page_id = getPageID(form)
+
+   #Connect to app database so you can get information on pages and content (pageresult and contentresult) out of the database
+   #Note: results from query is SQLalchemy ResultProxy object that needs specific methods to access data: read the manual...
+   dbURL = readPgpass(app_name, user)
+   engine = create_engine(dbURL)
+   conn = engine.connect()
+
+   #Determine if a page has been requested
+   if request.args.get('page_id') is None:
+       return redirect(url_for('index'))
+   else:
+        #=======Get the Page Info as a DataFrame
+        pageInfo = getPageInfo(page_id, conn)
+
         #Initialize parameters
-        page_id = request.args.get('page_id')
         content_markdown = ''; content_html = ''; content_id = 0;
 
-        #Define the WTF form used
-        form = UpdateContent(request.form)
-
         #Get what is in the database
-
         #Page Info
         psql = "select * from public.page where page_id = %s " % request.args.get('page_id') ;
 
@@ -232,10 +243,11 @@ def content():
             return redirect(url_for('content', page_id = page_id ))
 
 
-    #All done?  Open the web page!                                                         
-    return render_template('content.html', 
+   #All done?  Open the web page!                                                         
+   return render_template('content.html', 
                            project_name = app_name, 
                            page_id=page_id,
+                           pageInfo=pageInfo,
                            page_name=page_name,
                            page_title = page_title,
                            page_target = page_target,
