@@ -51,7 +51,7 @@ def getPageInfo(page_id, conn):
         psql = "select * from public.page order by page_id";    
     result = conn.execute(psql);
     fetchall = result.fetchall()
-    pageInfo = pd.DataFrame(fetchall)
+    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_target'])
     return pageInfo
 
 def getPageContent(page_id, conn):
@@ -64,6 +64,7 @@ def getPageContent(page_id, conn):
     result = conn.execute(psql);
     fetchall = result.fetchall()
     pageContent = pd.DataFrame(fetchall)
+
     return pageContent
     
 def postPageContent(page_id, content_id, target, conn):    
@@ -105,8 +106,7 @@ def index():
         #Get Page Id
         page_id = getPageID(form)
 
-        #Connect to app database so you can get information on pages and content (pageresult and contentresult) out of the database
-        #Note: results from query is SQLalchemy ResultProxy object that needs specific methods to access data: read the manual...
+        #Connect to app database for information on pages and content out of the database
         dbURL = readPgpass(app_name, user)
         engine = create_engine(dbURL)
         conn = engine.connect()
@@ -115,14 +115,13 @@ def index():
         psql = "select * from public.page order by page_id";
         pageresult = conn.execute(psql);
 
-        #Pull the page title off the first row (that is the app subtitle). The rest of the rows are passed to the view for parsing.
+        #Pull page title off the first row (that is the app subtitle). 
+        #The rest of the rows are passed to the view for parsing.
         page_title = pageresult.fetchone()[2]
 
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
-        #flash("The pageInfo df has "+str(len(pageInfo.index))+" records in it")
-        #title is pageInfo[2][i] name is pageInfo[1][i]
-
+        
         #=============================================
         #Find out if you have any results to write backk
         if request.method == 'POST':
@@ -154,8 +153,7 @@ def content():
    #Get Page Id
    page_id = getPageID(form)
 
-   #Connect to app database so you can get information on pages and content (pageresult and contentresult) out of the database
-   #Note: results from query is SQLalchemy ResultProxy object that needs specific methods to access data: read the manual...
+   #Connect to app database for information on pages and content out of the database
    dbURL = readPgpass(app_name, user)
    engine = create_engine(dbURL)
    conn = engine.connect()
@@ -174,8 +172,10 @@ def content():
         #Page Info
         psql = "select * from public.page where page_id = %s " % request.args.get('page_id') ;
 
-        #The pageresult has one record - corresponding to page_id. Variables are page_id, page_name, page_title, and page_target
+        #pageresult has one record - corresponding to page_id. 
+        #Variables are page_id, page_name, page_title, and page_target
         pageresult = conn.execute(psql);
+
         #Get the paramters out of it
         pageparam = pageresult.fetchone()
         page_id = pageparam[0]
@@ -215,7 +215,9 @@ def content():
         #flash("The actual content is " + content_markdown);
 
         #Get content that has been submitted via the form
-        #Note -- this still just handles one content per form. Somehow the content_id is not being properly passed through the renderer
+        #Note: currently handles one content per form. 
+        #Somehow the content_id is not being properly passed through the renderer
+
         new_content_md = form.content_md.data
         new_content_ht = form.content_ht.data
         if new_content_md is not None:
@@ -274,11 +276,14 @@ def seemedb():
     engine = create_engine(dbURL)
     conn = engine.connect()
 
-    #Get the page id out of the GET parameters
-    if request.args.get('page_id') is None:
-        return redirect(url_for('index'))
-    else:
-        page_id = request.args.get('page_id')
+    #Define the WTF form used
+    form = UpdateContent(request.form)
+
+    #Get the page id
+    page_id = getPageID(form)
+
+    #Get Page Info as DataFrame
+    pageInfo = getPageInfo(page_id, conn)
 
     #Get the detailed page info (name, title, target)
     psql = "select * from public.page where page_id = %s " % page_id ;
@@ -355,6 +360,7 @@ def seemedb():
     return render_template('seemedb.html', 
                            project_name = app_name, 
                            page_id = page_id ,
+                           pageInfo = pageInfo,
                            page_name = page_name,
                            page_title = page_title,
                            page_target = page_target,

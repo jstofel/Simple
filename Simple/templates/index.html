@@ -50,7 +50,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
   {% for i in pageInfo.index %}
    {% if i > 0 %}
      <li>  
-      <a href="/{{pageInfo[3][i]}}?page_id={{pageInfo[0][i]}}"> {{ pageInfo[1][i] }}</a>  
+      <a href="/{{pageInfo['page_target'][i]}}?page_id={{pageInfo['page_id'][i]}}">{{pageInfo['page_name'][i]}}</a>  
      </li>
    {% endif %}
   {% endfor %}
