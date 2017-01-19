@@ -26,6 +26,7 @@ class AddPage(Form):
 
 class UpdateContent(Form):
   page_id = HiddenField("Page_id")
+  page_target = HiddenField("page_target")
   content_id = HiddenField("Content_id")
   content_md = TextField("Content Markdown")
   content_ht = TextField("Content HTML")

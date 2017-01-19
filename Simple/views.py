@@ -67,32 +67,38 @@ def getPageContent(page_id, conn):
 
     return pageContent
     
-def postPageContent(page_id, content_id, target, conn):    
+def postPageContent(page_id, form, conn):    
     #Get content that has been submitted via the form
     new_content_md = form.content_md.data
     new_content_ht = form.content_ht.data
+    content_id = form.content_id.data
+    target = form.page_target.data
+    #flash("The target is '"+str(target)+"'")
+
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):
-            if (int(content_id) > 0):
+            if content_id > '0':
                 contsql = "update public.content set "
                 contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id)); 
-                #flash(contsql)
+                xsql = ''
                 conn.execute(contsql)
             else:
-                #flash("Trying to update with " + new_content_md )
-                #flash("Also "+ new_content_ht)
                 contsql = "insert into public.content (content_md, content_ht) VALUES ";
                 contsql += "('%s', '%s')" % (new_content_md, new_content_ht);
                 xsql = "insert into public.page_content "
                 xsql += "(select %s as page_id, max(content_id) as content_id from public.content) " % str(page_id);
-                #flash(contsql)
-                #flash(xsql)
-                #Note: this is not the most ironclad process. I do the insert on the content table, then do the insert on the 
-                #  linking table, using the new content_id that was just created by the insert.   
+
+                #Note: not the most ironclad process to insert on content table, then insert on linking table 
+                #  using the new content_id that was just created by the insert, but it works in dev
                 conn.execute(contsql)
                 conn.execute(xsql)
-        #Refresh the page to show the new content
-        return redirect(url_for(target, page_id = page_id ))
+
+            #Return True: the update was run
+            return True
+        else:
+            return False
+    else:
+        return False
      
 #===========================================================================        
 ##Define the Functions that Render the Views (HTML pages) 
@@ -159,36 +165,10 @@ def content():
         #======Get Page Contents (Text) as DataFrame
         pageContent = getPageContent(page_id, conn)
 
-        #Get content that has been submitted via the form
-        #Note: currently handles one content per form. 
-        #Somehow the content_id is not being properly passed through the renderer
-
-        new_content_md = form.content_md.data
-        new_content_ht = form.content_ht.data
-        if new_content_md is not None:
-            if (len(new_content_md.strip()) > 0):
-                if (content_id > 0):
-                    contsql = "update public.content set "
-                    contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id)); 
-                    #flash(contsql)
-                    conn.execute(contsql)
-                else:
-                    #flash("Trying to update with " + new_content_md )
-                    #flash("Also "+ new_content_ht)
-                    contsql = "insert into public.content (content_md, content_ht) VALUES ";
-                    contsql += "('%s', '%s')" % (new_content_md, new_content_ht);
-                    xsql = "insert into public.page_content (page_id, content_id) VALUES (%s, %s)" % (str(page_id), '1') 
-                    xsql = "insert into public.page_content (select %s as page_id, max(content_id) as content_id from public.content) " % str(page_id);
-                    #flash(contsql)
-                    #flash(xsql)
-                    #Note: this is not the most ironclad process. I do the insert on the content table, then do the insert on the 
-                    #  linking table, using the new content_id that was just created by the insert.   
-                    conn.execute(contsql)
-                    conn.execute(xsql)
-
-            #Refresh the page to show the new content
-            return redirect(url_for('content', page_id = page_id ))
-
+        #====Get content that has been submitted via the form and post it
+        didPost = postPageContent(page_id, form, conn)
+        if (didPost):
+            return redirect(url_for(form.page_target.data, page_id = page_id ))
 
    #All done?  Open the web page!                                                         
    return render_template('content.html', 
@@ -198,7 +178,6 @@ def content():
                            pageContent = pageContent,
                            form=form
                            )
-
 
 #==================================================
 #Define the SeeMeDB page                                                                                                  

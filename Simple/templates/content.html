@@ -19,7 +19,10 @@
 <div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
 <input type='button' id='showEditContent' value='Open Editor' style='width:8rem' >
 <input type='submit' id='saveit' value='Save' style='display:none' >
+
 <input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
+<input type = "hidden" name="page_target" value="{{pageInfo['page_target'][0]}}" >
+
 <!-- note: currently only handling one content per page-->
 <input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
 </div>
