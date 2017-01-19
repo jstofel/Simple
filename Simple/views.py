@@ -61,9 +61,9 @@ def getPageContent(page_id, conn):
     csql += "join public.page_content pc on c.content_id = pc.content_id ";
     csql += "join public.page p on p.page_id = pc.page_id ";
     csql += "where pc.page_id = %s " % request.args.get('page_id') ;
-    result = conn.execute(psql);
+    result = conn.execute(csql);
     fetchall = result.fetchall()
-    pageContent = pd.DataFrame(fetchall)
+    pageContent = pd.DataFrame(fetchall, columns=['content_id','content_md', 'content_ht'] )
 
     return pageContent
     
@@ -121,7 +121,7 @@ def index():
 
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
-        
+
         #=============================================
         #Find out if you have any results to write backk
         if request.method == 'POST':
@@ -165,12 +165,16 @@ def content():
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
 
+        #======Get Page Contents (Text) as DataFrame
+        pageContent = getPageContent(page_id, conn)
+
+
         #Initialize parameters
         content_markdown = ''; content_html = ''; content_id = 0;
 
         #Get what is in the database
         #Page Info
-        psql = "select * from public.page where page_id = %s " % request.args.get('page_id') ;
+        psql = "select * from public.page where page_id = %s " % page_id;
 
         #pageresult has one record - corresponding to page_id. 
         #Variables are page_id, page_name, page_title, and page_target
@@ -250,6 +254,7 @@ def content():
                            project_name = app_name, 
                            page_id=page_id,
                            pageInfo=pageInfo,
+                           pageContent = pageContent,
                            page_name=page_name,
                            page_title = page_title,
                            page_target = page_target,
@@ -282,8 +287,12 @@ def seemedb():
     #Get the page id
     page_id = getPageID(form)
 
-    #Get Page Info as DataFrame
+    #=======Get Page Info as DataFrame
     pageInfo = getPageInfo(page_id, conn)
+
+    #======Get Page Contents (Text) as DataFrame
+    pageContent = getPageContent(page_id, conn)
+
 
     #Get the detailed page info (name, title, target)
     psql = "select * from public.page where page_id = %s " % page_id ;
@@ -361,6 +370,7 @@ def seemedb():
                            project_name = app_name, 
                            page_id = page_id ,
                            pageInfo = pageInfo,
+                           pageContent=pageContent,
                            page_name = page_name,
                            page_title = page_title,
                            page_target = page_target,
