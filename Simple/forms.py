@@ -28,6 +28,10 @@ class UpdateContent(Form):
   page_id = HiddenField("Page_id")
   page_target = HiddenField("page_target")
   content_id = HiddenField("Content_id")
+  database = HiddenField("database")
   content_md = TextField("Content Markdown")
   content_ht = TextField("Content HTML")
   submit = SubmitField("Save")
+
+class ChooseDatabase(Form):
+  database = TextField("database")

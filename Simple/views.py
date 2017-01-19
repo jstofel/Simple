@@ -176,6 +176,7 @@ def content():
                            page_id=page_id,
                            pageInfo=pageInfo,
                            pageContent = pageContent,
+                           dbname='',
                            form=form
                            )
 
@@ -200,53 +201,25 @@ def seemedb():
     #Get the page id
     page_id = getPageID(form)
 
+    #Get the dbname - selected by user or default
+    if request.args.get('database') is not None:
+        dbname = request.args.get('database')
+    elif form.database.data is not None:
+        dbname = form.database.data
+    else:
+        dbname = 'postgres'
+
+
     #=======Get Page Info as DataFrame
     pageInfo = getPageInfo(page_id, conn)
 
     #======Get Page Contents (Text) as DataFrame
     pageContent = getPageContent(page_id, conn)
 
-
-    #Get the detailed page info (name, title, target)
-    psql = "select * from public.page where page_id = %s " % page_id ;
-    pageresult = conn.execute(psql);
-    #Get the paramters out of it
-    pageparam = pageresult.fetchone()
-    page_name = pageparam[1]
-    page_title = pageparam[2]
-    page_target = pageparam[3]
-
-    #Get the Page Content
-    csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
-    csql += "join public.page_content pc on c.content_id = pc.content_id ";
-    csql += "join public.page p on p.page_id = pc.page_id ";
-    csql += "where pc.page_id = %s " % str(page_id) ;
-
-    #The contentresult has 0 or more records, depending on how many content sections
-    #    we have added.  The contentresult (like all ResultProxies) are cursor objects,
-    #    and right now I only know how to access and discard each row! (ie, not like a
-    #    dataframe or data table object that persists and can be repeatedly accessed
-
-
-    #This should get all results, even empty ones, and put them in a dataframe
-    contentresult = conn.execute(csql);
-    fetchall = contentresult.fetchall()
-    pagecontents = pd.DataFrame(fetchall)
-
-    #This gets just the first row of non-empty results
-    contentresult = conn.execute(csql);
-    if contentresult.rowcount > 0 :
-        resultlist = contentresult.fetchone()
-        content_id = resultlist[0];
-        content_markdown = resultlist[1];
-        content_html = resultlist[2];
-    else:
-        content_id = 0
-        content_markdown = ''
-        content_html = ''
-    #flash("Content id for page_id " + str(page_id) + " is "+str(content_id))
-    #flash("The actual content is " + content_markdown);
-
+    #====Get content that has been submitted via the form and post it
+    didPost = postPageContent(page_id, form, conn)
+    if (didPost):
+        return redirect(url_for(form.page_target.data, page_id = page_id, database=dbname ))
 
     #======================================
     #The code for showing Database info
@@ -255,18 +228,16 @@ def seemedb():
     session['logged_in'] = True
 
     #initialize the variables
-    numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = ''; dbname = 'postgres'; 
+    numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = '';
     allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = '';
 
     #Get the name of all datbases in the Postgresql instance, connecting using the pg default db                           
     dbnames = getPgDBnames(user)
 
     #Get Database info the User has selected
-    if request.method == 'POST':
-        dbname = request.form['database']
+    if dbname != 'postgres':
         schema_list = getSchemas(dbname, user)
         numschema = len(schema_list)
-
 
     #Get data frame of all tables by schema                                                                                
     if (numschema > 0):
@@ -284,13 +255,8 @@ def seemedb():
                            page_id = page_id ,
                            pageInfo = pageInfo,
                            pageContent=pageContent,
-                           page_name = page_name,
-                           page_title = page_title,
-                           page_target = page_target,
-                           content_id = content_id,
-                           content_html = content_html,
-                           content_markdown = content_markdown,
-                           dbname=dbname, username=user, numschema=numschema,
+                           dbname=dbname, 
+                           username=user, numschema=numschema,
                            dbnames=dbnames, numdb=numdb, note=note,
                            schema_list = schema_list, allTables = allTables,
                            allSchemas = allSchemas, allFK = allFK, num_allFK = num_allFK,

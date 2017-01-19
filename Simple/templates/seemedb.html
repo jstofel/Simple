@@ -15,7 +15,7 @@
 
  <!--Show Form to Choose a Database--> 
   <div>
-    <form action="{{ url_for('seemedb', page_id=page_id) }}" method="POST">
+    <form id="ChooseDatabase"  action="{{ url_for('seemedb', page_id=page_id) }}" method="GET">
             <select  name="database" width="300px">
               {% for o in dbnames %}
 	        {% if o[0] == dbname %}
