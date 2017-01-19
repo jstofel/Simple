@@ -20,9 +20,6 @@ Note that the ResultProxy object "Wraps a DB-API cursor object to provide easier
 and the methods are DBA-API cursor methods... They seem to only go forward, not backward on stay in place.
 -->
 
-<!--Show the Index Page: Where the User Has Not Yet Selected a Page-->
-{% if pageresult.rowcount > 1 %}
-
  <div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
    <div style='float:right; width=90%'>
     <input type='button' id='showAddPage' value='Add Page' style='width:9rem' 
@@ -55,11 +52,5 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
    {% endif %}
   {% endfor %}
   </ol>
-
-{% endif %}
-
-
-
-
 
 {% endblock %}

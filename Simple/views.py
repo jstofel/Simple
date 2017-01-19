@@ -111,14 +111,6 @@ def index():
         engine = create_engine(dbURL)
         conn = engine.connect()
 
-        #=======Get Info on Page and Return as Result Proxy
-        psql = "select * from public.page order by page_id";
-        pageresult = conn.execute(psql);
-
-        #Pull page title off the first row (that is the app subtitle). 
-        #The rest of the rows are passed to the view for parsing.
-        page_title = pageresult.fetchone()[2]
-
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
 
@@ -128,7 +120,8 @@ def index():
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
             if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title, page_target) Values ('%s', '%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
+                newsql = "insert into public.page (page_name, page_title, page_target)";
+                newsql += "Values ('%s', '%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
                 conn.execute(newsql)
                 #Refresh Page so you can see what you have just done
                 return redirect(url_for('index'))
@@ -138,8 +131,6 @@ def index():
         return render_template('index.html', 
                            project_name = app_name, 
                            page_id=page_id,
-                           page_title=page_title,
-                           pageresult = pageresult,
                            pageInfo = pageInfo,
                            form=form
                            )
@@ -167,56 +158,6 @@ def content():
 
         #======Get Page Contents (Text) as DataFrame
         pageContent = getPageContent(page_id, conn)
-
-
-        #Initialize parameters
-        content_markdown = ''; content_html = ''; content_id = 0;
-
-        #Get what is in the database
-        #Page Info
-        psql = "select * from public.page where page_id = %s " % page_id;
-
-        #pageresult has one record - corresponding to page_id. 
-        #Variables are page_id, page_name, page_title, and page_target
-        pageresult = conn.execute(psql);
-
-        #Get the paramters out of it
-        pageparam = pageresult.fetchone()
-        page_id = pageparam[0]
-        page_name = pageparam[1]
-        page_title = pageparam[2]
-        page_target = pageparam[3]
-
-        # Content Info
-        csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
-        csql += "join public.page_content pc on c.content_id = pc.content_id ";
-        csql += "join public.page p on p.page_id = pc.page_id ";
-        csql += "where pc.page_id = %s " % request.args.get('page_id') ;
-
-        #The contentresult has 0 or more records, depending on how many content sections
-        #    we have added.  The contentresult (like all ResultProxies) are cursor objects,
-        #    and right now I only know how to access and discard each row! (ie, not like a
-        #    dataframe or data table object that persists and can be repeatedly accessed
-
-
-        #This should get all results, even empty ones, and put them in a dataframe
-        contentresult = conn.execute(csql);
-        fetchall = contentresult.fetchall()
-        pagecontents = pd.DataFrame(fetchall)
-
-        #This gets just the first row of non-empty results
-        contentresult = conn.execute(csql);
-        if contentresult.rowcount > 0 :
-            resultlist = contentresult.fetchone()
-            content_id = resultlist[0];
-            content_markdown = resultlist[1];
-            content_html = resultlist[2];
-        else:
-            content_id = 0
-            content_markdown = ''
-            content_html = ''
-        #flash("Content id for page_id " + str(page_id) + " is "+str(content_id))
-        #flash("The actual content is " + content_markdown);
 
         #Get content that has been submitted via the form
         #Note: currently handles one content per form. 
@@ -255,13 +196,6 @@ def content():
                            page_id=page_id,
                            pageInfo=pageInfo,
                            pageContent = pageContent,
-                           page_name=page_name,
-                           page_title = page_title,
-                           page_target = page_target,
-                           pagecontents=pagecontents,
-                           content_id = content_id,
-                           content_html = content_html,
-                           content_markdown = content_markdown,
                            form=form
                            )
 
