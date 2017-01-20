@@ -161,6 +161,7 @@ def getTables(database, user):
                     i['table'] = t
                 #Add the dictionary to the list of all dictionaries
                 allFK = allFK + fkt
+            
             #Make a dataframe for all table names in this schema (if none, empty frame is made)
             tf = pd.DataFrame({'schema' : s, 'table' : tables})
             #Make a dataframe for count of tables in schema, only if there are tables in schema
@@ -177,6 +178,86 @@ def getTables(database, user):
             #Make a list of objects to return
             returnList = [allTables, allSchemas, allFK]
         return returnList
+
+    except exc.SQLAlchemyError as detail:
+        fatal("Could not query : %s" % detail)
+
+
+
+
+
+
+#=================================================================================
+##Get Network of Tables by Schema out of named Database
+#=================================================================================
+def getTableNetwork(database, user):
+    #get sqlalchemy functions to use
+    from sqlalchemy import create_engine, engine, exc, engine
+    from sqlalchemy.engine import reflection
+    import pandas as pd
+
+    allTables = pd.DataFrame({'schema' : [] , 'table' : [] })
+    allSchemas = pd.DataFrame({'schema' : [] , 'numtable' : [] })
+    allFK = []  #This will be a list of all lists of dicts for the foreign keys
+  
+    #make the connection using the specified database
+    dbURL = readPgpass(database, user)
+    try:
+        db = create_engine(dbURL)
+        insp = reflection.Inspector.from_engine(db)
+        s_list = insp.get_schema_names() #List of names
+        for s in s_list:
+            tables = insp.get_table_names(schema=s)  #List of table names
+            for t in tables:
+                #Get list of dicts describing foreign key relations
+                fkt = insp.get_foreign_keys(t, schema = s)
+                #Add schema name and table name to each dict in list
+                for i in fkt:
+                    i['schema'] = s 
+                    i['table'] = t
+                #Add the dictionary to the list of all dictionaries
+                allFK = allFK + fkt
+            
+            #Make into dataframe
+            tableDF = pd.DataFrame(allFK)
+            
+            #Isolate Source and Destination
+            columns = ['table','referred_table']
+            src_dst = pd.DataFrame(tableDF, columns=columns)
+
+            #Rename columns
+            src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
+
+            #Group 
+            grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
+
+            #Join source and target into consolidated index to be used for index position
+            unique_ips = pd.Index(grouped_src_dst['source']
+                                  .append(grouped_src_dst['target'])
+                                  .reset_index(drop=True).unique())
+
+            #Begin the structure. Here we just use 1 for the value.  Could calculate it as a function of something - see tutorial;
+            temp_links_list = list(grouped_src_dst.apply(lambda row: {"source": row['source'], "target": row['target'],"value": 1 }, axis=1))
+
+            #Extract the index location for each unique source/dest pair and append to links list
+            #Note - this is still hard coded to the tutorial data... re unique_ips -- we will want to create a generic source
+            links_list = []
+            #for link in temp_links_list:
+            #     record = {"value":link['value'], "source":unique_ips.get_loc(link['source']),
+            #               "target": unique_ips.get_loc(link['target'])}
+            #     links_list.append(record)
+
+            #Get the nodes list
+            #nodes_list = []
+
+            #for ip in unique_ips:
+            #     breakout_ip = re.match("^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)
+            #     if breakout_ip:
+            #          net_id = '.'.join(breakout_ip.group(1,2,3))
+            #          nodes_list.append({"name":ip, "group": group_dict.get(net_id)})
+
+        #return links_list
+        return src_dst
 
     except exc.SQLAlchemyError as detail:
         fatal("Could not query : %s" % detail)

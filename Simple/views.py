@@ -20,7 +20,7 @@ import app_functions
 from app_functions import getPageID, getPageInfo, getPageContent, postPageContent
 
 import db_functions
-from db_functions import fatal, readPgpass, getPgDBnames, pageNav, getSchemas, getTables
+from db_functions import fatal, readPgpass, getPgDBnames, pageNav, getSchemas, getTables, getTableNetwork
 
 import forms
 from forms import ContactForm, RegistrationForm, AddPage, UpdateContent
@@ -164,7 +164,7 @@ def seemedb():
 
     #initialize the variables
     numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = '';
-    allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = '';
+    allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = ''; link_list = [];
 
     #Get the name of all datbases in the Postgresql instance, connecting using the pg default db                           
     dbnames = getPgDBnames(user)
@@ -184,6 +184,9 @@ def seemedb():
         numschema = len(allSchemas)
         num_allFK = len(allFK)
 
+    #Get Network Data Structure
+    tableDF = getTableNetwork(dbname, user)
+
     #Open the web page with the variables set (found) by the python code                                                   
     return render_template('seemedb.html', 
                            project_name = app_name, 
@@ -195,7 +198,9 @@ def seemedb():
                            dbnames=dbnames, numdb=numdb, note=note,
                            schema_list = schema_list, allTables = allTables,
                            allSchemas = allSchemas, allFK = allFK, num_allFK = num_allFK,
-                           num_tables=num_tables
+                           num_tables=num_tables,
+			   link_list = link_list,
+			   tableDF = tableDF
                            )
 
 

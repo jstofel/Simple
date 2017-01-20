@@ -34,16 +34,10 @@
        <h2 style="font-style:normal" > {{dbname}} </h2>
         <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
 
-
-  <!-- Show What is in the FK list of Dictionaries -->
-  <!-- Options: ['name', 'referred_columns', 'referred_table', 'constrained_columns', 'table', 'referred_schema', 'options', 'schema'] -->
-  <table border=1>
-    <tr><th>Schema</th><th>Table</th><th>Constrained Column</th><th>Referred Columns</th><th>Referred Table</th><th>Referred Schema</th></tr>
-      {% for d in allFK  %}
-         <tr><td> {{d['schema']}} <td>{{d['table']}} </td><td> {{d['constrained_columns']}} </td>
-             <td> {{d['referred_columns']}} </td><td> {{d['referred_table']}} </td><td> {{d['referred_schema']}} </td></tr>
-      {% endfor %}
-  </table>
+	{% if num_allFK > 0 %}
+	<!-- Show the Table -->
+	{{tableDF.to_html()|safe}}
+	{% endif %}
 
   <!-- Show schemas as accordian. Schemas are in a pandas dataframe -->
        {% for index, row in allSchemas.iterrows() %}
