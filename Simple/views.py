@@ -185,7 +185,25 @@ def seemedb():
         num_allFK = len(allFK)
 
     #Get Network Data Structure
-    tableDF = getTableNetwork(dbname, user)
+    output_list = getTableNetwork(dbname, user)
+    tableDF = output_list[0]
+    unique_rec = output_list[1]
+    links_list = output_list[2]
+    nodes_list = output_list[3]
+    json_prep = output_list[4]
+    json_dump = output_list[5]
+
+    flash(type(json_prep))
+    flash(type(json_dump))
+    #flash(len(unique_rec))
+    #for i in range(0,len(unique_rec)):
+	#    flash(unique_rec[i])
+
+    i = 1
+    #flash(tableDF.iloc[i]['source'])
+    #flash(unique_rec.get_loc(tableDF.iloc[i]['source']))
+    #flash(unique_rec.get_loc(tableDF.iloc[i]['target']))
+    #flash(links_list)
 
     #Open the web page with the variables set (found) by the python code                                                   
     return render_template('seemedb.html', 
@@ -201,6 +219,7 @@ def seemedb():
                            num_tables=num_tables,
 			   link_list = link_list,
 			   tableDF = tableDF
+
                            )
 
 

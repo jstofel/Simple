@@ -1,3 +1,98 @@
+def rename(self,key,new_key):
+    ind = self._keys.index(key)  #get the index of old key, O(N) operation
+    self._keys[ind] = new_key    #replace old key with new key in self._keys
+    self[new_key] = self[key]    #add the new key, this is added at the end of self._keys
+    self._keys.pop(-1)           #pop the last item in self._keys
+
+
+#=================================================================================
+##Get Network of Tables by Schema out of named Database
+#=================================================================================
+def getTableNetwork(database, user):
+    #get sqlalchemy functions to use
+    from sqlalchemy import create_engine, engine, exc, engine
+    from sqlalchemy.engine import reflection
+    import pandas as pd
+
+    allFK = []
+    #make the connection using the specified database
+    dbURL = readPgpass(database, user)
+    try:
+        db = create_engine(dbURL)
+        insp = reflection.Inspector.from_engine(db)
+        s_list = insp.get_schema_names() #List of names
+        for s in s_list:
+            tables = insp.get_table_names(schema=s)  #List of table names
+            for t in tables:
+                #Get list of dicts describing foreign key relations
+                fkt = insp.get_foreign_keys(t, schema = s)
+                #Add schema name and table name to each dict in list
+                for i in fkt:
+                    i['schema'] = s 
+                    i['table'] = t
+                #Add the dictionary to the list of all dictionaries
+                allFK = allFK + fkt
+            
+            #Make into dataframe
+            tableDF = pd.DataFrame(allFK)
+            
+            #Isolate Source and Destination
+            columns = ['table','referred_table']
+            src_dst = pd.DataFrame(tableDF, columns=columns)
+
+            #Rename columns
+            src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
+
+            #Group 
+            grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
+            grouped_src_dst['count'] = grouped_src_dst.pop(0) 
+
+            #Join source and target into consolidated index to be used for index position
+            #Index is the object storing axis labels for pandas object
+            unique_rec = pd.Index(grouped_src_dst['source']
+                                  .append(grouped_src_dst['target'])
+                                  .reset_index(drop=True).unique())
+
+            #Begin the structure. Make a temp links list with names 
+            tll = grouped_src_dst.apply(lambda row: {"source": row['source'], "target": row['target'],"value": row['count'] }, axis=1)
+
+
+            #Extract the index location for each unique source/dest pair and append to links list
+            #Note - this is still hard coded to the tutorial data... re unique_ips -- we will want to create a generic source
+            links_list = []
+            for i in range(0,len(tll)):
+                record = {"value":tll.iloc[i]['value'], "source":unique_rec.get_loc(tll.iloc[i]['source']),"target": unique_rec.get_loc(tll.iloc[i]['target'])}
+                links_list.append(record)
+
+            #Get the nodes list
+            nodes_list = []
+
+            for i in range(0, len(unique_rec)):
+                nodes_list.append({"name":unique_rec[i], "group": 1 })
+
+            #Make json
+            import json
+            json_prep = {"nodes":nodes_list, "links":links_list}
+            json_prep.keys()
+            json_dump = json.dumps(json_prep)
+            #dict_keys(['links', 'nodes'])
+
+            filename_out = 'pcap_export.json'
+            json_out = open(filename_out,'w')
+            json_out.write(json_dump)
+            json_out.close()
+
+        #return links_list
+        return [grouped_src_dst, unique_rec, links_list, nodes_list, json_prep, json_dump]
+
+
+    except exc.SQLAlchemyError as detail:
+        fatal("Could not query : %s" % detail)
+
+
+        
+
+
 #================================
 ##Debugging: show error and exit
 #================================
@@ -185,83 +280,4 @@ def getTables(database, user):
 
 
 
-
-
-#=================================================================================
-##Get Network of Tables by Schema out of named Database
-#=================================================================================
-def getTableNetwork(database, user):
-    #get sqlalchemy functions to use
-    from sqlalchemy import create_engine, engine, exc, engine
-    from sqlalchemy.engine import reflection
-    import pandas as pd
-
-    allTables = pd.DataFrame({'schema' : [] , 'table' : [] })
-    allSchemas = pd.DataFrame({'schema' : [] , 'numtable' : [] })
-    allFK = []  #This will be a list of all lists of dicts for the foreign keys
-  
-    #make the connection using the specified database
-    dbURL = readPgpass(database, user)
-    try:
-        db = create_engine(dbURL)
-        insp = reflection.Inspector.from_engine(db)
-        s_list = insp.get_schema_names() #List of names
-        for s in s_list:
-            tables = insp.get_table_names(schema=s)  #List of table names
-            for t in tables:
-                #Get list of dicts describing foreign key relations
-                fkt = insp.get_foreign_keys(t, schema = s)
-                #Add schema name and table name to each dict in list
-                for i in fkt:
-                    i['schema'] = s 
-                    i['table'] = t
-                #Add the dictionary to the list of all dictionaries
-                allFK = allFK + fkt
-            
-            #Make into dataframe
-            tableDF = pd.DataFrame(allFK)
-            
-            #Isolate Source and Destination
-            columns = ['table','referred_table']
-            src_dst = pd.DataFrame(tableDF, columns=columns)
-
-            #Rename columns
-            src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
-
-            #Group 
-            grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
-
-            #Join source and target into consolidated index to be used for index position
-            unique_ips = pd.Index(grouped_src_dst['source']
-                                  .append(grouped_src_dst['target'])
-                                  .reset_index(drop=True).unique())
-
-            #Begin the structure. Here we just use 1 for the value.  Could calculate it as a function of something - see tutorial;
-            temp_links_list = list(grouped_src_dst.apply(lambda row: {"source": row['source'], "target": row['target'],"value": 1 }, axis=1))
-
-            #Extract the index location for each unique source/dest pair and append to links list
-            #Note - this is still hard coded to the tutorial data... re unique_ips -- we will want to create a generic source
-            links_list = []
-            #for link in temp_links_list:
-            #     record = {"value":link['value'], "source":unique_ips.get_loc(link['source']),
-            #               "target": unique_ips.get_loc(link['target'])}
-            #     links_list.append(record)
-
-            #Get the nodes list
-            #nodes_list = []
-
-            #for ip in unique_ips:
-            #     breakout_ip = re.match("^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$", ip)
-            #     if breakout_ip:
-            #          net_id = '.'.join(breakout_ip.group(1,2,3))
-            #          nodes_list.append({"name":ip, "group": group_dict.get(net_id)})
-
-        #return links_list
-        return src_dst
-
-    except exc.SQLAlchemyError as detail:
-        fatal("Could not query : %s" % detail)
-
-
-        
     
