@@ -11,6 +11,8 @@ from sqlalchemy.engine import reflection
 
 import pandas as pd
 
+import json
+
 #==========================================================================
 ##Import Python Functions and Forms Specific to this Application
 ##These functions and forms are in separate files for readability and portability
@@ -193,8 +195,13 @@ def seemedb():
     json_prep = output_list[4]
     json_dump = output_list[5]
 
-    flash(type(json_prep))
-    flash(type(json_dump))
+    #flash(type(json_prep))
+    
+    #flash(type(json_dump))
+    #flash(json_dump)
+    #myjson = json.parse(json_dump)
+    #flash(type(mjson))
+
     #flash(len(unique_rec))
     #for i in range(0,len(unique_rec)):
 	#    flash(unique_rec[i])
@@ -218,7 +225,8 @@ def seemedb():
                            allSchemas = allSchemas, allFK = allFK, num_allFK = num_allFK,
                            num_tables=num_tables,
 			   link_list = link_list,
-			   tableDF = tableDF
+			   tableDF = tableDF,
+			   json_dump = json_dump
 
                            )
 
