@@ -74,6 +74,7 @@ var width = 960,
     height = 500;
 
 var color = d3.scale.category20();
+/*var color = d3.scaleOrdinal(d3.schemeCategory10);*/
 
 var force = d3.layout.force()
     .charge(-120)
@@ -84,7 +85,7 @@ var svg = d3.select("show_network").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("/Users/geekillustrated/Python/Simple/pcap_export.json", function(error, graph) {
+d3.json(JSON.parse({{json_dump|safe}}), function(error, graph) {
   if (error) throw error;
 
   force
