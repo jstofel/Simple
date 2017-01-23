@@ -70,20 +70,20 @@ def getTableNetwork(database, user):
             for i in range(0, len(unique_rec)):
                 nodes_list.append({"name":unique_rec[i], "group": 1 })
 
-            #Make json
+            #Make Dict
+            network_dict = {"nodes":nodes_list, "links":links_list}
+            
+            #Make json and write it out
             import json
-            json_prep = {"nodes":nodes_list, "links":links_list}
-            json_prep.keys()
-            json_dump = json.dumps(json_prep)
-            #dict_keys(['links', 'nodes'])
+            json_dump = json.dumps(network_dict)
 
             filename_out = 'pcap_export.json'
             json_out = open(filename_out,'w')
             json_out.write(json_dump)
             json_out.close()
 
-        #return links_list
-        return [grouped_src_dst, unique_rec, links_list, nodes_list, json_prep, json_dump]
+        #return results
+        return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump]
 
 
     except exc.SQLAlchemyError as detail:
