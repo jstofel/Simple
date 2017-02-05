@@ -58,7 +58,7 @@ def index():
         pageInfo = getPageInfo(page_id, conn)
 
         #=============================================
-        #Find out if you have any results to write backk
+        #Find out if you have any results ("add new page") to write backk
         if request.method == 'POST':
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
@@ -78,7 +78,7 @@ def index():
                            form=form
                            )
 
-#Define the content page 
+#Define the content page : this is the standard default page for any page with content in it 
 @app.route('/content', methods=['GET', 'POST'])
 def content():
    #Define the WTF form used
@@ -87,14 +87,16 @@ def content():
    #Get Page Id
    page_id = getPageID(form, request)
 
-   #Connect to app database for information on pages and content out of the database
+   #Connect to app database so you can get the page content out of the database
    dbURL = readPgpass(app_name, user)
    engine = create_engine(dbURL)
    conn = engine.connect()
 
-   #Determine if a page has been requested
+   #Determine the that page has been requested
+   #If no page, go back to home
    if request.args.get('page_id') is None:
        return redirect(url_for('index'))
+   #Otherwise...
    else:
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
@@ -104,6 +106,7 @@ def content():
 
         #====Get content that has been submitted via the form and post it
         didPost = postPageContent(page_id, form, conn)
+
         if (didPost):
             return redirect(url_for(form.page_target.data, page_id = page_id ))
 

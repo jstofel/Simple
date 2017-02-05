@@ -12,34 +12,27 @@
      The functionality of this Markdown editor comes from the ShowDown library
      at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
 
-<form id="editContentForm"
+<form id="tester"
       action="/{{pageInfo['page_target'][0]}}?page_id={{pageInfo['page_id'][0]}}&dbname={{dbname}}"
       method="POST" >
-
-<div id="BUTTONS" class=""  style='float:left; width:48%; height:3rem '>
-<input type='button' id='showEditContent' value='Open Editor' style='width:8rem' >
-<input type='submit' id='saveit' value='Save' style='display:none' >
-
-<input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
-<input type = "hidden" name="page_target" value="{{pageInfo['page_target'][0]}}" >
-<input type = "hidden" name="database" value="{{dbname}}" >
-
-<!-- note: currently only handling one content per page-->
-<input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
-</div>
-
-<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
- Edit the content in the textarea below using markdown styling, and see how it renders on the left.
+<div id="BUTTONS" class=""  style='float:left; width:98%; height:3rem '>
+ <input type='button' id='showEditContent' value='Open Editor' style='width:8rem' >
+ <input type='submit' id='saveit' value='Submit'  style='display:none' >
+ <input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
+ <input type = "hidden" name="page_target" value="{{pageInfo['page_target'][0]}}" >
+ <input type = "hidden" name="database" value="{{dbname}}" >
+ <input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
 </div>
 
 <div id="targetDiv" class=""  style='float:left; width:80%;'>{{pageContent['content_ht'][0]}}</div>
 
-<div id="editorDiv"  class="" style='float:right;width:52%; display:none; '>
+<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
+ Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 <textarea id="sourceTA" name="content_md" rows="40" cols="40"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
-<textarea id="targetTA" name="content_ht" rows="40" cols="40" style='display:none'>{{pageContent['content_ht'][0]}}</textarea>
 </div>
 
 </form>
+
 
 <div style='float:none'> </div>
 
