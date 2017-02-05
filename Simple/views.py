@@ -117,8 +117,21 @@ def content():
                            form=form
                            )
 
+#http://adilmoujahid.com/posts/2015/01/interactive-data-visualization-d3-dc-python-mongodb/
+#https://realpython.com/blog/python/web-development-with-flask-fetching-data-with-requests/
+
+#Need to figure out what the get_data() function is (in the example, it is from the stock_scraper library
+#In this example, at this point we just want to read a json file!
+#Google search:  why can't i pass python dict directly to d3
+#Think this has to do with fact that d3 is Javascript, so can only work with JSON
+
+@app.route("/data")
+#def data():
+#    return jsonify(get_data())
+
+
 #==================================================
-#Define the SeeMeDB page                                                                                                  
+#Define the SeeMeDB page 
 #=================================================
 @app.route('/seemedb', methods=['GET', 'POST'])
 def seemedb():
@@ -191,9 +204,9 @@ def seemedb():
     tableDF = output_list[0]
     unique_rec = output_list[1]
     links_list = output_list[2]
-    nodes_list = output_list[3]
-    json_prep = output_list[4]
-    json_dump = output_list[5]
+    nodes_list = output_list[3]   
+    network_dict = output_list[4] #a dictionary
+    json_dump = output_list[5]    #a string
 
     #flash(type(json_prep))
     
@@ -226,7 +239,8 @@ def seemedb():
                            num_tables=num_tables,
 			   link_list = link_list,
 			   tableDF = tableDF,
-			   json_dump = json_dump
+			   network_dict= network_dict,
+			   network_json = json_dump
 
                            )
 

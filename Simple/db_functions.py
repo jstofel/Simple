@@ -6,7 +6,7 @@ def rename(self,key,new_key):
 
 
 #=================================================================================
-##Get Network of Tables by Schema out of named Database
+##Create Network Diagram JSON showing Tables by Schema out of Specific Database
 #=================================================================================
 def getTableNetwork(database, user):
     #get sqlalchemy functions to use
@@ -14,6 +14,7 @@ def getTableNetwork(database, user):
     from sqlalchemy.engine import reflection
     import pandas as pd
 
+    #Define an empty list for the foreign keys
     allFK = []
     #make the connection using the specified database
     dbURL = readPgpass(database, user)
@@ -53,20 +54,25 @@ def getTableNetwork(database, user):
                                   .append(grouped_src_dst['target'])
                                   .reset_index(drop=True).unique())
 
-            #Begin the structure. Make a temp links list with names 
-            tll = grouped_src_dst.apply(lambda row: {"source": row['source'], "target": row['target'],"value": row['count'] }, axis=1)
+            #Begin the structure. Make a temp links list with names
+            #lambda refers to an anonymous (unnamed, internally used) function
+            tll = grouped_src_dst.apply(lambda row: {"source": row['source'], 
+                                                     "target": row['target'],
+                                                     "value": row['count'] }, 
+                                        axis=1)
 
 
-            #Extract the index location for each unique source/dest pair and append to links list
-            #Note - this is still hard coded to the tutorial data... re unique_ips -- we will want to create a generic source
+            #Extract the index location for each unique source/dest pair 
+            # (the unique_rec as defined by the Index function) and append to links list
             links_list = []
             for i in range(0,len(tll)):
-                record = {"value":tll.iloc[i]['value'], "source":unique_rec.get_loc(tll.iloc[i]['source']),"target": unique_rec.get_loc(tll.iloc[i]['target'])}
+                record = {"value":tll.iloc[i]['value'], 
+                          "source":unique_rec.get_loc(tll.iloc[i]['source']),
+                          "target": unique_rec.get_loc(tll.iloc[i]['target'])}
                 links_list.append(record)
 
             #Get the nodes list
             nodes_list = []
-
             for i in range(0, len(unique_rec)):
                 nodes_list.append({"name":unique_rec[i], "group": 1 })
 
@@ -75,9 +81,14 @@ def getTableNetwork(database, user):
             
             #Make json and write it out
             import json
-            json_dump = json.dumps(network_dict)
+            #json.dumps takes an object (dict) and produces a string. 
+            #contrast with json.loads, which uses a string to create object
+            #contrast agaon with json.dump and json.load, which interchange between objects and files, 
+            #   rather than objects and strings
+            json_dump = json.dumps(network_dict)  
+                
 
-            filename_out = 'pcap_export.json'
+            filename_out = 'network.json'
             json_out = open(filename_out,'w')
             json_out.write(json_dump)
             json_out.close()

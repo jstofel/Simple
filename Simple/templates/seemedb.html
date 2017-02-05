@@ -34,7 +34,7 @@
        <h2 style="font-style:normal" > {{dbname}} </h2>
         <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
 
-<div id="show_network"  class="border"> &nbsp </div> 
+<div id="show_network"  class="border"> This is where we want to put stuff  </div> 
 
 	{% if num_allFK > 0 %}
 
@@ -66,26 +66,51 @@
     <div class="flash">{{ message }}</div>
  {% endfor %}
 
+    <div id="circle_viz" class="border"></div>  
 
-
+<script type="text/javascript">                                                                                                          var sampleSVG = d3.select("#circle_viz")
+.append("svg")
+.attr("width", 100)
+.attr("height", 100)
+.style("stroke", "gray")
+.style("fill", "white")
+.attr("r", 40)
+.attr("cx", 50)
+.attr("cy", 50)
+.on("mouseover", function(){d3.select(this).style("fill", "aliceblue");})
+.on("mouseout", function(){d3.select(this).style("fill", "white");})
+;
+</script>
 <script>
+
+d3.select("#show_network").append("Hey")
 
 var width = 960,
     height = 500;
 
 var color = d3.scale.category20();
-/*var color = d3.scaleOrdinal(d3.schemeCategory10);*/
+/* <later version of D3>  var color = d3.scaleOrdinal(d3.schemeCategory10);*/
 
 var force = d3.layout.force()
     .charge(-120)
     .linkDistance(30)
     .size([width, height]);
 
-var svg = d3.select("show_network").append("svg")
+var svg = d3.select("#show_network").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json(JSON.parse({{json_dump|safe}}), function(error, graph) {
+svg.append("circle")
+    .style("stroke", "gray")
+    .style("fill", "white")
+    .attr("r", 40)
+    .attr("cx", 50)
+    .attr("cy", 50)
+    .on("mouseover", function(){d3.select(this).style("fill", "aliceblue");} )
+    .on("mouseout",  function(){d3.select(this).style("fill", "white")    ;} )
+
+/**
+d3.json('/data/network.json', function(error, graph) {
   if (error) throw error;
 
   force
@@ -120,6 +145,8 @@ node.append("title")
         .attr("cy", function(d) { return d.y; });
   });
 });
+
+**/
 
 </script>
 
