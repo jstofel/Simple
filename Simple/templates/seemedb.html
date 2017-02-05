@@ -16,17 +16,15 @@
  <!--Show Form to Choose a Database--> 
   <div>
     <form id="ChooseDatabase"  action="{{ url_for('seemedb', page_id=page_id) }}" method="GET">
-            <select  name="database" width="300px">
+      <input type = "hidden" name = "page_id" value = {{page_id}} >
+      <select  name="database" width="300px" onchange="this.form.submit()">
+             <option name="-1" SELECTED >Choose Database</option>
               {% for o in dbnames %}
-	        {% if o[0] == dbname %}
-                   <option name="{{ o[0] }}" SELECTED >{{ o[0] }}</option>
-	        {% else %}
+	        {% if o[0] != 'postgres' %}  <!--Note: if use dbname as variable, is it redefined with each choice so changes dropdown-->
                    <option name="{{ o[0] }}" >{{ o[0] }}</option>
 		{% endif %}
               {% endfor %}
-             </select>
-              <input class="button1" type="submit" value="Select">
-	      <input type = "hidden" name = "page_id" value = {{page_id}} >
+      </select>
     </form>
 
 <!-- If A Database with at Least one Schema with Tables Has Been Chosen, then Show Info About it --> 
