@@ -78,6 +78,15 @@
  <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
  <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script>
 
+<!-- Run the Page Load Conditions -->
+<script>
+   window.onload = function(){
+     //The runConverter function is a local function in scripts.js. It takes the input content, translates it, and writes it to the target div
+     runConverter();
+     //This is a testing fnction
+    showSampleD3();
+   }
+</script>
  
  
 </body>

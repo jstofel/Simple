@@ -34,15 +34,16 @@
 </form>
 
 
+
 <div style='float:none'> </div>
 
 
 
 <!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
 <script>
-jQuery(document).ready(function(){
-
-jQuery('#showEditContent').on('click', function(event) {
+  //Set the toggling of the Editor functions
+  jQuery(document).ready(function(){
+   jQuery('#showEditContent').on('click', function(event) {
              $('#editorDiv').toggle();
              $('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
@@ -54,16 +55,14 @@ jQuery('#showEditContent').on('click', function(event) {
                  $('#targetDiv').width('48%');
                  $('#saveit').show()
             }
-        });
-    });
+   });
+  });
 
-
-   //Run the load conditions
-   //The runConverter function takes the input conent, translates it, and writes it to the target div
-   window.onload = function(){
-     runConverter();
-   }
-
+  //Run the load conditions
+  //The runConverter function is a local function in scripts.js. It takes the input content, translates it, and writes it to the target div
+  //   window.onload = function(){
+  //   runConverter();
+  // }
 
 </script>
 
