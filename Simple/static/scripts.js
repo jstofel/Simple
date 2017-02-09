@@ -51,11 +51,11 @@ function runConverter() {
 }
 
 
-function showSampleD3() {
+function showSampleD3(radius=50) {
     //Set some variables
     var width = 100,
-    height = 100
-	radius = 50;
+	height = 100;
+
 
     //Define the canvas as an svg in the show_network div
     if (typeof show_network != "undefined") {

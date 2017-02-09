@@ -183,7 +183,7 @@ def seemedb():
     #initialize the variables
     numschema = 0; numdb = 0; note =''; schema_list = ''; allTables = '';
     allSchemas = ''; allFK = ''; num_allFK = 0; num_tables = ''; link_list = [];
-
+    radius=50;
     #Get the name of all datbases in the Postgresql instance, connecting using the pg default db                           
     dbnames = getPgDBnames(user)
 
@@ -201,6 +201,7 @@ def seemedb():
         num_tables = len(allTables)
         numschema = len(allSchemas)
         num_allFK = len(allFK)
+	radius=numschema*10
 
     #Get Network Data Structure
     output_list = getTableNetwork(dbname, user)
@@ -243,7 +244,8 @@ def seemedb():
 			   link_list = link_list,
 			   tableDF = tableDF,
 			   network_dict= network_dict,
-			   network_json = json_dump
+			   network_json = json_dump,
+			   radius=radius
 
                            )
 
