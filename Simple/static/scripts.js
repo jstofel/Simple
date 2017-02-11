@@ -76,7 +76,21 @@ function showSampleD3(radius=50) {
     }
 }
 
-function showNetworkD3() {
+function showNetworkD3(graph) {
+
+
+    if (typeof graph != "undefined") {
+
+    //Set some variables
+    var width = 100,
+	height = 100;
+
+
+    //Define the canvas as an svg in the show_network div
+    var svg = d3.select("#show_network").append("svg")
+	.attr("width", width)
+	.attr("height", height);
+
 
 
 //Make a force diagram object
@@ -92,8 +106,8 @@ var force = d3.layout.force()
 
     /**This is where we are trying to do something!**/
 
-d3.json('/data/network.json', function(error, graph) {
-  if (error) throw error;
+    //d3.json('/home/network.json', function(error, graph) {
+    //  if (error) throw error;
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -120,6 +134,6 @@ d3.json('/data/network.json', function(error, graph) {
 	    node.attr("cx", function(d) { return d.x; })
 		.attr("cy", function(d) { return d.y; });
 	});
-    });
-
+    // });
+    } // end of if graph not underfined
 }

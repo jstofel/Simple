@@ -43,8 +43,6 @@
 <!-- Put the page content between the jinja2 block tags -->
 
 <div  >
-<!-- p>HEY!  This is supposed to be pink.</p -->
-
 <!--Word Content on Left -->
 <div class='' style='float:left; width:58%'>
    {% block body %}
@@ -81,10 +79,15 @@
 <!-- Run the Page Load Conditions -->
 <script>
    window.onload = function(){
-     //The runConverter function is a local function in scripts.js. It takes the input content, translates it, and writes it to the target div
-     runConverter();
-     //This is a testing fnction
-    showSampleD3({{radius}});
+     //The runConverter function is a local function in scripts.js. 
+     // It takes the input content, translates it, and writes it to the target div
+       runConverter();
+     //This is a testing fnction to write a circle on an svg canvas 
+      showSampleD3({{radius}});
+    //This is trying to show network -- hard code
+      showNetworkD3({'nodes': [{'group': 1, 'name': 'page_content'}, {'group': 1, 'name': 'content'}, {'group': 1, 'name': 'page'}], 'links': [{'source': 0, 'target': 1, 'value': 1}, {'source': 0, 'target': 2, 'value': 1}]})
+                    
+                    
    }
 </script>
  

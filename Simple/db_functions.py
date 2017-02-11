@@ -95,7 +95,7 @@ def getTableNetwork(database, user):
 
         #return results
         return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump]
-
+        #return json_dump
 
     except exc.SQLAlchemyError as detail:
         fatal("Could not query : %s" % detail)

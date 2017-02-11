@@ -4,7 +4,7 @@ from Simple import app
 ##Import Python Modules Used in App
 #===========================================================================        
 import os, sys, getpass
-from flask import Flask, redirect, url_for, request, session, g,  abort, render_template, flash
+from flask import Flask, redirect, url_for, request, session, g,  abort, render_template, flash, jsonify
 
 from sqlalchemy import create_engine, schema, engine, exc
 from sqlalchemy.engine import reflection
@@ -205,19 +205,22 @@ def seemedb():
 
     #Get Network Data Structure
     output_list = getTableNetwork(dbname, user)
+    
     tableDF = output_list[0]
     unique_rec = output_list[1]
     links_list = output_list[2]
     nodes_list = output_list[3]   
-    network_dict = output_list[4] #a dictionary
+    network_dict = output_list[4] #a dictionary-- the same thing you get with json.loads the string
     json_dump = output_list[5]    #a string
 
-    #flash(type(json_prep))
+    #flash(type(network_dict))
+    #flash(network_dict)
     
-    #flash(type(json_dump))
-    #flash(json_dump)
-    #myjson = json.parse(json_dump)
+    #import json
+    #mjson = json.loads(json_dump)
     #flash(type(mjson))
+    #flash(mjson)
+    #flash(network_dict==mjson)
 
     #flash(len(unique_rec))
     #for i in range(0,len(unique_rec)):
@@ -243,8 +246,8 @@ def seemedb():
                            num_tables=num_tables,
 			   link_list = link_list,
 			   tableDF = tableDF,
-			   network_dict= network_dict,
-			   network_json = json_dump,
+			   network_dict= json_dump,
+			   network_str = '',
 			   radius=radius
 
                            )
