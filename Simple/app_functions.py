@@ -37,12 +37,12 @@ def getPageContent(page_id, conn):
     return pageContent
 
 def postPageContent(page_id, form, conn):
+    from flask import flash
     #Get content that has been submitted via the form                                         
     new_content_md = form.content_md.data
     new_content_ht = form.content_ht.data
     content_id = form.content_id.data
     target = form.page_target.data
-    #flash("The target is '"+str(target)+"'")                                                 
 
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):
@@ -50,13 +50,13 @@ def postPageContent(page_id, form, conn):
                 contsql = "update public.content set "
                 contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id));
                 xsql = ''
+                flash(contsql)
                 conn.execute(contsql)
             else:
                 contsql = "insert into public.content (content_md, content_ht) VALUES ";
                 contsql += "('%s', '%s')" % (new_content_md, new_content_ht);
                 xsql = "insert into public.page_content "
-                xsql += "(select %s as page_id, max(content_id) as content_id from public.con\
-tent) " % str(page_id);
+                xsql += "(select %s as page_id, max(content_id) as content_id from public.content) " % str(page_id);
 
                 #Note: not the most ironclad process to insert on content table, then insert on linking table
                 #  using the new content_id that was just created by the insert, but it works in dev

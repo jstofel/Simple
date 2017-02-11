@@ -24,16 +24,15 @@
 
     <!-- If A Database with at Least one Schema with Tables Has Been Chosen, then Show Info About it --> 
     {% if numschema > 0 %}      
-       <h2 style="font-style:normal" > {{dbname}} </h2>
-	<div id="show_network"  class="border"> 
+       <h2 style="font-style:normal" > {{dbname}} Database </h2>
           <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
-	</div> 
 
 	{% if num_allFK > 0 %}
 	<!-- Show the Table -->
 	      <!-- {{tableDF.to_html()|safe}} -->
 	{% endif %}
 	<!-- Show schemas as accordian. Schemas are in a pandas dataframe -->
+	<div class="" style="width:10rem; float:left" >
 	{% for index, row in allSchemas.iterrows() %}
          <button class="accordion">{{ row['schema'] }}</button>
 	 <div class="panel">
@@ -44,6 +43,12 @@
 	   {% endfor %}
 	 </div>
 	{% endfor %}
+	</div>
+
+       <!--This is the div where the network is attached-->
+	<div id="show_network"  class="border" style="float:left">  </div> 
+
+
    {% endif %}
 </div>
 

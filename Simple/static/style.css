@@ -1,7 +1,5 @@
 charset "UTF-8";
 
-/*====This is an adaptation of tufte.css for styling Geek Illustrated ==== */
-
 /*== nodes & such */
 .node {
   stroke: #fff;
@@ -14,7 +12,7 @@ charset "UTF-8";
 }
 
 /* ============================== Simple CSS styles ===================================*/
-div.solid {border-style: solid; border-width: 2px; margin-right: 24%;  }
+div.solid {border-style: solid; border-width: 2px; margin-right: 5%;  }
 div.border {border-style: solid; border-width: 1px; background-color:lightblue;margin:0.5rem; padding-left:0.3rem  }
 
 #header {border-style: solid; border-width: 1px; margin-right:5%; padding-left:5%;
@@ -98,12 +96,13 @@ button.accordion {
     background-color: #eee;
     color: #444;
     cursor: pointer;
-    padding: 6px;
+    padding: 0px;
     width: 50%;
     text-align: left;
     border: none;
     outline: none;
     transition: 0.4s;
+    width:10rem;
 }
 
 /* Add a background color to the button if it is clicked on 
@@ -114,7 +113,7 @@ button.accordion.active, button.accordion:hover {
 
 /* Style the accordion panel. Note: hidden by default */
 div.panel {
-    padding: 0 18px;
+    padding: 0 0px;
     background-color: white;
     display: none;
 }
@@ -135,18 +134,11 @@ div.panel.hide {
 /* Tufte CSS styles */
 html { font-size: 15px; }
 
-body { width: 87.5%;
-       /*width: 100%;*/
-       /*margin-left: auto; */
-       margin-right: auto;
-       /*padding-left: 12.5%;*/
-       padding-left:5%;
+body { 
        font-family:  et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
        background-color: #fffff8;
-       /*background-color: #ffffff;*/
        color: #111;
        max-width: 1300px;
-       /*max-width: 800px;*/
        counter-reset: sidenote-counter; }
 
 h1 { font-weight: 400;
@@ -186,46 +178,21 @@ p.subtitle { font-style: italic;
 
 .numeral { font-family: et-book-roman-old-style; }
 
-.danger { color: red; }
-
-article { position: relative;
-          padding: /*5rem*/ 0rem;
-         }
-
-section { font-size:/*1.5rem*/ 1.1rem; padding-top: 1rem;
-          padding-bottom: 1rem; }
-
-p, ol, ul { font-size: /*1.4rem*/ 1.1rem; }
+p, ol, ul { font-size: 1.1rem; }
 
 p { line-height: 1.2rem;
     margin-top: 1.4rem;
     margin-bottom: 0.4rem;
-    padding-right: 0;
+    padding: 0;
     vertical-align: baseline; }
-
-/* Chapter Epigraphs */
-div.epigraph { margin: 5em 0; }
-
-div.epigraph > blockquote { margin-top: 3em;
-                            margin-bottom: 3em; }
-
-div.epigraph > blockquote, div.epigraph > blockquote > p { font-style: italic; }
-
-div.epigraph > blockquote > footer { font-style: normal; }
-
-div.epigraph > blockquote > footer > cite { font-style: italic; }
-/* end chapter epigraphs styles */
 
 blockquote { font-size: 0.8rem;
 	     font-family: sans-serif, "Arial", "Helvetica", "Gill Sans", "Gill Sans MT", sans-serif,  "Trebuchet MS"; }
  }
 
 blockquote p { width: 85%;
-               margin-right: 40px; }
+               margin-right: 10px; }
 
-blockquote footer { width: 55%;
-                    font-size: 1.1rem;
-                    text-align: right; }
 
 /**LISTS **/
 section>ol, section>ul { width: 45%;
@@ -233,33 +200,8 @@ section>ol, section>ul { width: 45%;
                          -webkit-padding-end: 5%; }
 li { padding: 0 0; }
 
-/**FIGURES**/
-
-figure { padding: 0;
-         border: 0;
-         font-size: 100%;
-         font: inherit;
-         vertical-align: baseline;
-         max-width: 55%;
-         -webkit-margin-start: 0;
-         -webkit-margin-end: 0;
-         margin: 0 0 3em 0; }
-
-figcaption { float: right;
-             clear: right;
-             margin-top: 0;
-             margin-bottom: 0;
-             font-size: 1.1rem;
-             line-height: 1.6;
-             vertical-align: baseline;
-             position: relative;
-             max-width: 40%; }
-
-figure.fullwidth figcaption { margin-right: 24%; }
-
 /* Links: replicate underline that clears descenders */
 a:link, a:visited { color: inherit; }
-
 
 a:link { text-decoration: none;
        
@@ -272,20 +214,7 @@ a:link { text-decoration: none;
          background-size: 0.05em 1px, 0.05em 1px, 1px 1px;
 
          background-repeat: no-repeat, no-repeat, repeat-x;
-	  /*
-         text-shadow: 0.03em 0 #fffff8, 
-                     -0.03em 0 #fffff8, 
-                      0 0.03em #fffff8, 
-                      0 -0.03em #fffff8, 
-                      0.06em 0 #fffff8, 
-                     -0.06em 0 #fffff8, 
-                      0.09em 0 #fffff8, 
-		      -0.09em 0 #fffff8, 
-		      0.12em 0 #fffff8, 
-		      -0.12em 0 #fffff8, 
-		      0.15em 0 #fffff8, 
-		      -0.15em 0 #fffff8;
-         */
+
          background-position: 0% 93%, 100% 93%, 0% 93%; }
 
 
@@ -300,37 +229,11 @@ a:link::-moz-selection { text-shadow: 0.03em 0 #b4d5fe, -0.03em 0 #b4d5fe, 0 0.0
 /* Sidenotes, margin notes, figures, captions */
 img { max-width: 100%; }
 
-.sidenote, .marginnote { float: right;
-                         clear: right;
-                         margin-right: -55%;
-                         width: 50%;
-                         margin-top: 0;
-                         margin-bottom: 0;
-                         font-size: 1.1rem;
-                         line-height: 1.3;
-                         vertical-align: baseline;
-                         position: relative; }
-
-.sidenote-number { counter-increment: sidenote-counter; }
-
-.sidenote-number:after, .sidenote:before { content: counter(sidenote-counter) " ";
-                                           font-family: et-book-roman-old-style;
-                                           position: relative;
-                                           vertical-align: baseline; }
-
-.sidenote-number:after { content: counter(sidenote-counter);
-                         font-size: 1rem;
-                         top: -0.5rem;
-                         left: 0.1rem; }
-
-.sidenote:before { content: counter(sidenote-counter) " ";
-                   top: -0.5rem; }
-
 blockquote .sidenote, blockquote .marginnote { margin-right: -82%;
                                                min-width: 59%;
                                                text-align: left; }    
 
-/*p,*/ footer, table { width: 55%; }
+footer, table { width: 55%; }
 
 div.fullwidth, table.fullwidth, table.tryit { width: 100%; }
 
@@ -362,40 +265,3 @@ pre.code.fullwidth { width: 90%; }
 .fullwidth { max-width: 90%;
              clear:both; }
 
-span.newthought { font-variant: small-caps;
-                  font-size: 1.2em; }
-
- 
-
-input.margin-toggle { display: none; }
-
-label.sidenote-number { display: inline; }
-
-label.margin-toggle:not(.sidenote-number) { display: none; }
-
-@media (max-width: 760px) { body { width: 84%;
-                                   padding-left: 8%;
-                                   padding-right: 8%; }
-                            p, footer { width: 100%; }
-                            pre.code { width: 97%; }
-                            ul { width: 85%; }
-                            figure { max-width: 90%; }
-                            figcaption, figure.fullwidth figcaption { margin-right: 0%;
-                                                                      max-width: none; }
-                            blockquote { margin-left: 1.5em;
-                                         margin-right: 0em; }
-                            blockquote p, blockquote footer { width: 100%; }
-                            label.margin-toggle:not(.sidenote-number) { display: inline; }
-                            .sidenote, .marginnote { display: none; }
-                            .margin-toggle:checked + .sidenote,
-                            .margin-toggle:checked + .marginnote { display: block;
-                                                                   float: left;
-                                                                   left: 1rem;
-                                                                   clear: both;
-                                                                   width: 95%;
-                                                                   margin: 1rem 2.5%;
-                                                                   vertical-align: baseline;
-                                                                   position: relative; }
-                            label { cursor: pointer; }
-                            div.table-wrapper, table { width: 85%; }
-                            img { width: 100%; } }

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
-{% block body %}
 
+{% block body %}
 
 <!-- Show the Page the User Has Requested -->
 <!-- Note: there are no longer any records in the pageresult cursor, as we have moved through them all and it has closed -->
@@ -24,7 +24,7 @@
  <input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
 </div>
 
-<div id="targetDiv" class=""  style='float:left; width:80%;'>{{pageContent['content_ht'][0]}}</div>
+<div id="targetDiv" class=""  style='float:left; width:100%;'>{{pageContent['content_ht'][0]}}</div>
 
 <div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
@@ -34,9 +34,7 @@
 </form>
 
 
-
 <div style='float:none'> </div>
-
 
 
 <!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
@@ -68,3 +66,5 @@
 
 
 {% endblock %}
+
+
