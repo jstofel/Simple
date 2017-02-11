@@ -53,8 +53,8 @@ function runConverter() {
 
 function showSampleD3(radius=50) {
     //Set some variables
-    var width = 100,
-	height = 100;
+    var width = 400,
+	height = 500;
 
 
     //Define the canvas as an svg in the show_network div
@@ -81,11 +81,15 @@ function showNetworkD3(graph) {
 
     if (typeof graph != "undefined") {
 
+	var gsize = graph.nodes.length;
+
     //Set some variables
-    var width = 100,
-	height = 100;
-
-
+	//var width = gsize * 15, height = gsize * 30 ;
+	if (gsize > 10) {
+	    var width = 500, height = 500;
+	} else {
+	    var width = 100, height = 100;
+	}
     //Define the canvas as an svg in the show_network div
     var svg = d3.select("#show_network").append("svg")
 	.attr("width", width)

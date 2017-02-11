@@ -74,7 +74,7 @@ def getTableNetwork(database, user):
             #Get the nodes list
             nodes_list = []
             for i in range(0, len(unique_rec)):
-                nodes_list.append({"name":unique_rec[i], "group": 1 })
+                nodes_list.append({"name":str(unique_rec[i]), "group": 1 })
 
             #Make Dict
             network_dict = {"nodes":nodes_list, "links":links_list}
@@ -93,9 +93,7 @@ def getTableNetwork(database, user):
             json_out.write(json_dump)
             json_out.close()
 
-        #return results
         return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump]
-        #return json_dump
 
     except exc.SQLAlchemyError as detail:
         fatal("Could not query : %s" % detail)

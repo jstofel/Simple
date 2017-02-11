@@ -83,12 +83,10 @@
      // It takes the input content, translates it, and writes it to the target div
        runConverter();
      //This is a testing fnction to write a circle on an svg canvas 
-      showSampleD3({{radius}});
-    //This is trying to show network -- hard code
-      showNetworkD3({'nodes': [{'group': 1, 'name': 'page_content'}, {'group': 1, 'name': 'content'}, {'group': 1, 'name': 'page'}], 'links': [{'source': 0, 'target': 1, 'value': 1}, {'source': 0, 'target': 2, 'value': 1}]})
+      //showSampleD3({{radius}});
 
-    //Try to show network -- 
-      //showNetworkD3({{network_dict}})
+    //Show the network
+      showNetworkD3({{network_dict|safe}})
                     
    }
 </script>
