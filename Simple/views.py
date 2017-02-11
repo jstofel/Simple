@@ -38,6 +38,17 @@ dbName = app_name
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 #===========================================================================        
+##Set Application-Level Parsers
+#===========================================================================        
+app.config['DEFAULT_PARSERS'] = [
+    'flask.ext.api.parsers.JSONParser',
+    'flask.ext.api.parsers.URLEncodedParser',
+    'flask.ext.api.parsers.MultiPartParser'
+]
+
+
+
+#===========================================================================        
 ##Define the Functions that Render the Views (HTML pages) 
 #===========================================================================        
 #Define the home (index) page with a single slash, and define the page as a render function 
@@ -246,8 +257,8 @@ def seemedb():
                            num_tables=num_tables,
 			   link_list = link_list,
 			   tableDF = tableDF,
-			   network_dict= json_dump,
-			   network_str = '',
+			   network_dict= network_dict,
+			   network_str = json_dump,
 			   radius=radius
 
                            )
