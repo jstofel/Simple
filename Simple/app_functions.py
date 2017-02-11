@@ -31,7 +31,8 @@ def getPageContent(page_id, conn):
     csql += "join public.page p on p.page_id = pc.page_id ";
     csql += "where pc.page_id = %s " % page_id; 
     result = conn.execute(csql);
-    fetchall = result.fetchall()
+    fetchall = result.fetchall();
+
     import pandas as pd
     pageContent = pd.DataFrame(fetchall, columns=['content_id','content_md', 'content_ht'] )
     return pageContent
