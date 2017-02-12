@@ -24,7 +24,10 @@
  <input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
 </div>
 
-<div id="targetDiv" class=""  style='float:left; width:100%;'>{{pageContent['content_ht'][0]}}</div>
+<!--This div appears empty, but it is populated from pageContent['content_md'] by the runConverter() script -->
+<div id="targetDiv" class=""  style='float:left; width:100%;'>
+
+</div>
 
 <div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.

@@ -2,6 +2,7 @@
 #===========================================================================                  
 #  Application Functions                                                                         
 #===========================================================================                  
+from flask import flash;  #for debugging messages
 
 def getPageID(form, request):
     if request.args.get('page_id') is not None:
@@ -26,7 +27,7 @@ def getPageInfo(page_id, conn):
 def getPageContent(page_id, conn):
     if (page_id is None) or (int(page_id) == 0) :
         fatal("getPageContent function requires a numeric page_id argument > 0")
-    csql = "select c.content_id, c.content_md, c.content_ht from public.content c ";
+    csql = "select c.content_id, c.content_md from public.content c ";
     csql += "join public.page_content pc on c.content_id = pc.content_id ";
     csql += "join public.page p on p.page_id = pc.page_id ";
     csql += "where pc.page_id = %s " % page_id; 
@@ -34,14 +35,12 @@ def getPageContent(page_id, conn):
     fetchall = result.fetchall();
 
     import pandas as pd
-    pageContent = pd.DataFrame(fetchall, columns=['content_id','content_md', 'content_ht'] )
+    pageContent = pd.DataFrame(fetchall, columns=['content_id','content_md'] )
     return pageContent
 
 def postPageContent(page_id, form, conn):
-    from flask import flash
     #Get content that has been submitted via the form                                         
     new_content_md = form.content_md.data
-    new_content_ht = form.content_ht.data
     content_id = form.content_id.data
     target = form.page_target.data
 
@@ -49,13 +48,13 @@ def postPageContent(page_id, form, conn):
         if (len(new_content_md.strip()) > 0):
             if content_id > '0':
                 contsql = "update public.content set "
-                contsql += "content_md = '%s', content_ht = '%s' where content_id = %s " % (new_content_md, new_content_ht, str(content_id));
+                contsql += "content_md = '%s'where content_id = %s " % (new_content_md, str(content_id));
                 xsql = ''
-                flash(contsql)
+                #flash(contsql)
                 conn.execute(contsql)
             else:
-                contsql = "insert into public.content (content_md, content_ht) VALUES ";
-                contsql += "('%s', '%s')" % (new_content_md, new_content_ht);
+                contsql = "insert into public.content (content_md) VALUES ";
+                contsql += "('%s')" % (new_content_md);
                 xsql = "insert into public.page_content "
                 xsql += "(select %s as page_id, max(content_id) as content_id from public.content) " % str(page_id);
 
