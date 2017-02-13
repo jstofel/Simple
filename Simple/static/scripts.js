@@ -95,8 +95,6 @@ function showNetworkD3(graph) {
 	.attr("width", width)
 	.attr("height", height);
 
-
-
 //Make a force diagram object
 var force = d3.layout.force()
     .charge(-120)
@@ -105,22 +103,37 @@ var force = d3.layout.force()
  
 
     //Define the color scale to use  - depends on what version of D3 you are using
-    var color = d3.scale.category20();
-    /* <later version of D3>  var color = d3.scaleOrdinal(d3.schemeCategory10);*/
+var color = d3.scale.category20();  //later version of D3:  var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    /**This is where we are trying to do something!**/
 
-    //d3.json('/home/network.json', function(error, graph) {
-    //  if (error) throw error;
   force
       .nodes(graph.nodes)
       .links(graph.links)
       .start();
+
+  // build the arrow.
+  svg.append("svg:defs").selectAll("marker")
+      .data(["end"])      // Different link/path types can be defined here
+      .enter().append("svg:marker")    // This section adds in the arrows
+      .attr("id", String)
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 15)
+      .attr("refY", -1.5)
+      .attr("markerWidth", 6)
+      .attr("markerHeight", 6)
+      .attr("orient", "auto")
+      .append("svg:path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+  // add the links and the arrows
   var link = svg.selectAll(".link")
       .data(graph.links)
       .enter().append("line")
       .attr("class", "link")
+      .attr("marker-end", "url(#end)")
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+  // add the nodes
   var node = svg.selectAll(".node")
       .data(graph.nodes)
       .enter().append("circle")
@@ -128,6 +141,8 @@ var force = d3.layout.force()
       .attr("r", 5)
       .style("fill", function(d) { return color(d.group); })
       .call(force.drag);
+
+  // add text to the nodes
   node.append("title")
       .text(function(d) { return d.name; });
     force.on("tick", function() {
@@ -138,6 +153,6 @@ var force = d3.layout.force()
 	    node.attr("cx", function(d) { return d.x; })
 		.attr("cy", function(d) { return d.y; });
 	});
-    // });
+
     } // end of if graph not underfined
 }
