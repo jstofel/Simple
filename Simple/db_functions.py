@@ -36,16 +36,29 @@ def getTableNetwork(database, user):
             
             #Make into dataframe
             tableDF = pd.DataFrame(allFK)
-            
+
+            #Isolate Schema and Table
+            columns = ['table','schema']
+            tbl_schema = pd.DataFrame(tableDF, columns=columns)
+
+            #Group the Tables by Schema
+            grp_schema = tbl_schema.groupby(["schema"]).size().reset_index()
+            #The number of tables per schema is the last column
+            grp_schema['numtables'] = grp_schema.pop(0)
+            #Name the index (row names) to schema id
+            grp_schema.index.name = 'schema_id'
+            grp_schema.reset_index(inplace=True)
+
             #Isolate Source and Destination
             columns = ['table','referred_table']
             src_dst = pd.DataFrame(tableDF, columns=columns)
 
-            #Rename columns
+            #Rename columns table and referred table to source and target
             src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
 
-            #Group 
+            #Group the Targets by Source 
             grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
+            #The last column is the count of the number of Targets per Source
             grouped_src_dst['count'] = grouped_src_dst.pop(0) 
 
             #Join source and target into consolidated index to be used for index position
@@ -88,10 +101,10 @@ def getTableNetwork(database, user):
             json_dump = json.dumps(network_dict)  
                 
 
-            filename_out = 'network.json'
-            json_out = open(filename_out,'w')
-            json_out.write(json_dump)
-            json_out.close()
+            #filename_out = 'network.json'
+            #json_out = open(filename_out,'w')
+            #json_out.write(json_dump)
+            #json_out.close()
 
         return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump]
 
