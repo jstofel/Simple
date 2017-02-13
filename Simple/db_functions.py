@@ -40,14 +40,20 @@ def getTableNetwork(database, user):
             #Isolate Schema and Table
             columns = ['table','schema']
             tbl_schema = pd.DataFrame(tableDF, columns=columns)
-
-            #Group the Tables by Schema
-            grp_schema = tbl_schema.groupby(["schema"]).size().reset_index()
+            #Make the Tables Unique
+            tbl_schema_u = tbl_schema.groupby(["schema", "table"]).size().reset_index()
+            #Group the Unique Tables by Schema
+            grp_schema = tbl_schema_u.groupby(["schema"]).size().reset_index()
             #The number of tables per schema is the last column
             grp_schema['numtables'] = grp_schema.pop(0)
             #Name the index (row names) to schema id
             grp_schema.index.name = 'schema_id'
             grp_schema.reset_index(inplace=True)
+            #Merge this back to the table dataframe
+            tbl_schema_id = pd.merge(tbl_schema_u, grp_schema, how='left', on='schema')
+            #Apply index to the table name field
+            tbl_schema_idx=tbl_schema_id.set_index("table")
+            #tbl_schema_idx = tbl_schema_id
 
             #Isolate Source and Destination
             columns = ['table','referred_table']
@@ -67,6 +73,8 @@ def getTableNetwork(database, user):
                                   .append(grouped_src_dst['target'])
                                   .reset_index(drop=True).unique())
 
+            
+
             #Begin the structure. Make a temp links list with names
             #lambda refers to an anonymous (unnamed, internally used) function
             tll = grouped_src_dst.apply(lambda row: {"source": row['source'], 
@@ -85,9 +93,14 @@ def getTableNetwork(database, user):
                 links_list.append(record)
 
             #Get the nodes list
+            from flask import flash
             nodes_list = []
+
             for i in range(0, len(unique_rec)):
-                nodes_list.append({"name":str(unique_rec[i]), "group": 1 })
+                #flash(str(unique_rec[i])) 
+                #flash(tbl_schema_idx.loc["employee", "schema_id"])
+
+                nodes_list.append({"name":str(unique_rec[i]), "group": 1  })
 
             #Make Dict
             network_dict = {"nodes":nodes_list, "links":links_list}
@@ -101,19 +114,10 @@ def getTableNetwork(database, user):
             json_dump = json.dumps(network_dict)  
                 
 
-            #filename_out = 'network.json'
-            #json_out = open(filename_out,'w')
-            #json_out.write(json_dump)
-            #json_out.close()
-
-        return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump]
+        return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump, tbl_schema_idx]
 
     except exc.SQLAlchemyError as detail:
         fatal("Could not query : %s" % detail)
-
-
-        
-
 
 #================================
 ##Debugging: show error and exit

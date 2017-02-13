@@ -27,10 +27,6 @@
        <h2 style="font-style:normal" > {{dbname}} Database </h2>
           <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
 
-	{% if num_allFK > 0 %}
-	<!-- Show the Table -->
-	      <!-- {{tableDF.to_html()|safe}} -->
-	{% endif %}
 	<!-- Show schemas as accordian. Schemas are in a pandas dataframe -->
 	<div class="" style="width:10rem; float:left" >
 	{% for index, row in allSchemas.iterrows() %}
@@ -47,6 +43,11 @@
 
        <!--This is the div where the network is attached-->
 	<div id="show_network"  class="" style="float:left">  </div> 
+
+	<!-- Show Debugging Table -->
+	{% if num_allFK > 0 %}
+	      {{schema_id_list.to_html()|safe}} 
+	{% endif %}
 
 
    {% endif %}

@@ -219,10 +219,13 @@ def seemedb():
     
     tableDF = output_list[0]
     unique_rec = output_list[1]
+    #flash(unique_rec)
     links_list = output_list[2]
     nodes_list = output_list[3]   
     network_dict = output_list[4] #a dictionary-- the same thing you get with json.loads the string
     json_dump = output_list[5]    #a string
+    schema_id_list = output_list[6]
+    #flash(schema_id_list)
 
     #flash(type(network_dict))
     #flash(network_dict)
@@ -259,7 +262,8 @@ def seemedb():
 			   tableDF = tableDF,
 			   network_dict= network_dict,
 			   network_str = json_dump,
-			   radius=radius
+			   radius=radius,
+			   schema_id_list = schema_id_list
 
                            )
 
