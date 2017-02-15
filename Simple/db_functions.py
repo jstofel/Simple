@@ -106,12 +106,10 @@ def getTableNetwork(database, user):
         #flash("this is unique rec for ")
         #flash(s)
         #flash(unique_rec)
+        import numpy as np
         for i in range(0, len(unique_rec)):
-            flash("table " + str(i))
-            flash(str(unique_rec[i])) 
-            flash(tableDFx.loc[str(unique_rec[i]), "schema_id"])
-
-            nodes_list.append({"name":str(unique_rec[i]), "group": 1  })
+            group_id = tableDFx.loc[str(unique_rec[i])]['schema_id']
+            nodes_list.append({"name":str(unique_rec[i]), "group": str(group_id) })
 
         #Make Dict
         network_dict = {"nodes":nodes_list, "links":links_list}
