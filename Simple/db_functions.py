@@ -1,3 +1,6 @@
+from flask import flash
+
+
 def rename(self,key,new_key):
     ind = self._keys.index(key)  #get the index of old key, O(N) operation
     self._keys[ind] = new_key    #replace old key with new key in self._keys
@@ -16,105 +19,108 @@ def getTableNetwork(database, user):
 
     #Define an empty list for the foreign keys
     allFK = []
+    #Define an empty list for all tables
+    allTables = []
     #make the connection using the specified database
     dbURL = readPgpass(database, user)
     try:
         db = create_engine(dbURL)
         insp = reflection.Inspector.from_engine(db)
         s_list = insp.get_schema_names() #List of names
+        n = 1
         for s in s_list:
             tables = insp.get_table_names(schema=s)  #List of table names
-            for t in tables:
-                #Get list of dicts describing foreign key relations
-                fkt = insp.get_foreign_keys(t, schema = s)
-                #Add schema name and table name to each dict in list
-                for i in fkt:
-                    i['schema'] = s 
-                    i['table'] = t
-                #Add the dictionary to the list of all dictionaries
-                allFK = allFK + fkt
+            if (len(tables) > 0):
+                for t in tables:
+                    #Add Table, Schema, and Schema_id to list of All Tables
+                    tdict = [{"table":t, "schema":s, "schema_id":n}]
+                    allTables = allTables + tdict
+                
+                    #Get list of dicts describing foreign key relations for this table
+                    fkt = insp.get_foreign_keys(t, schema = s)
+                    #Add schema name and table name to each dict in list
+                    for i in fkt:
+                        i['schema'] = s 
+                        i['table'] = t
+                    #Add the dictionary to the list of all dictionaries
+                    allFK = allFK + fkt
+                #Update the schema number
+                n = n + 1
             
-            #Make into dataframe
-            tableDF = pd.DataFrame(allFK)
+        #Make into dataframes
+        tableFKDF = pd.DataFrame(allFK)
+        tableDF = pd.DataFrame(allTables)
 
-            #Isolate Schema and Table
-            columns = ['table','schema']
-            tbl_schema = pd.DataFrame(tableDF, columns=columns)
-            #Make the Tables Unique
-            tbl_schema_u = tbl_schema.groupby(["schema", "table"]).size().reset_index()
-            #Group the Unique Tables by Schema
-            grp_schema = tbl_schema_u.groupby(["schema"]).size().reset_index()
-            #The number of tables per schema is the last column
-            grp_schema['numtables'] = grp_schema.pop(0)
-            #Name the index (row names) to schema id
-            grp_schema.index.name = 'schema_id'
-            grp_schema.reset_index(inplace=True)
-            #Merge this back to the table dataframe
-            tbl_schema_id = pd.merge(tbl_schema_u, grp_schema, how='left', on='schema')
-            #Apply index to the table name field
-            tbl_schema_idx=tbl_schema_id.set_index("table")
-            #tbl_schema_idx = tbl_schema_id
+        #Apply index to the table name field
+        tableDFx=tableDF.set_index("table")
 
-            #Isolate Source and Destination
-            columns = ['table','referred_table']
-            src_dst = pd.DataFrame(tableDF, columns=columns)
+        #Isolate Schema and Table
+        columns = ['table','schema']
+        tbl_schema = pd.DataFrame(tableFKDF, columns=columns)
 
-            #Rename columns table and referred table to source and target
-            src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
+        #Make the Tables Unique
+        tbl_schema_u = tbl_schema.groupby(["schema", "table"]).size().reset_index()
+        #Group the Unique Tables by Schema
+        grp_schema = tbl_schema_u.groupby(["schema"]).size().reset_index()
+        #The number of tables per schema is the last column
+        grp_schema['numtables'] = grp_schema.pop(0)
 
-            #Group the Targets by Source 
-            grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
-            #The last column is the count of the number of Targets per Source
-            grouped_src_dst['count'] = grouped_src_dst.pop(0) 
 
-            #Join source and target into consolidated index to be used for index position
-            #Index is the object storing axis labels for pandas object
-            unique_rec = pd.Index(grouped_src_dst['source']
-                                  .append(grouped_src_dst['target'])
-                                  .reset_index(drop=True).unique())
+        #Isolate Source and Destination
+        columns = ['table','referred_table']
+        src_dst = pd.DataFrame(tableFKDF, columns=columns)
 
-            
+        #Rename columns table and referred table to source and target
+        src_dst.rename(columns={"table":"source","referred_table":"target"}, inplace=True)
 
-            #Begin the structure. Make a temp links list with names
-            #lambda refers to an anonymous (unnamed, internally used) function
-            tll = grouped_src_dst.apply(lambda row: {"source": row['source'], 
+        #Group the Targets by Source 
+        grouped_src_dst = src_dst.groupby(["source","target"]).size().reset_index()
+        #The last column is the count of the number of Targets per Source
+        grouped_src_dst['count'] = grouped_src_dst.pop(0) 
+
+        #Join source and target into consolidated index to be used for index position
+        #Index is the object storing axis labels for pandas object
+        unique_rec = pd.Index(grouped_src_dst['source']
+                              .append(grouped_src_dst['target'])
+                              .reset_index(drop=True).unique())
+
+        #Begin the structure. Make a temp links list with names
+        #lambda refers to an anonymous (unnamed, internally used) function
+        tll = grouped_src_dst.apply(lambda row: {"source": row['source'], 
                                                      "target": row['target'],
                                                      "value": row['count'] }, 
                                         axis=1)
 
 
-            #Extract the index location for each unique source/dest pair 
-            # (the unique_rec as defined by the Index function) and append to links list
-            links_list = []
-            for i in range(0,len(tll)):
-                record = {"value":tll.iloc[i]['value'], 
+        #Extract the index location for each unique source/dest pair 
+        # (the unique_rec as defined by the Index function) and append to links list
+        links_list = []
+        for i in range(0,len(tll)):
+            record = {"value":tll.iloc[i]['value'], 
                           "source":unique_rec.get_loc(tll.iloc[i]['source']),
                           "target": unique_rec.get_loc(tll.iloc[i]['target'])}
-                links_list.append(record)
+            links_list.append(record)
 
-            #Get the nodes list
-            from flask import flash
-            nodes_list = []
+        #Get the nodes list
+        nodes_list = []
+        #flash("this is unique rec for ")
+        #flash(s)
+        #flash(unique_rec)
+        for i in range(0, len(unique_rec)):
+            flash("table " + str(i))
+            flash(str(unique_rec[i])) 
+            flash(tableDFx.loc[str(unique_rec[i]), "schema_id"])
 
-            for i in range(0, len(unique_rec)):
-                #flash(str(unique_rec[i])) 
-                #flash(tbl_schema_idx.loc["employee", "schema_id"])
+            nodes_list.append({"name":str(unique_rec[i]), "group": 1  })
 
-                nodes_list.append({"name":str(unique_rec[i]), "group": 1  })
-
-            #Make Dict
-            network_dict = {"nodes":nodes_list, "links":links_list}
+        #Make Dict
+        network_dict = {"nodes":nodes_list, "links":links_list}
             
-            #Make json and write it out
-            import json
-            #json.dumps takes an object (dict) and produces a string. 
-            #contrast with json.loads, which uses a string to create object
-            #contrast agaon with json.dump and json.load, which interchange between objects and files, 
-            #   rather than objects and strings
-            json_dump = json.dumps(network_dict)  
+        #Make json 
+        import json
+        json_dump = json.dumps(network_dict)  
                 
-
-        return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump, tbl_schema_idx]
+        return [grouped_src_dst, unique_rec, links_list, nodes_list, network_dict, json_dump, tableDFx]
 
     except exc.SQLAlchemyError as detail:
         fatal("Could not query : %s" % detail)
