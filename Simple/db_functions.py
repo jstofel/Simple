@@ -267,7 +267,7 @@ def getTables(database, user):
     #  get_foreign_keys(table_name, schema=) returns list of dicts with these keys:
     #    constrained_columns, referred_schema, referred_table, referred_columns, name(optional name of constraint)
     allTables = pd.DataFrame({'schema' : [] , 'table' : [] })
-    allSchemas = pd.DataFrame({'schema' : [] , 'numtable' : [] })
+    allSchemas = pd.DataFrame({'schema' : [] , 'numtable' : [], 'schema_id': [] })
     allFK = []  #This will be a list of all lists of dicts for the foreign keys
     #make the connection using the specified database
     dbURL = readPgpass(database, user)
@@ -275,6 +275,8 @@ def getTables(database, user):
         db = create_engine(dbURL)
         insp = reflection.Inspector.from_engine(db)
         s_list = insp.get_schema_names() #List of names
+        s_list.remove("information_schema")
+        n = 1
         for s in s_list:
             tables = insp.get_table_names(schema=s)  #List of table names
             for t in tables:
@@ -290,10 +292,10 @@ def getTables(database, user):
             #Make a dataframe for all table names in this schema (if none, empty frame is made)
             tf = pd.DataFrame({'schema' : s, 'table' : tables})
             #Make a dataframe for count of tables in schema, only if there are tables in schema
-            sf = pd.DataFrame({'schema' : [] , 'numtable' : [] })
+            sf = pd.DataFrame({'schema' : [] , 'numtable' : [], 'schema_id' :[] })
             if len(tables) > 0 :
-                sf = pd.DataFrame({'schema' : s, 'numtable' : [len(tables)] })
-
+                sf = pd.DataFrame({'schema' : s, 'numtable' : [len(tables)], 'schema_id' : n })
+                n = n + 1
             # How to get information out of the pandas data frame
             #for index, row in tf.iterrows():
             #    print row['schema'], row['table']

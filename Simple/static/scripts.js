@@ -12,6 +12,7 @@ for (i = 0; i < acc.length; i++) {
         this.classList.toggle("active");
         this.nextElementSibling.classList.toggle("show");
     }
+    /*
     acc[i].onmouseover = function(){
         this.classList.toggle("active");
         this.nextElementSibling.classList.toggle("show");
@@ -20,6 +21,7 @@ for (i = 0; i < acc.length; i++) {
 	this.classList.toggle("active");
         this.nextElementSibling.classList.toggle("hide");
     }
+    */
 
 }
 
@@ -85,10 +87,10 @@ function showNetworkD3(graph) {
 
     //Set some variables
 	//var width = gsize * 15, height = gsize * 30 ;
-	if (gsize > 10) {
+	if (gsize > 20) {
 	    var width = 500, height = 500;
 	} else {
-	    var width = 100, height = 100;
+	    var width = 250, height = 250;
 	}
     //Define the canvas as an svg in the show_network div
     var svg = d3.select("#show_network").append("svg")
