@@ -13,7 +13,7 @@ def rename(self,key,new_key):
 #=================================================================================
 def getTableNetwork(database, user):
     #get sqlalchemy functions to use
-    from sqlalchemy import create_engine, engine, exc, engine
+    from sqlalchemy import create_engine, engine, exc
     from sqlalchemy.engine import reflection
     import pandas as pd
 

@@ -86,7 +86,9 @@ def index():
                            project_name = app_name, 
                            page_id=page_id,
                            pageInfo = pageInfo,
-                           form=form
+                           form=form,
+			   content_width=100,
+			   viz_width=0
                            )
 
 #Define the content page : this is the standard default page for any page with content in it 
@@ -128,7 +130,9 @@ def content():
                            pageInfo=pageInfo,
                            pageContent = pageContent,
                            dbname='',
-                           form=form
+                           form=form,
+			   content_width=100,
+			   viz_width = 0
                            )
 
 #http://adilmoujahid.com/posts/2015/01/interactive-data-visualization-d3-dc-python-mongodb/
@@ -263,7 +267,10 @@ def seemedb():
 			   network_dict= network_dict,
 			   network_str = json_dump,
 			   radius=radius,
-			   schema_id_list = schema_id_list
+			   schema_id_list = schema_id_list,
+			   content_width=40,
+			   viz_width=58
+			   
 
                            )
 
