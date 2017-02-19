@@ -47,8 +47,9 @@ def postPageContent(page_id, form, conn):
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):
             if content_id > '0':
+                #python replace str.replace(old, new[, max]) 
                 contsql = "update public.content set "
-                contsql += "content_md = '%s'where content_id = %s " % (new_content_md, str(content_id));
+                contsql += "content_md = '%s' where content_id = %s " % (new_content_md.replace("'", "''"), str(content_id));
                 xsql = ''
                 #flash(contsql)
                 conn.execute(contsql)
