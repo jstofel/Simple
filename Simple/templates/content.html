@@ -1,16 +1,13 @@
 {% extends "layout.html" %}
 
-
 {% block body %}
 
 <!-- Show the Page the User Has Requested -->
-<!-- Note: there are no longer any records in the pageresult cursor, as we have moved through them all and it has closed -->
-
 <!--Put in a Markdown Editor to accept content-->
 <!-- It has a Show/Hide Button, a Div with instructions, an Editor div that lets you write, and a Target div 
      that shows what you've written, all closed out by a div to clear the floats.
      The functionality of this Markdown editor comes from the ShowDown library
-     at http://showdownjs.github.io/demo/ by John Fraser . Thanks! -->
+     at http://showdownjs.github.io/demo/ by John Fraser. -->
 
 <form id="tester"
       action="/{{pageInfo['page_target'][0]}}?page_id={{pageInfo['page_id'][0]}}&dbname={{dbname}}"
@@ -33,13 +30,9 @@
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
 <textarea id="sourceTA" name="content_md" rows="40" cols="40"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
 </div>
-
 </form>
 
-
 <div style='float:none'> </div>
-
-
 <!-- Add JQ functionality to show/hide buttons for the Single Page controls-->
 <script>
   //Set the toggling of the Editor functions
@@ -58,15 +51,7 @@
             }
    });
   });
-
-  //Run the load conditions
-  //The runConverter function is a local function in scripts.js. It takes the input content, translates it, and writes it to the target div
-  //   window.onload = function(){
-  //   runConverter();
-  // }
-
 </script>
-
 
 {% endblock %}
 

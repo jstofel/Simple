@@ -128,6 +128,17 @@ div.panel.hide {
     display: none;
 }
 
+/*Table striping */
+tbody tr:nth-child(odd) {
+   background-color: #ccc;
+}
+
+/*Table Border */
+table, th, td {
+   border-bottom: 1px solid gray;
+   border-collapse: collapse;
+}
+
 
 /* ========================= Tufte CSS starts here. Special font section deleted ====================================*/
 
@@ -233,7 +244,7 @@ blockquote .sidenote, blockquote .marginnote { margin-right: -82%;
                                                min-width: 59%;
                                                text-align: left; }    
 
-footer, table { width: 55%; }
+footer, table{ width: 95%; }
 
 div.fullwidth, table.fullwidth, table.tryit { width: 100%; }
 

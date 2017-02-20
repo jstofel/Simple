@@ -42,12 +42,13 @@ for (i = 0; i < acc.length; i++) {
 
 /**  Use ShowDown to convert markdown to HTML **/
 function runConverter() {
-
     if (typeof targetDiv != "undefined") {
+
     var text = document.getElementById('sourceTA').value,
 	target = document.getElementById('targetDiv'),
-	converter = new showdown.Converter(),
+	converter = new showdown.Converter({tables:true}),
 	html = converter.makeHtml(text);
+
     target.innerHTML = html;
     }
 }

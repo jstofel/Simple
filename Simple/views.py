@@ -131,7 +131,8 @@ def content():
                            pageContent = pageContent,
                            dbname='',
                            form=form,
-			   content_width=100,
+			   content_width=80,
+			   code_width=0,
 			   viz_width = 0
                            )
 

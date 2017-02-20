@@ -156,9 +156,11 @@ def pageNav(a):
 ##  Returns a connection string
 #=======================================
 def readPgpass(dbName, user):
-    #Read the pgpass file 
+    #Define the server type 
     protocol = 'postgresql'
+    #Define the URL format
     URL_FORMAT = "%s://%s:%s@%s/%s"
+    #Read the pgpass file  
     fname = "/Users/"+user+"/.pgpass"
     f = open(fname, 'rb')
     for a in f.readlines():

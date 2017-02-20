@@ -11,7 +11,7 @@
  <!--jQuery -->
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
  <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
- <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script>
+ <script src="https://cdn.rawgit.com/showdownjs/showdown/1.6.0/dist/showdown.min.js"></script>
 
 </head>
 
@@ -42,13 +42,25 @@
 <!-- This is where all the content from your python-enabled views goes -->
 <!-- Put the page content between the jinja2 block tags -->
 
-<div  >
+<div >
+
+
 <!--Word Content on Left -->
-<div class='' style='float:left; width:{{content_width}}%; margin:0; padding:0.5rem;'>
+<div class='' style='float:left; width:{{content_width}}%; margin-bottom:5rem; padding:0.5rem;'>
    {% block body %}
 
    {% endblock %}
 </div>
+
+<!-- Code Content in Middle -->
+<div class='' style='float:left; width:{{code_width}}%; padding:0.5rem;'>
+   {% block codex %}
+
+   {% endblock %}
+</div>
+
+
+
 
 <!--Picture Content on Right --> 
 <div class='' style='float:right; width:{{viz_width}}%; margin:0; padding:0'>
@@ -60,6 +72,9 @@
 
 
 </div>
+
+
+
 
 
   <!-- Load Local Javascript Scripts ---------                                                                                  
@@ -74,7 +89,7 @@
   <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
 
  <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
- <script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script>
+ <!-- loaded at top of page script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script-->
 
 <!-- Run the Page Load Conditions -->
 <script>
@@ -82,10 +97,12 @@
      //The runConverter function is a local function in scripts.js. 
      // It takes the input content, translates it, and writes it to the target div
        runConverter();
+
+
      //This is a testing fnction to write a circle on an svg canvas 
       //showSampleD3({{radius}});
 
-    //Show the network
+    //Show the Table network. This is also a local function in scripts.js
       showNetworkD3({{network_dict|safe}})
                     
    }
