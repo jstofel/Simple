@@ -256,7 +256,8 @@ div.table-wrapper { overflow-x: auto;
 
 code { font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
        font-size: 1.0rem;
-       line-height: 1.42; }
+       line-height: 1.42; 
+       }
 
 .sans > code { font-size: 1.2rem; }
 
@@ -268,7 +269,9 @@ pre, pre.code { font-size: 0.9rem;
 	   width: 90%;
            margin-left: 5%;
 	   font-family:  monospace;
-           overflow-x: auto; }
+           overflow-x: auto; 
+	   background-color:white;
+	   }
 
 pre.code.fullwidth { width: 90%; }
 
