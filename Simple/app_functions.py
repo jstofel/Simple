@@ -67,14 +67,14 @@ def postPageContent(page_id, form, conn):
                 #If there are script tags, you need to insert a space before the word 'script'
                 # And also add a usage note. Define usage note here.
                 sn1 = "###Note: if you copy a script off this page to paste and use in your own code, "
-                sn2 = "make sure to remove the space between the ```<``` and  ```<\``` openers "
+                sn2 = "make sure to remove the space between the ```<``` and  ```</``` openers "
                 sn3 = "and their associated ```script``` keyword, in order to make the script executable."
                 sn = sn1 + sn2 + sn3
-                # First, check if there is <script or <\script
+                # First, check if there is <script or </script
                 fs = "<script"
                 fso = esc_content.find(fs)
                 if (fso >= 0):
-                    esc_content = esc_content.replace("<script", "< script").replace("<\script", "<\ script")
+                    esc_content = esc_content.replace("<script", "< script").replace("</script", "</ script")
                     fno = esc_content.find(sn)
                     if (fno <= 0):
                         fto = esc_content.find("```", fso) + 3
