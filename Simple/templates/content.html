@@ -26,9 +26,9 @@
 
 </div>
 
-<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; '>
+<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; margin-left:3rem;  '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
-<textarea id="sourceTA" name="content_md" rows="40" cols="40"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
+<textarea id="sourceTA" name="content_md" rows="120" cols="100"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
 </div>
 </form>
 
@@ -42,7 +42,7 @@
              $('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
                  $(this).val('Open Editor');
-                 $('#targetDiv').width('80%');
+                 $('#targetDiv').width('100%');
                  $('#saveit').hide()
              } else {
                  $(this).val('Close Editor');

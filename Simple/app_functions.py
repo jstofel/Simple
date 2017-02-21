@@ -13,6 +13,21 @@ def getPageID(form, request):
         page_id = 0
     return str(page_id)
 
+def pageNav(a):
+    #Determine what page has been requested
+    from flask import url_for
+    if a.get('page_title') is None:
+        page_title=''; page_name='index';
+        url = url_for('index');
+    else:
+        page_title = a.get('page_title');
+        if a.get('page_name') is None:
+            page_name = page_title;
+        else:
+            page_name = a.get('page_name')
+        url = url_for('index')+"?page_title="+page_title+"&page_name="+page_name;
+    return(page_name, page_title, url)
+
 def getPageInfo(page_id, conn):
     if int(page_id) > 0:
         psql = "select * from public.page where page_id = %s " % (page_id);
@@ -47,8 +62,30 @@ def postPageContent(page_id, form, conn):
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):
             if content_id > '0':
-                #python replace str.replace(old, new[, max]) 
+                #Excape ' and % by doubling them
                 esc_content = new_content_md.replace("'", "''").replace("%","%%")
+                #If there are script tags, you need to insert a space before the word 'script'
+                # And also add a usage note. Define usage note here.
+                sn1 = "###Note: if you copy a script off this page to paste and use in your own code, "
+                sn2 = "make sure to remove the space between the ```<``` and  ```<\``` openers "
+                sn3 = "and their associated ```script``` keyword, in order to make the script executable."
+                sn = sn1 + sn2 + sn3
+                # First, check if there is <script or <\script
+                fs = "<script"
+                fso = esc_content.find(fs)
+                if (fso >= 0):
+                    esc_content = esc_content.replace("<script", "< script").replace("<\script", "<\ script")
+                    fno = esc_content.find(sn)
+                    if (fno <= 0):
+                        fto = esc_content.find("```", fso) + 3
+                        #Note - you want to slice the string into 2 parts: from 0 to fto, and from fto to end
+                        a = esc_content[:fto]
+                        b = esc_content[fto:]
+                        esc_content = a + sn + "   " + b
+                    #    #Find the first ``` after fso
+                    #    #Split the string
+                    #    #Put the note in the string
+
                 contsql = "update public.content set "
                 contsql += "content_md = '%s' where content_id = %s " % (esc_content, str(content_id));
                 xsql = ''

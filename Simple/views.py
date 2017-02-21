@@ -19,10 +19,10 @@ import json
 #==========================================================================
 
 import app_functions
-from app_functions import getPageID, getPageInfo, getPageContent, postPageContent
+from app_functions import getPageID, pageNav, getPageInfo, getPageContent, postPageContent
 
 import db_functions
-from db_functions import fatal, readPgpass, getPgDBnames, pageNav, getSchemas, getTables, getTableNetwork
+from db_functions import fatal, readPgpass, getPgDBnames, getSchemas, getTables, getTableNetwork
 
 import forms
 from forms import ContactForm, RegistrationForm, AddPage, UpdateContent

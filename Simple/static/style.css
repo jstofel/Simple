@@ -133,10 +133,18 @@ tbody tr:nth-child(odd) {
    background-color: #ccc;
 }
 
-/*Table Border */
+/*Table Align */
+
+table {
+      align:center;
+}
+
+/*Table Border and Column Padding*/
 table, th, td {
    border-bottom: 1px solid gray;
    border-collapse: collapse;
+   padding-left:3rem;
+   padding-right:3rem;
 }
 
 
@@ -244,7 +252,7 @@ blockquote .sidenote, blockquote .marginnote { margin-right: -82%;
                                                min-width: 59%;
                                                text-align: left; }    
 
-footer, table{ width: 95%; }
+footer { width: 95%; }
 
 div.fullwidth, table.fullwidth, table.tryit { width: 100%; }
 
