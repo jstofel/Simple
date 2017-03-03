@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--Put linked text in the subheader using d3 -->
+<script>
+   d3.select("#subref")
+       .text("{{subtitle}}")
+       .attr("href", "{{url}}")       
+;
+</script>
+
+<article>
+
+<h2>{{pagename}}</h2>
+
+<section>
+<span class="newthought"> 
+What is D3?t</span> javascript library produced by ... providing methods for interacting with the DOM [tooltip defining DOM and linking to DOM discussion]
+single javascript file of xx lines / X (k or M)bytes
+version history - numbers and dates 
+diff between current version and previous version [have to figure out how to do this:  load & inspect lines - but, dont need to do this live - use git diff or some other diff tool to create a file, then visualize it? find a good diff tool!]
+keeping current - be aware of syntax changes and deprecations as well as new features
+Sourcing D3
+source from the web or download and source locally 
+general work, source from web [show include line]
+if you need or want to work offline (say for testing or dev), download and source locally [show include lines: plain & flask. tooltip & link the flask line to the discussion of the flask framework]
+in either case, be clear on which version you are using and test all features [link to discussion of unit tests and test harnesses] before changing versions
+the D3 object
+a video showing the use of the console and writing to the console log
+point out features and methods we will be using.
+      <label for="sn-1"
+       class="margin-toggle sidenote-number">
+       </label>
+       <input type="checkbox"
+       id="sn-1"
+       class="margin-toggle"/>
+      <span class="sidenote">This is supposed to be a margin note</span>
+Here is some more stuff after that margin note.
+</section>
+
+<section>
+<span class="newthought">This is some text for another section.</span>  There are more words here to fill out the page as well.
+    <label for="mn-demo" class="margin-toggle">&#8853;</label>
+    <input type="checkbox" id="mn-demo" class="margin-toggle"/>
+    <span class="marginnote">
+      This is a margin note. Notice there isn’t a number preceding the note.
+    </span>
+You might want to wordify it in some other way, but typing is what we have now.
+</section>
+</article>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--Put text in the subheader using d3 -->
+<script>
+   d3.select("#subheader")
+       .text("Learning D3");
+</script>
+
+
+<p>
+Based on: <a href='https://www.youtube.com/channel/UCNYL0ZF2j8-OSGZ4iHBLNPA' target=_blan\
+k>D3 Video Tutorials</a> by d3Vienno.
+</p>
+
+<!-- Put in viewer for the full outline -->
+D3 Tutorial outline 
+<ol>
+
+<li>D3 </li>
+<ul>
+What is D3? 
+<ol>
+<li>javascript library produced by ... providing methods for interacting with the DOM [tooltip defining DOM and linking to DOM discussion] </li>
+<li>single javascript file of xx lines / X (k or M)bytes </li>
+<li>version history - numbers and dates </li>
+<li>diff between current version and previous version [have to figure out how to do this:  load & inspect lines - but, dont need to do this live - use git diff or some other diff tool to create a file, then visualize it? find a good diff tool!] </li>
+<li>keeping current - be aware of syntax changes and deprecations as well as new features </li>
+</ol>
+Sourcing D3 
+<ol>
+<li>source from the web or download and source locally </li>
+<li>general work, source from web [show include line] </li>
+<li>if you need or want to work offline (say for testing or dev), download and source locally [show include lines: plain & flask. tooltip & link the flask line to the discussion of the flask framework] </li>
+<li>in either case, be clear on which version you are using and test all features [link to discussion of unit tests and test harnesses] before changing versions </li>
+</ol>
+the D3 object 
+<ol>
+<li> a video showing the use of the console and writing to the console log </li>
+<li>point out features and methods we will be using </li>
+</ol>
+</ul>
+
+<li> DOM </li>
+<ul>
+a quick tour of the Document Object Model
+interacting with the DOM
+replace : text replacement
+add : 
+remove :
+</ul>
+<li>SVG</li> 
+a brief description : vectors and containers
+
+
+<li>Putting it all together : using D3 to write SVG to the DOM</li>
+<ul>
+adding an svg container to the DOM
+adding shapes to the svg canvas: circle, rect, arc, path
+adding shapes to group object g
+transforming grouped shapes
+layering shapes: labeling shapes, overlapping shapes, venn diagrams, euler diagrams
+animating shapes
+using shapes and animation to customize common UI elements
+tool tip : modern browsers provide a tool tip for any object with a title, but there limitations: speed, appearance, content 
+forms, dropdowns, etc: style (css) & behavior
+</ul>
+
+<li>Data Driven Part 1: internally defined data shapes from a vector </li>
+<ul>
+min, max, and range
+Make charts:  bar chart (horizontal), histogram (vertical), scatterplot
+define the chart symbols
+scale the container to the symbols
+scale the symbols to the container
+add axes : draw, position, set ticks. set uneven ticks?
+Question - what d3 functions are avail for this? surely each chart isn't built of components like this?
+</ul>
+
+<li>Data Driven Part 2: externally sourced data</li>
+<ul>
+json and csv flat files
+database connection - d3? or python sqlalchemy?
+web scraping - data.gov, clintrials.gov, and ?
+advanced - access pdf from web and turn it into data (python? d3?)
+run the exercises from part 1 with the bigger data from part 2
+</ul>
+</ol>
+
+
+
+<article> <section>
+<ol>
+<li> <a href="{{url_for('d3_tutorial_intro')}}">Introduction</a></li>
+<li> <a href="{{url_for('d3_tutorial_select_and_append')}}" >Select and Append </a> </li>
+<li> Basic SVG Shapes </li>
+<li> Visualizing Data </li>
+<li> Scales </li>
+<li> Groups and Axes </li>
+<li> Enter Update Exit </li>
+<li> Transitions </li>
+<li> Working with Arrays </li>
+<li> Loading External Data </li>
+<li> Paths </li>
+<li> Arcs </li>
+<li> Pie Layout </li>
+<li> Tree Layout </li>
+<li> Cluster, Pack, & Bubble Layouts </li>
+<li> Histogram Layout </li>
+<li> Treemap Layout </li>
+<li> Maps </li>
+</ol>
+
+</section></article>
+
+
+
+{% endblock %}

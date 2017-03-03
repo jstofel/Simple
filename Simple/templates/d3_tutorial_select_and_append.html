@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+{% block body %}
+<!--Put linked text in the subheader using d3 -->
+<script>
+   d3.select("#subref")
+       .text("{{subtitle}}")
+       .attr("href", "{{url}}")       
+;
+</script>
+
+<article>
+<h2>{{pagename}}</h2>
+<section>
+<span class="newthought"> 
+This is some text</span> for one section.  We can go on and on here and add some more stuff to see how long it can get. 
+      <label for="mn_1" class="margin-toggle">&#8853;</label>
+       <input type="checkbox" id="mn-1" class="margin-toggle"/>
+      <span class="marginnote">
+         d3Vennio Tutorial 2: Select and Append Text. 
+	    <iframe width="400"  src="https://www.youtube.com/embed/qIIKw2RFNlU" frameborder="0" allowfullscreen></iframe>
+     </span>
+
+    <label for="mn-2" class="margin-toggle">&#8853;</label>
+    <input type="checkbox" id="mn-2" class="margin-toggle"/>
+    <span class="marginnote">
+     <a href="https://www.youtube.com/embed/qIIKw2RFNlU" target="_blank" >Ctrl-Click</a> to view the video in a separate page.
+    </span>
+</section>
+
+<section>
+      <label for="mn_3" class="margin-toggle">&#8853;</label>
+       <input type="checkbox" id="mn-1" class="margin-toggle"/>
+      <span class="marginnote">
+         d3Vennio Tutorial 3: SVG Graphics. 
+	    <iframe width="400"  
+		    src="https://www.youtube.com/embed/TR39nfAW1dw"
+		    frameborder="0" allowfullscreen></iframe>
+     </span>
+</section>
+
+
+<section>
+<span class="newthought">Use the try-it editor to see output as you write it.</span> 
+
+<table class="tryit" width="100%" border="0" cellspacing="5" cellpadding="5">
+    <tr>
+        <td width="50%" scope="col">
+            <input onclick="runCode();" type="button" class="tryit" value="Code">       
+        </td>
+        <td width="50%" align="left" scope="col">
+            <input  type="deadbutton" class="tryit" value="Output">       
+        </td>
+    </tr>
+    <tr>
+        <td> 
+            <form>
+                <textarea class="tryit" name="sourceCode" id="sourceCode">
+<!doctype html>
+<html>
+
+<head>
+   <title>D3 Tutorial</title>
+   <script src="http://d3js.org/d3.v3.min.js"> </script>
+</head>
+
+<body>
+<p>This is a paragraph.</p>
+  <script>
+    d3.select("p");
+
+  </script>
+
+</body>
+
+</html>
+                </textarea>
+            </form>
+        </td>
+        <td><iframe class="tryit" name="targetCode" id="targetCode"></iframe></td>
+    </tr>
+</table>  
+
+</section>
+
+</article>
+
+{% endblock %}
