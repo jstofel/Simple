@@ -14,8 +14,9 @@ import pandas as pd
 import json
 
 #==========================================================================
-##Import Python Functions and Forms Specific to this Application
+##Import Python Functions and Forms SPECIFIC TO THIS APPLICATION
 ##These functions and forms are in separate files for readability and portability
+## see app_functions.py, db_functions.py, and forms.py in the top level folder
 #==========================================================================
 
 import app_functions
@@ -25,7 +26,7 @@ import db_functions
 from db_functions import fatal, readPgpass, getPgDBnames, getSchemas, getTables, getTableNetwork
 
 import forms
-from forms import ContactForm, RegistrationForm, AddPage, UpdateContent
+from forms import ContactForm, RegistrationForm, AddPage, UpdateContent, DelPage
 
 #===========================================================================        
 ##Set Application-Level Static Variables Defined When the Server is Started
@@ -90,6 +91,27 @@ def index():
 			   content_width=100,
 			   viz_width=0
                            )
+#Define the delete page 
+@app.route('/del_page', methods=['POST'])
+def del_page():
+        #Define the form used on the page
+        form = DelPage(request.form)
+
+        #Get Page Id
+        page_id = getPageID(form, request)
+	if (page_id > 1):
+		#Connect to app database 
+		dbURL = readPgpass(app_name, user)
+		engine = create_engine(dbURL)
+		conn = engine.connect()
+
+                dsql1 = "delete from public.page_content where page_id = %s " % page_id;
+                dsql2 = "delete from public.page where page_id = %s " % page_id;
+
+                conn.execute(dsql1)
+		conn.execute(dsql2)
+                #Go to main index page so you can see what you have just done
+                return redirect(url_for('index'))
 
 #Define the content page : this is the standard default page for any page with content in it 
 @app.route('/content', methods=['GET', 'POST'])

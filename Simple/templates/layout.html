@@ -24,7 +24,22 @@
 
 <div id="header">
   <h1><a href="{{url_for('index')}}"> {{project_name}} </a> </h1>
-     <div id="subheader">{{pageInfo['page_title'][0]}}</div>
+     <div id="subheader" style='float:left; width:70%;'>
+       {{pageInfo['page_title'][0]}}
+    </div>
+
+{% if pageInfo['page_id'][0] > 1 %}
+     <div style='float:right; width:20%;'>
+       <form id="DelPage" action="{{url_for('del_page')}}" method=POST> 
+	 <input type="submit" id="delPageButton" value="Delete Page" style="width:8rem" >
+		<!--onClick="alert('Delete PageID ' + {{pageInfo['page_id'][0]}}  )   "-->
+	 <input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
+	 <input type = "hidden" name="page_target" value="{{pageInfo['page_target'][0]}}" >
+	 <input type = "hidden" name="database" value="{{dbname}}" >
+       </form>
+     </div>
+{% endif %}
+
 </div>
 
 <!--Add a place to put flashed messages. 

@@ -24,6 +24,10 @@ class AddPage(Form):
   new_page_title = TextField("Page Title")
   submit = SubmitField("Save")
 
+class DelPage(Form):
+  page_id = HiddenField("Page_id")
+  submit = SubmitField("Delete")
+
 class UpdateContent(Form):
   page_id = HiddenField("Page_id")
   page_target = HiddenField("page_target")
