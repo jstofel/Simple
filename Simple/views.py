@@ -25,6 +25,9 @@ from app_functions import getPageID, pageNav, getPageInfo, getPageContent, postP
 import db_functions
 from db_functions import fatal, readPgpass, getPgDBnames, getSchemas, getTables, getTableNetwork
 
+import network_functions
+from network_functions import createNetwork
+
 import forms
 from forms import ContactForm, RegistrationForm, AddPage, UpdateContent, DelPage
 
@@ -255,7 +258,7 @@ def seemedb():
     #flash(schema_id_list)
 
     #flash(type(network_dict))
-    #flash(network_dict)
+    flash(network_dict)
     
     #import json
     #mjson = json.loads(json_dump)

@@ -28,7 +28,7 @@
        {{pageInfo['page_title'][0]}}
     </div>
 
-{% if pageInfo['page_id'][0] > 1 %}
+{% if pageInfo['page_id'][0] > 1000 %}
      <div style='float:right; width:20%;'>
        <form id="DelPage" action="{{url_for('del_page')}}" method=POST> 
 	 <input type="submit" id="delPageButton" value="Delete Page" style="width:8rem" >
