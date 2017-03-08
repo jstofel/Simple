@@ -3,8 +3,8 @@
 <style>
 
 .node {
-  stroke: #fff;
-  stroke-width: 1.5px;
+  stroke: #fff;  
+  stroke-width: .5px;
 }
 
 .node text {
@@ -50,12 +50,30 @@ d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
       .links(graph.links)
       .start();
 
-  //Create links as shape line with width as square-root of the weight value
+
+  // build directional arrow for marker end
+     svg.append("svg:defs").selectAll("marker")
+       .data(["end"])      // Different link/path types can be defined here
+       .enter().append("svg:marker")    // This section adds in the arrows
+       .attr("id", function(d) {return d; } )   //was set to String in original example - not sure what this does!
+       .attr("viewBox", "0 -5 10 10")       
+       .attr("refX", 20)                    //setting to 20 means arrow touches outside of node when node radius is set to 8.  should be a variable
+       .attr("refY", 0)                    //Setting refY to 0 centers arrow tip on line
+       .attr("markerWidth", 10)
+       .attr("markerHeight", 10)
+       .attr("orient", "auto")
+       .append("svg:path")
+       .attr("d", "M0,-5L10,0L0,5");
+
+  //Create links as shape line, with width as square-root of the weight value, and marker end defined
   var link = svg.selectAll(".link")
       .data(graph.links)
       .enter().append("line")
       .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+      .style("marker-end",  "url(#end)") 
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); 
+
+});
 
   //Create the nodes : use the g ("group") object as a placeholder - this will be a group of circle and text
   var node = svg.selectAll(".node")
@@ -93,7 +111,7 @@ d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
 
 
 
-//Now we are giving the SVGs co-ordinates - the force layout is generating the co-ordinates which this code is using to update the attributes of the SVG elements
+//Give the co-ordinates for the node and line objects- the force layout generates the co-ordinates used here to update the attributes of the SVG elements
 force.on("tick", function () {
     link.attr("x1", function (d) {
         return d.source.x;
@@ -121,7 +139,6 @@ force.on("tick", function () {
     });
 
    });
-
 
 });
 
