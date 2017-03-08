@@ -20,15 +20,16 @@
 </style>
 <body>
 
-<div id="show_net" style="width:70%; float:left;background-color:lightgrey">
+<div id="show_net" style="float:left;border-style:solid;border-width:2px;">
 
  </div>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
-var width = 300,
-    height = 300;
+var width = 250,
+    height = 250
+    radius = 10 ;
 
 var color = d3.scale.category20();
 
@@ -57,10 +58,10 @@ d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
        .enter().append("svg:marker")    // This section adds in the arrows
        .attr("id", function(d) {return d; } )   //was set to String in original example - not sure what this does!
        .attr("viewBox", "0 -5 10 10")       
-       .attr("refX", 20)                    //setting to 20 means arrow touches outside of node when node radius is set to 8.  should be a variable
+       .attr("refX", 2.5*radius)           //setting to 2.5 * radius sets arrow to touch outside of node, at least approx
        .attr("refY", 0)                    //Setting refY to 0 centers arrow tip on line
-       .attr("markerWidth", 10)
-       .attr("markerHeight", 10)
+       .attr("markerWidth", 7)
+       .attr("markerHeight", 7)
        .attr("orient", "auto")
        .append("svg:path")
        .attr("d", "M0,-5L10,0L0,5");
@@ -84,7 +85,7 @@ d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
 
  //Append to the node a circle object of radius 8 and color by group 
   node.append("circle")
-    .attr("r", 8)
+    .attr("r", radius)
     .style("fill", function (d) {
     return color(d.group);
   })
