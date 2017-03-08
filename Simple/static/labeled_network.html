@@ -50,27 +50,35 @@ d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
       .links(graph.links)
       .start();
 
-  //Show the links as shape line with width as square-root of the weight value
+  //Create links as shape line with width as square-root of the weight value
   var link = svg.selectAll(".link")
       .data(graph.links)
       .enter().append("line")
       .attr("class", "link")
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
-  //Show the nodes as shape circle of radius 5, colored by group
-var node = svg.selectAll(".node")
+  //Create the nodes : use the g ("group") object as a placeholder - this will be a group of circle and text
+  var node = svg.selectAll(".node")
     .data(graph.nodes)
     .enter().append("g")
     .attr("class", "node")
     .call(force.drag);
-node.append("circle")
+
+ //Append to the node a circle object of radius 8 and color by group 
+  node.append("circle")
     .attr("r", 8)
     .style("fill", function (d) {
     return color(d.group);
-})
-node.append("text")
-      .attr("dx", 10)
-      .attr("dy", ".35em")
+  })
+
+ //Append to the node a text object, with relative x and y locations (dx dy) relative to the node center x and y.  
+ // Note that the relative directions are to the right for x, and down for y 
+ // Also note that the y text aligns the bottom of the text. So, if you want to align the center of the text height
+ // with the center of the node circle, you will want to push it down by, say, 0.25rem (see note below) 
+
+  node.append("text")
+      .attr("dx", 15)
+      .attr("dy", 0 ) /*use "0.25rem" to vertical align the text with the circle center **/
       .text(function(d) { return d.name })
       .style("stroke", "black");
 
