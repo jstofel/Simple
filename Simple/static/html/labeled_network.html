@@ -43,7 +43,7 @@ var svg = d3.select("#show_net").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
+d3.json("http://localhost:5000/static/html/graphFile.json", function(error, graph) {
   if (error) throw error;
 
   force
