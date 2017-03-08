@@ -258,7 +258,7 @@ def seemedb():
     #flash(schema_id_list)
 
     #flash(type(network_dict))
-    flash(network_dict)
+    #flash(network_dict)
     
     #import json
     #mjson = json.loads(json_dump)

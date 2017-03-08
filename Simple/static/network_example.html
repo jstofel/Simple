@@ -14,11 +14,16 @@
 
 </style>
 <body>
+
+<div id="show_net" style="width:50%; float:left;background-color:lightgrey">
+
+ </div>
+
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
-var width = 960,
-    height = 500;
+var width = 300,
+    height = 300;
 
 var color = d3.scale.category20();
 
@@ -27,11 +32,11 @@ var force = d3.layout.force()
     .linkDistance(30)
     .size([width, height]);
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#show_net").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("pcap_export.json", function(error, graph) {
+d3.json("http://localhost:5000/static/graphFile.json", function(error, graph) {
   if (error) throw error;
 
   force
@@ -39,22 +44,42 @@ d3.json("pcap_export.json", function(error, graph) {
       .links(graph.links)
       .start();
 
+  //Show the links as shape line with width as square-root of the weight value
   var link = svg.selectAll(".link")
       .data(graph.links)
-    .enter().append("line")
+      .enter().append("line")
       .attr("class", "link")
       .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
+  //Show the nodes as shape circle of radius 5, colored by group
   var node = svg.selectAll(".node")
       .data(graph.nodes)
-    .enter().append("circle")
+      .enter().append("circle")
       .attr("class", "node")
       .attr("r", 5)
       .style("fill", function(d) { return color(d.group); })
       .call(force.drag);
 
+  /* Add the name of the node as title, so the browser will show as tooltip
+   Note, however, that browser-native tooltip functions are usually slow -- you
+   have to leave the cursor over the node for 1 second, for example, which means
+   that unless your user knows it is there they will probably not leave the cursor
+   in place long enough to see it
+  */
+
   node.append("title")
       .text(function(d) { return d.name; });
+
+  /* Add the name of the node as label, so the contents are clear. This works well for 
+    a small network, but you'd need something different for a large one -- combine 
+    with fisheye, for example 
+  */
+
+  node.append("text")
+      .attr("dx", 10)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name })
+      .style("stroke", "gray");
 
   force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x; })
