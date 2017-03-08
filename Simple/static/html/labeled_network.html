@@ -83,7 +83,7 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
     .attr("class", "node")
     .call(force.drag);
 
- //Append to the node a circle object of radius 8 and color by group 
+ //Append to the node a circle object with specified radius and color by group 
   node.append("circle")
     .attr("r", radius)
     .style("fill", function (d) {
@@ -112,7 +112,7 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
 
 
 
-//Give the co-ordinates for the node and line objects- the force layout generates the co-ordinates used here to update the attributes of the SVG elements
+//Give the coordinates for the node and line objects- the force layout generates the coordinates used to update the attributes of the SVG elements
 force.on("tick", function () {
     link.attr("x1", function (d) {
         return d.source.x;
