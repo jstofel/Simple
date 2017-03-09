@@ -101,7 +101,7 @@
   -->
 
 <!-- local scripts for this app-->
-  <script type="text/javascript" src="{{ url_for('static', filename='scripts.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
 
  <!--Showdown: converts markdown to html https://github.com/showdownjs/showdown -->
  <!-- loaded at top of page script src="https://cdn.rawgit.com/showdownjs/showdown/1.5.5/dist/showdown.min.js"></script-->
@@ -120,7 +120,7 @@
     //Show the Table network. This is also a local function in scripts.js
       showNetworkD3({{network_dict|safe}})
                     
-   }
+   } //end of window onload functions
 </script>
  
  

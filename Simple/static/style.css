@@ -6,6 +6,11 @@ charset "UTF-8";
   stroke-width: 1.5px;
 }
 
+.node text {
+  font-size: 0.75rem;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
 .link {
   stroke: #999;
   stroke-opacity: .6;

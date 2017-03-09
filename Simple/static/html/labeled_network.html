@@ -20,23 +20,27 @@
 </style>
 <body>
 
-<div id="show_net" style="float:left;border-style:solid;border-width:2px;">
+<!--Create a Div in which the Graphics are displayed-->
+<div id="show_net" style="float:left;border-style:solid;border-width:2px;"> </div>
 
- </div>
-
+<!--Load D3.  Using version 3 because of how the color scale is used -->
 <script src="http://d3js.org/d3.v3.min.js"></script>
+
+<!-- Create the Custom Script that uses D3 elements to create the diagram & display as desired -->
 <script>
 
 var width = 250,
     height = 250
-    radius = 10 ;
+    radius = 10 
+    markerht = 10
+    markerwth = 10;
 
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
     .gravity(.05)
-    .distance(100)
     .charge(-100)
+    .distance(100)
     .size([width, height]);
 
 var svg = d3.select("#show_net").append("svg")
@@ -56,12 +60,12 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
      svg.append("svg:defs").selectAll("marker")
        .data(["end"])      // Different link/path types can be defined here
        .enter().append("svg:marker")    // This section adds in the arrows
-       .attr("id", function(d) {return d; } )   //was set to String in original example - not sure what this does!
+       .attr("id", function(d) {return d; } )   
        .attr("viewBox", "0 -5 10 10")       
-       .attr("refX", 2.5*radius)           //setting to 2.5 * radius sets arrow to touch outside of node, at least approx
+       .attr("refX", markerwth + radius)           //Sets arrow to touch outside of node, at least approx
        .attr("refY", 0)                    //Setting refY to 0 centers arrow tip on line
-       .attr("markerWidth", 7)
-       .attr("markerHeight", 7)
+       .attr("markerWidth", markerwth)
+       .attr("markerHeight", markerht)
        .attr("orient", "auto")
        .append("svg:path")
        .attr("d", "M0,-5L10,0L0,5");
@@ -84,11 +88,13 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
     .call(force.drag);
 
  //Append to the node a circle object with specified radius and color by group 
+
+
   node.append("circle")
     .attr("r", radius)
-    .style("fill", function (d) {
-    return color(d.group);
-  })
+    .style("fill", function (d) {    return color(d.group); })
+
+
 
  //Append to the node a text object, with relative x and y locations (dx dy) relative to the node center x and y.  
  // Note that the relative directions are to the right for x, and down for y 
@@ -101,7 +107,7 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
       .text(function(d) { return d.name })
       .style("stroke", "black");
 
-
+/*
   var node = svg.selectAll(".node")
       .data(graph.nodes)
       .enter().append("circle")
@@ -109,35 +115,24 @@ d3.json("http://localhost:5000/static/html/graphFile.json", function(error, grap
       .attr("r", 5)
       .style("fill", function(d) { return color(d.group); })
       .call(force.drag);
+*/
 
 
-
-//Give the coordinates for the node and line objects- the force layout generates the coordinates used to update the attributes of the SVG elements
+//Give the coordinates for the node and line objects
+// the force layout generates the coordinates used to update the attributes of the SVG elements
 force.on("tick", function () {
-    link.attr("x1", function (d) {
-        return d.source.x;
-    })
-        .attr("y1", function (d) {
-        return d.source.y;
-    })
-        .attr("x2", function (d) {
-        return d.target.x;
-    })
-        .attr("y2", function (d) {
-        return d.target.y;
-    });
-    d3.selectAll("circle").attr("cx", function (d) {
-        return d.x;
-    })
-        .attr("cy", function (d) {
-        return d.y;
-    });
-    d3.selectAll("text").attr("x", function (d) {
-        return d.x;
-    })
-        .attr("y", function (d) {
-        return d.y;
-    });
+    link.attr("x1", function (d) {        return d.source.x; })
+        .attr("y1", function (d) {        return d.source.y; })
+        .attr("x2", function (d) {        return d.target.x; })
+        .attr("y2", function (d) {        return d.target.y; });
+
+    d3.selectAll("circle")
+        .attr("cx", function (d) {        return d.x; })
+        .attr("cy", function (d) {        return d.y; });
+
+    d3.selectAll("text")
+        .attr("x", function (d) {         return d.x; })
+        .attr("y", function (d) {         return d.y; });
 
    });
 
