@@ -55,4 +55,15 @@
 	<div id="show_network"  class="" style="float:left">  </div> 
 </div>
 
+
+
+<!-- local scripts for this app-->
+  <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
+
+  <script>
+    //Show the Table network. This is a local function in local_scripts.js
+      showNetworkD3({{network_dict|safe}})
+  </script>
+
+
 {% endblock %}

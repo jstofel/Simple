@@ -69,6 +69,35 @@ def index():
         engine = create_engine(dbURL)
         conn = engine.connect()
 
+	#====Get List of Pages as A Node List ==#
+	tnq = "select page_name as name, 1 as group from page order by page_id; "
+	node_proxy = conn.execute(tnq)
+	node_list = [dict(r) for r in node_proxy]
+
+	#===Get List of Relationships as Link List ==#
+	#   Assign index number to pages ordered by page id
+	iq = "select row_number() over (order by page_id nulls last) - 1 as idx"
+	iq += ", page_id , page_name from page"
+
+	#   Assign the source and targets by index number
+	lq = "select s.idx as source, t.idx as target, 1 as weight from "
+	lq += " page_relation r"
+	lq += " join ("+iq+") as s on s.page_id = r.src_page_id " 
+	lq += " join ("+iq+") as t on t.page_id = r.tgt_page_id " 
+
+	link_proxy = conn.execute(lq)
+	link_list = [dict(r) for r in link_proxy]
+
+	from collections import defaultdict
+	d = defaultdict(list)
+	for n in node_list:
+		d["nodes"].append(n)
+	for l in link_list:
+		d["links"].append(l)
+
+	network_dict = json.dumps(d)
+	#flash(d)
+
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
 
@@ -90,6 +119,7 @@ def index():
                            project_name = app_name, 
                            page_id=page_id,
                            pageInfo = pageInfo,
+			   network_dict = network_dict,
                            form=form,
 			   content_width=100,
 			   viz_width=0

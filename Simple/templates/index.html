@@ -42,7 +42,8 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
    </div>
  </div>
 
-  <!-- Show ordered list of page names out of the pageInfo dataframe. The 0th record is the index title, so not included in list-->
+  <!-- Show ordered list of page names out of the pageInfo dataframe. The 0th record is the index title, so not included in list--->
+<div class="" style="float:left; width:25%">
   <ol>
   {% for i in pageInfo.index %}
    {% if i > 0 %}
@@ -52,10 +53,11 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
    {% endif %}
   {% endfor %}
   </ol>
+</div>
 
 <!-- Show Page Names as a Network Diagram -->
 
-<div class="" style="float:left; width:55%">
+<div class="" style="float:left; width:45%">
        <!--This is the div where the network is attached-->
        <!--This empty div is populated with the function showNetworkD3 called in the layout template -->
        <!--A network is only shown if a network dict is supplied via the views.py definition -->
@@ -64,4 +66,14 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 </div>
 
 
+<!-- local scripts for this app-->
+  <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
+
+  <script>
+    //Show the Table network. This is a local function in local_scripts.js
+      showNetworkD3({{network_dict|safe}})
+  </script>
+
+
 {% endblock %}
+
