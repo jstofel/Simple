@@ -30,13 +30,13 @@ def pageNav(a):
 
 def getPageInfo(page_id, conn):
     if int(page_id) > 0:
-        psql = "select * from public.page where page_id = %s " % (page_id);
+        psql = "select page_id, page_name, page_title, page_template from public.page where page_id = %s " % (page_id);
     else:
-        psql = "select * from public.page order by page_id";
+        psql = "select page_id, page_name, page_title, page_template from public.page order by page_id";
     result = conn.execute(psql);
     fetchall = result.fetchall()
     import pandas as pd
-    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_target'])
+    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template'])
     return pageInfo
 
 def getPageContent(page_id, conn):
@@ -57,7 +57,7 @@ def postPageContent(page_id, form, conn):
     #Get content that has been submitted via the form                                         
     new_content_md = form.content_md.data
     content_id = form.content_id.data
-    target = form.page_target.data
+    target = form.page_template.data
 
     if new_content_md is not None:
         if (len(new_content_md.strip()) > 0):

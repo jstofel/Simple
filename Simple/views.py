@@ -26,7 +26,7 @@ import db_functions
 from db_functions import fatal, readPgpass, getPgDBnames, getSchemas, getTables, getTableNetwork
 
 import network_functions
-from network_functions import createNetwork
+from network_functions import createNetworkFromDB
 
 import forms
 from forms import ContactForm, RegistrationForm, AddPage, UpdateContent, DelPage
@@ -78,7 +78,7 @@ def index():
             new_page_name = form.new_page_name.data
             new_page_title = form.new_page_title.data
             if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title, page_target)";
+                newsql = "insert into public.page (page_name, page_title, page_template)";
                 newsql += "Values ('%s', '%s', '%s') ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
                 conn.execute(newsql)
                 #Refresh Page so you can see what you have just done
@@ -146,7 +146,7 @@ def content():
         didPost = postPageContent(page_id, form, conn)
 
         if (didPost):
-            return redirect(url_for(form.page_target.data, page_id = page_id ))
+            return redirect(url_for(form.page_template.data, page_id = page_id ))
 
    #All done?  Open the web page!                                                         
    return render_template('content.html', 
@@ -213,7 +213,7 @@ def seemedb():
     #====Get content that has been submitted via the form and post it
     didPost = postPageContent(page_id, form, conn)
     if (didPost):
-        return redirect(url_for(form.page_target.data, page_id = page_id, database=dbname ))
+        return redirect(url_for(form.page_template.data, page_id = page_id, database=dbname ))
 
     #======================================
     #The code for showing Database info
@@ -301,6 +301,66 @@ def seemedb():
                            )
 
 
+
+
+#==================================================
+#Define the content for the JsonDB page
+#  This page is the same as content, but with code added 
+#=================================================
+@app.route('/jsondb', methods=['GET', 'POST'])
+def jsondb():
+   #Define the WTF form used
+   form = UpdateContent(request.form)
+
+   #Get Page Id
+   page_id = getPageID(form, request)
+
+   #Connect to app database so you can get the page content out of the database
+   dbURL = readPgpass(app_name, user)
+   engine = create_engine(dbURL)
+   conn = engine.connect()
+
+   #For jsondb, query db to get the nodes/links json dict for a network
+
+
+   #Determine the that page has been requested
+   #If no page, go back to home
+   if request.args.get('page_id') is None:
+       return redirect(url_for('index'))
+   #Otherwise...
+   else:
+        #=======Get the Page Info as a DataFrame
+        pageInfo = getPageInfo(page_id, conn)
+
+        #======Get Page Contents (Text) as DataFrame
+        pageContent = getPageContent(page_id, conn)
+
+        #====Get content that has been submitted via the form and post it
+        didPost = postPageContent(page_id, form, conn)
+
+        if (didPost):
+            return redirect(url_for(form.page_template.data, page_id = page_id ))
+
+   #All done?  Open the web page!                                                         
+   return render_template('content.html', 
+                           project_name = app_name, 
+                           page_id=page_id,
+                           pageInfo=pageInfo,
+                           pageContent = pageContent,
+                           dbname='',
+                           form=form,
+			   content_width=80,
+			   code_width=0,
+			   viz_width = 0
+                           )
+
+
+
+
+
+#==================================================
+#Define the Register page 
+#=================================================
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     #Determine what page has been requested

@@ -30,7 +30,7 @@ class DelPage(Form):
 
 class UpdateContent(Form):
   page_id = HiddenField("Page_id")
-  page_target = HiddenField("page_target")
+  page_template = HiddenField("page_template")
   content_id = HiddenField("Content_id")
   database = HiddenField("database")
   content_md = TextField("Content Markdown")
