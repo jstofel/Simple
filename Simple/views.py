@@ -70,13 +70,13 @@ def index():
         conn = engine.connect()
 
 	#====Get List of Pages as A Node List ==#
-	tnq = "select page_name as name, 1 as group from page order by page_id; "
+	tnq = "select page_name as name, 1 as group from page order by page_order; "
 	node_proxy = conn.execute(tnq)
 	node_list = [dict(r) for r in node_proxy]
 
 	#===Get List of Relationships as Link List ==#
-	#   Assign index number to pages ordered by page id
-	iq = "select row_number() over (order by page_id nulls last) - 1 as idx"
+	#   Assign index number to ordered pages 
+	iq = "select row_number() over (order by page_order nulls last) - 1 as idx"
 	iq += ", page_id , page_name from page"
 
 	#   Assign the source and targets by index number

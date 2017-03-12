@@ -30,13 +30,13 @@ def pageNav(a):
 
 def getPageInfo(page_id, conn):
     if int(page_id) > 0:
-        psql = "select page_id, page_name, page_title, page_template from public.page where page_id = %s " % (page_id);
+        psql = "select page_id, page_name, page_title, page_template, page_level from public.page where page_id = %s " % (page_id);
     else:
-        psql = "select page_id, page_name, page_title, page_template from public.page order by page_id";
+        psql = "select page_id, page_name, page_title, page_template, page_level from public.page order by page_order";
     result = conn.execute(psql);
     fetchall = result.fetchall()
     import pandas as pd
-    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template'])
+    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template', 'page_level'])
     return pageInfo
 
 def getPageContent(page_id, conn):

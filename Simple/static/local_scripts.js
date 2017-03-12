@@ -80,9 +80,14 @@ function showSampleD3(radius=50) {
 }
 
 
-function showNetworkD3(graph,ormtgt="#show_network") {
+function showNetworkD3(graph,ormtgt="#show_network",width=0,height=0,radius=10,markerht=10,markerwth=10) {
   if (typeof graph != "undefined") {
 
+      if ((width > 0) && (height == 0)) {
+	  var height = width;
+      } else if ((width == 0) && (height > 0)) {
+	  var height = width;
+      } else if ((width == 0) && (height==0))  {
        //Count nodes in graph to get an idea of size
 	var gsize = graph.nodes.length;
        //Set height & wdth based on graph size
@@ -91,8 +96,12 @@ function showNetworkD3(graph,ormtgt="#show_network") {
 	} else {
 	    var width = 250, height = 250;
 	}
+      }
+
+      //alert("ht "+height+" wth:"+width)
+
        //Set node and marker sizes
-	var radius = 10, markerht = 10, markerwth = 10;
+      //var radius = 10, markerht = 10, markerwth = 10;
        //Set color scale (works only in d3 version 3)
 	var color = d3.scale.category20();
        //Make an SVG object and attach it to the named ORM target
@@ -103,7 +112,7 @@ function showNetworkD3(graph,ormtgt="#show_network") {
 	var force = d3.layout.force()
 	    .gravity(.05)
 	    .charge(-100)
-	    .distance(100)
+	    .distance(radius * 10)
 	    .size([width, height]);
 
 	force

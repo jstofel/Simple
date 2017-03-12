@@ -1,68 +1,64 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<!--This is the template for page content. It has the following parameters:
-pageresult:  a SQl Alxchemy ResultProxy object. This is the result of a sql
-             query on the Page table, containing data that is 'like' the 
-	     columns and rows of a table. See the manual for all methods to 
-	     access data from this object. The specific methods used in this
-	     template are:
-	     1. fetchone() is used in the layout template to get the page title
-	          from the first record in the object (the title of the index page)
-		  and put it in the subheader. This method moves the cursor to the
-		  next record, so the next method (the jinja for loop) starts there
-	     2. for o in pageresult:  gets each remaining row in turn. Used to
-	          display the list of the rest of the pages (after the index page).
-	     3. rowcount: counts the number of rows in the object
-	     See documentation for, say, the fetchone method, at 
-http://docs.sqlalchemy.org/en/latest/core/connections.html?highlight=fetchone#sqlalchemy.engine.ResultProxy.fetchone
-Note that the ResultProxy object "Wraps a DB-API cursor object to provide easier access to row columns."
-and the methods are DBA-API cursor methods... They seem to only go forward, not backward on stay in place.
--->
-
- <div id="addPageSectionDiv" class=""  style='float:right; width:30%;'>
-   <div style='float:right; width=90%'>
+<!-- Add a form to add a new page -->
+<div class="border" style="float:left; width:25%">
+ <div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
+   <div style='float:left; width=90%'>
     <input type='button' id='showAddPage' value='Add Page' style='width:9rem' 
 	   onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
    </div>
 
-   <!-- Add a form to add a new page -->
    {% from "_formhelpers.html" import render_field %}
 
    <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
     <form id = "addPage" action="{{url_for('index')}}" method=POST>
-       <div style='float:right'>  {{ form.submit }} </div>
+       <div style='float:left'>  {{ form.submit }} </div>
        <br>
        <dl>
        {{ render_field(form.new_page_name) }} 
        {{ render_field(form.new_page_title) }}
+       {{ render_field(form.new_page_after) }}
+       {{ render_field(form.new_page_level) }}
        </dl>
        <input type = "hidden" name="page_id" value="{{page_id}}" >
     </form>
    </div>
  </div>
-
-  <!-- Show ordered list of page names out of the pageInfo dataframe. The 0th record is the index title, so not included in list--->
-<div class="" style="float:left; width:25%">
-  <ol>
+ <div style='clear:both'></div>
+ <!-- Show ordered list of page names out of the pageInfo dataframe.-->
+ <ol>
   {% for i in pageInfo.index %}
-   {% if i > 0 %}
-     <li>  
+
+    {% if pageInfo['page_level'][i] == 1 %}
+       {% if pageInfo['page_id'][i] == 1 %}
+         <li>  
+	   <a href="/">{{pageInfo['page_name'][i]}}</a>  
+	 </li>
+       {% endif %}
+       {% if pageInfo['page_id'][i] > 1 %}
+         <li>  
+	   <a href="/{{pageInfo['page_template'][i]}}?page_id={{pageInfo['page_id'][i]}}">{{pageInfo['page_name'][i]}}</a>  
+	 </li>
+       {% endif %}
+    {% endif %}
+    {% if pageInfo['page_level'][i] == 2 %}
+     <ul><li>  
       <a href="/{{pageInfo['page_template'][i]}}?page_id={{pageInfo['page_id'][i]}}">{{pageInfo['page_name'][i]}}</a>  
-     </li>
-   {% endif %}
+     </li></ul>
+    {% endif %}
+
   {% endfor %}
   </ol>
 </div>
 
 <!-- Show Page Names as a Network Diagram -->
-
 <div class="" style="float:left; width:45%">
        <!--This is the div where the network is attached-->
        <!--This empty div is populated with the function showNetworkD3 called in the layout template -->
        <!--A network is only shown if a network dict is supplied via the views.py definition -->
 
-        <div id="show_network"  class="" style="float:left">  </div>
+        <div id="show_network"  class="border" style="float:left">  </div>
 </div>
 
 
@@ -71,7 +67,7 @@ and the methods are DBA-API cursor methods... They seem to only go forward, not 
 
   <script>
     //Show the Table network. This is a local function in local_scripts.js
-      showNetworkD3({{network_dict|safe}})
+      showNetworkD3({{network_dict|safe}}, ormtgt="#show_network", width=600, height=350, radius=10)
   </script>
 
 

@@ -22,6 +22,8 @@ class AddPage(Form):
   page_id = HiddenField("Page_id")
   new_page_name = TextField("Page Name")
   new_page_title = TextField("Page Title")
+  new_page_after = TextField("After Page (Name)")
+  new_page_level = TextField("Page Level (1 or 2)")
   submit = SubmitField("Save")
 
 class DelPage(Form):
