@@ -59,10 +59,10 @@ app.config['DEFAULT_PARSERS'] = [
 @app.route('/', methods=['GET', 'POST'])
 def index():
         #Define the form used on the page
-        form = AddPage(request.form)
+        pageform = AddPage(request.form)
 
         #Get Page Id
-        page_id = getPageID(form, request)
+        page_id = getPageID(pageform, request)
 
         #Connect to app database for information on pages and content out of the database
         dbURL = readPgpass(app_name, user)
@@ -104,8 +104,8 @@ def index():
         #=============================================
         #Find out if you have any results ("add new page") to write backk
         if request.method == 'POST':
-            new_page_name = form.new_page_name.data
-            new_page_title = form.new_page_title.data
+            new_page_name = pageform.new_page_name.data
+            new_page_title = pageform.new_page_title.data
             if (len(new_page_name.strip()) > 0):
                 newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
                 newsql += "Values ('%s', '%s', '%s', 1) ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
@@ -122,7 +122,7 @@ def index():
                            page_id=page_id,
                            pageInfo = pageInfo,
 			   network_dict = network_dict,
-                           form=form,
+                           pageform=pageform,
 			   content_width=100,
 			   viz_width=0
                            )
