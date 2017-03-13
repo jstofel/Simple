@@ -98,7 +98,7 @@ def index():
 	network_dict = json.dumps(d)
 	#flash(d)
 
-        #=======Get the Page Info as a DataFrame
+        #=======Get the Page Info as a DataFrame-- Used to Show Pages as Table of Contents
         pageInfo = getPageInfo(page_id, conn)
 
         #=============================================
@@ -121,9 +121,10 @@ def index():
                            project_name = app_name, 
                            page_id=page_id,
                            pageInfo = pageInfo,
+			   tocInfo = pageInfo,
 			   network_dict = network_dict,
                            pageform=pageform,
-			   content_width=100,
+			   content_width=75,
 			   viz_width=0
                            )
 #Define the delete page 
@@ -170,6 +171,7 @@ def content():
    else:
         #=======Get the Page Info as a DataFrame
         pageInfo = getPageInfo(page_id, conn)
+	tocInfo = getPageInfo(0, conn)
 
         #======Get Page Contents (Text) as DataFrame
         pageContent = getPageContent(page_id, conn)
@@ -185,10 +187,11 @@ def content():
                            project_name = app_name, 
                            page_id=page_id,
                            pageInfo=pageInfo,
+			   tocInfo=tocInfo,
                            pageContent = pageContent,
                            dbname='',
                            form=form,
-			   content_width=80,
+			   content_width=75,
 			   code_width=0,
 			   viz_width = 0
                            )
@@ -238,6 +241,7 @@ def seemedb():
 
     #=======Get Page Info as DataFrame
     pageInfo = getPageInfo(page_id, conn)
+    tocInfo = getPageInfo(0, conn)
 
     #======Get Page Contents (Text) as DataFrame
     pageContent = getPageContent(page_id, conn)
@@ -313,6 +317,7 @@ def seemedb():
                            project_name = app_name, 
                            page_id = page_id ,
                            pageInfo = pageInfo,
+			   tocInfo = tocInfo,
                            pageContent=pageContent,
                            dbname=dbname, 
                            username=user, numschema=numschema,
@@ -326,8 +331,8 @@ def seemedb():
 			   network_str = json_dump,
 			   radius=radius,
 			   schema_id_list = schema_id_list,
-			   content_width=40,
-			   viz_width=58
+			   content_width=38,
+			   viz_width=38
 			   
 
                            )

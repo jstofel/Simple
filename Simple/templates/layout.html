@@ -63,6 +63,34 @@
 
 <div >
 
+<!--Table of Contents - Left Nav -->
+
+<div class='border' style='float:left; width:20%; margin:10px'>
+<ol>
+  {% for i in tocInfo.index %}
+
+    {% if tocInfo['page_level'][i] == 1 %}
+       {% if tocInfo['page_id'][i] == 1 %}
+         <li>
+           <a href="/">{{tocInfo['page_name'][i]}}</a>
+         </li>
+       {% endif %}
+       {% if tocInfo['page_id'][i] > 1 %}
+         <li>
+           <a href="/{{tocInfo['page_template'][i]}}?page_id={{tocInfo['page_id'][i]}}">{{tocInfo['page_name'][i]}}</a>
+         </li>
+       {% endif %}
+    {% endif %}
+    {% if tocInfo['page_level'][i] == 2 %}
+     <ul><li>
+      <a href="/{{tocInfo['page_template'][i]}}?page_id={{tocInfo['page_id'][i]}}">{{tocInfo['page_name'][i]}}</a>
+     </li></ul>
+    {% endif %}
+
+  {% endfor %}
+  </ol>
+</div>
+
 
 <!--Word Content on Left -->
 <div class='' style='float:left; width:{{content_width}}%; margin-bottom:5rem; padding:0.5rem;'>
