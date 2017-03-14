@@ -30,7 +30,8 @@ def pageNav(a):
 
 def getPageInfo(page_id, conn):
     if int(page_id) > 0:
-        psql = "select page_id, page_name, page_title, page_template, page_level from public.page where page_id = %s " % (page_id);
+        psql = "select p.page_id, p.page_name, p.page_title, p.page_template, p.page_level from public.page p "
+        psql += "where p.page_id = %s " % (page_id);
     else:
         psql = "select page_id, page_name, page_title, page_template, page_level from public.page order by page_order";
     result = conn.execute(psql);

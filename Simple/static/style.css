@@ -20,8 +20,8 @@ charset "UTF-8";
 div.solid {border-style: solid; border-width: 2px; margin-right: 5%;  }
 div.border {border-style: solid; border-width: 1px; background-color:lightblue;margin:0.5rem; padding-left:0.3rem  }
 
-#header {border-style: solid; border-width: 1px; margin-right:5%; padding-left:5%;
-	background-color: lightgrey; height:150px; width:1200px;  }
+#header {padding-left:10px; padding-top:5px; margin-top:0px; margin-top:-10px;
+	background-color: lightgrey; height:125px; width:100%;  }
 
 #subheader {
      font-style: italic;

@@ -153,10 +153,11 @@ def del_page():
 @app.route('/content', methods=['GET', 'POST'])
 def content():
    #Define the WTF form used
-   form = UpdateContent(request.form)
+   contentform = UpdateContent(request.form)
+   pageform = AddPage(request.form)
 
    #Get Page Id
-   page_id = getPageID(form, request)
+   page_id = getPageID(contentform, request)
 
    #Connect to app database so you can get the page content out of the database
    dbURL = readPgpass(app_name, user)
@@ -177,10 +178,10 @@ def content():
         pageContent = getPageContent(page_id, conn)
 
         #====Get content that has been submitted via the form and post it
-        didPost = postPageContent(page_id, form, conn)
+        didPost = postPageContent(page_id, contentform, conn)
 
         if (didPost):
-            return redirect(url_for(form.page_template.data, page_id = page_id ))
+            return redirect(url_for(contentform.page_template.data, page_id = page_id ))
 
    #All done?  Open the web page!                                                         
    return render_template('content.html', 
@@ -190,7 +191,8 @@ def content():
 			   tocInfo=tocInfo,
                            pageContent = pageContent,
                            dbname='',
-                           form=form,
+			   pageform=pageform,
+                           contentform=contentform,
 			   content_width=75,
 			   code_width=0,
 			   viz_width = 0
@@ -225,16 +227,17 @@ def seemedb():
     conn = engine.connect()
 
     #Define the WTF form used
-    form = UpdateContent(request.form)
-
-    #Get the page id
-    page_id = getPageID(form, request)
+    contentform = UpdateContent(request.form)
+    pageform = AddPage(request.form)
+ 
+   #Get the page id
+    page_id = getPageID(contentform, request)
 
     #Get the dbname - selected by user or default
     if request.args.get('database') is not None:
         dbname = request.args.get('database')
-    elif form.database.data is not None:
-        dbname = form.database.data
+    elif contentform.database.data is not None:
+        dbname = contentform.database.data
     else:
         dbname = 'postgres'
 
@@ -247,9 +250,9 @@ def seemedb():
     pageContent = getPageContent(page_id, conn)
 
     #====Get content that has been submitted via the form and post it
-    didPost = postPageContent(page_id, form, conn)
+    didPost = postPageContent(page_id, contentform, conn)
     if (didPost):
-        return redirect(url_for(form.page_template.data, page_id = page_id, database=dbname ))
+        return redirect(url_for(contentform.page_template.data, page_id = page_id, database=dbname ))
 
     #======================================
     #The code for showing Database info
@@ -319,6 +322,7 @@ def seemedb():
                            pageInfo = pageInfo,
 			   tocInfo = tocInfo,
                            pageContent=pageContent,
+                           pageform=pageform,
                            dbname=dbname, 
                            username=user, numschema=numschema,
                            dbnames=dbnames, numdb=numdb, note=note,

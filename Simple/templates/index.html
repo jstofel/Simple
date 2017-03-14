@@ -1,56 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<!-- Add a form to add a new page -->
-<div class="border" style="float:left; width:25%">
- <div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
-   <div style='float:left; width=90%'>
-    <input type='button' id='showAddPage' value='Add Page' style='width:9rem' 
-	   onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
-   </div>
-
-   {% from "_formhelpers.html" import render_field %}
-
-   <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
-    <form id = "addPage" action="{{url_for('index')}}" method=POST>
-       <div style='float:left'>  {{ pageform.submit }} </div>
-       <br>
-       <dl>
-       {{ render_field(pageform.new_page_name) }} 
-       {{ render_field(pageform.new_page_title) }}
-       {{ render_field(pageform.new_page_after) }}
-       {{ render_field(pageform.new_page_level) }}
-       </dl>
-       <input type = "hidden" name="page_id" value="{{page_id}}" >
-    </form>
-   </div>
- </div>
- <div style='clear:both'></div>
- <!-- Show ordered list of page names out of the pageInfo dataframe.-->
- <ol>
-  {% for i in pageInfo.index %}
-
-    {% if pageInfo['page_level'][i] == 1 %}
-       {% if pageInfo['page_id'][i] == 1 %}
-         <li>  
-	   <a href="/">{{pageInfo['page_name'][i]}}</a>  
-	 </li>
-       {% endif %}
-       {% if pageInfo['page_id'][i] > 1 %}
-         <li>  
-	   <a href="/{{pageInfo['page_template'][i]}}?page_id={{pageInfo['page_id'][i]}}">{{pageInfo['page_name'][i]}}</a>  
-	 </li>
-       {% endif %}
-    {% endif %}
-    {% if pageInfo['page_level'][i] == 2 %}
-     <ul><li>  
-      <a href="/{{pageInfo['page_template'][i]}}?page_id={{pageInfo['page_id'][i]}}">{{pageInfo['page_name'][i]}}</a>  
-     </li></ul>
-    {% endif %}
-
-  {% endfor %}
-  </ol>
-</div>
 
 <!-- Show Page Names as a Network Diagram -->
 <div class="" style="float:left; width:45%">

@@ -61,11 +61,40 @@
 <!-- This is where all the content from your python-enabled views goes -->
 <!-- Put the page content between the jinja2 block tags -->
 
-<div >
+<!-- Top Bar for Editing Buttons -->
+<DIV style='background-color:pink; border-style:solid; border-width:1px'  >
+ * < Prev Page *  ------   *Add Page* -----  *Delete Page* ------ *Edit Content* ------- * Next Page > *  
+
+</DIV>
 
 <!--Table of Contents - Left Nav -->
-
 <div class='border' style='float:left; width:20%; margin:10px'>
+
+<div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
+   <div style='float:left; width=90%'>
+    <input type='button' id='showAddPage' value='Add Page' style='width:9rem'
+           onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
+   </div>
+
+   {% from "_formhelpers.html" import render_field %}
+
+   <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
+    <form id = "addPage" action="{{url_for('index')}}" method=POST>
+       <div style='float:left'>  {{ pageform.submit }} </div>
+       <br>
+       <dl>
+       {{ render_field(pageform.new_page_name) }}
+       {{ render_field(pageform.new_page_title) }}
+       {{ render_field(pageform.new_page_after) }}
+       {{ render_field(pageform.new_page_level) }}
+       </dl>
+       <input type = "hidden" name="page_id" value="{{page_id}}" >
+    </form>
+   </div>
+ </div>
+ <div style='clear:both'></div>
+
+
 <ol>
   {% for i in tocInfo.index %}
 
