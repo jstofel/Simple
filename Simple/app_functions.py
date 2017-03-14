@@ -30,14 +30,26 @@ def pageNav(a):
 
 def getPageInfo(page_id, conn):
     if int(page_id) > 0:
-        psql = "select p.page_id, p.page_name, p.page_title, p.page_template, p.page_level from public.page p "
+        psql = "select p.page_id, p.page_name, p.page_title, p.page_template, p.page_level from public.page p " ;
         psql += "where p.page_id = %s " % (page_id);
+
+
+        psql = "select s.page_id , s.page_name, s.page_title, s.page_template, s.page_level, ";
+        psql += "coalesce(p1.page_id, 0) as next_page_id , coalesce(p2.page_id, 0) as prev_page_id from" ;
+        psql += "(select *, page_order + 1 as next_page_order, page_order - 1 as prev_page_order " ;
+        psql += "from page where page_id = %s ) s " % (page_id) ;
+        psql += "join page p1  on p1.page_order = s.next_page_order join page p2 ";
+        psql += " on p2.page_order = s.prev_page_order ";
+
+
     else:
-        psql = "select page_id, page_name, page_title, page_template, page_level from public.page order by page_order";
+        psql = "select page_id, page_name, page_title, page_template, page_level, 0 as next_page_id, 0 as prev_page_id ";
+        psql += "from public.page order by page_order";
+
     result = conn.execute(psql);
     fetchall = result.fetchall()
     import pandas as pd
-    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template', 'page_level'])
+    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template', 'page_level', 'next_page_id', 'prev_page_id'])
     return pageInfo
 
 def getPageContent(page_id, conn):
