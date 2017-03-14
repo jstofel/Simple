@@ -62,8 +62,16 @@
 <!-- Put the page content between the jinja2 block tags -->
 
 <!-- Top Bar for Editing Buttons -->
-<DIV style='background-color:pink; border-style:solid; border-width:1px'  >
- * < Prev Page {{pageInfo['prev_page_id'][0]}} *  ------   *Add Page* -----  *Delete Page* ------ *Edit Content* ------- * Next Page  {{pageInfo['next_page_id'][0]}}  > *  
+<DIV style='border-style:solid; border-width:0px;float:left; width:80%'  >
+
+
+<input type="button" value="Prev Page" style='float:left; margin-top:10px;' 
+ onclick='window.location.href="/{{pageInfo['prev_page_template'][0]}}?page_id={{pageInfo['prev_page_id'][0]}}"' >
+
+
+<input type="button" value="Next Page" style='float:right; margin-top:10px; '
+ onclick='window.location.href="/{{pageInfo['next_page_template'][0]}}?page_id={{pageInfo['next_page_id'][0]}}"' >
+
 
 </DIV>
 
