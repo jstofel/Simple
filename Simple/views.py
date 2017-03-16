@@ -110,7 +110,7 @@ def index():
                 newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
                 newsql += "Values ('%s', '%s', '%s', 1) ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
                 conn.execute(newsql)
-		usql = "UPDATE public.page set page_order = page_id where page_order is null";
+		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
                 conn.execute(usql)		
                 #Refresh Page so you can see what you have just done
                 return redirect(url_for('index'))
