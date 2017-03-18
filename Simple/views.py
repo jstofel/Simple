@@ -140,6 +140,9 @@ def del_page():
 		dbURL = readPgpass(app_name, user)
 		engine = create_engine(dbURL)
 		conn = engine.connect()
+		osql = "update public.page set page_order = page_order - 1 ";
+		osql += " where page_order > (select page_order from page where page_id = %s ) " % page_id ;
+		conn.execute(osql)
 
                 dsql1 = "delete from public.page_content where page_id = %s " % page_id;
                 dsql2 = "delete from public.page where page_id = %s " % page_id;

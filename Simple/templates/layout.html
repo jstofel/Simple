@@ -28,7 +28,7 @@
        {{pageInfo['page_title'][0]}}
     </div>
 
-{% if pageInfo['page_id'][0] > 1000 %}
+{% if pageInfo['has_content'][0] == 0 %}
      <div style='float:right; width:20%;'>
        <form id="DelPage" action="{{url_for('del_page')}}" method=POST> 
 	 <input type="submit" id="delPageButton" value="Delete Page" style="width:8rem" >
@@ -64,19 +64,20 @@
 <!-- Top Bar for Editing Buttons -->
 <DIV style='border-style:solid; border-width:0px;float:left; width:80%'  >
 
-
-<input type="button" value="Prev Page {{pageInfo['prev_page_id'][0]}} " style='float:left; margin-top:10px;' 
+{% if pageInfo['prev_page_id'][0] > 0  %}
+<input type="button" value="Prev Page" style='float:left; margin-top:10px;' 
  onclick='window.location.href="/{{pageInfo['prev_page_template'][0]}}?page_id={{pageInfo['prev_page_id'][0]}}"' >
+{% endif %}
 
-
-<input type="button" value="Next Page  {{pageInfo['next_page_id'][0]}} " style='float:right; margin-top:10px; '
+{% if pageInfo['next_page_id'][0] > 0  %}
+<input type="button" value="Next Page" style='float:right; margin-top:10px; '
  onclick='window.location.href="/{{pageInfo['next_page_template'][0]}}?page_id={{pageInfo['next_page_id'][0]}}"' >
-
+{% endif %}
 
 </DIV>
 
 <!--Table of Contents - Left Nav -->
-<div class='border' style='float:left; width:20%; margin:10px'>
+<div class='' style='float:left; width:20%; margin:10px'>
 
 <div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
    <div style='float:left; width=90%'>
