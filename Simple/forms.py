@@ -37,5 +37,15 @@ class UpdateContent(Form):
   content_ht = TextField("Content HTML")
   submit = SubmitField("Save")
 
+class UpdateJSCode(Form):
+  page_id = HiddenField("Page_id")
+  page_template = HiddenField("page_template")
+  jscode_id = HiddenField("jscode_id")
+  database = HiddenField("database")
+  jscode = TextField("JS Code")
+  submit = SubmitField("Save")
+
+
+
 class ChooseDatabase(Form):
   database = TextField("database")

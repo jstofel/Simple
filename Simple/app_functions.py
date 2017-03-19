@@ -69,6 +69,23 @@ def getPageContent(page_id, conn):
     pageContent = pd.DataFrame(fetchall, columns=['content_id','content_md'] )
     return pageContent
 
+
+def getPageCode(page_id, conn):
+    if (page_id is None) or (int(page_id) == 0) :
+        fatal("getPageCode function requires a numeric page_id argument > 0")
+    csql = "select c.jscode_id, c.jscode from public.jscode c ";
+    csql += "join public.page_jscode pc on c.jscode_id = pc.jscode_id ";
+    csql += "join public.page p on p.page_id = pc.page_id ";
+    csql += "where pc.page_id = %s " % page_id; 
+    result = conn.execute(csql);
+    fetchall = result.fetchall();
+
+    import pandas as pd
+    pageCode = pd.DataFrame(fetchall, columns=['jscode_id','jscode'] )
+    return pageCode
+
+
+
 def postPageContent(page_id, form, conn):
     #Get content that has been submitted via the form                                         
     new_content_md = form.content_md.data
@@ -105,7 +122,7 @@ def postPageContent(page_id, form, conn):
                 contsql = "update public.content set "
                 contsql += "content_md = '%s' where content_id = %s " % (esc_content, str(content_id));
                 xsql = ''
-                #flash(contsql)
+                flash(contsql)
                 conn.execute(contsql)
             else:
                 contsql = "insert into public.content (content_md) VALUES ";
@@ -117,6 +134,43 @@ def postPageContent(page_id, form, conn):
                 #  using the new content_id that was just created by the insert, but it works in dev
                 conn.execute(contsql)
                 conn.execute(xsql)
+
+            #Return True: the update was run                                                  
+            return True
+        else:
+            return False
+    else:
+        return False
+
+def postJSCode(page_id, form, conn):
+    #Get content that has been submitted via the form                                         
+    new_jscode = form.jscode.data
+    jscode_id = form.jscode_id.data
+    target = form.page_template.data
+
+    if new_jscode is not None:
+        if (len(new_jscode.strip()) > 0):
+            #Excape ' and % by doubling them
+            esc_jscode = new_jscode.replace("'", "''").replace("%","%%")
+            flash("Escaped code "+esc_jscode)
+            if jscode_id > '0':
+                contsql = "update public.jscode set "
+                contsql += "jscode = '%s' where jscode_id = %s " % (esc_jscode, str(jscode_id));
+                xsql = ''
+                flash(contsql)
+                #conn.execute(contsql)
+            else:
+                contsql = "insert into public.jscode (jscode) VALUES ";
+                contsql += "('%s')" % (esc_jscode);
+                xsql = "insert into public.page_jscode "
+                xsql += "(select %s as page_id, max(jscode_id) as jscode_id from public.jscode) " % str(page_id);
+
+                #Note: not the most ironclad process to insert on content table, then insert on linking table
+                #  using the new jscode_id that was just created by the insert, but it works in dev
+                flash(contsql)
+                flash(xsql)
+                #conn.execute(contsql)
+                #conn.execute(xsql)
 
             #Return True: the update was run                                                  
             return True

@@ -20,7 +20,7 @@ import json
 #==========================================================================
 
 import app_functions
-from app_functions import getPageID, pageNav, getPageInfo, getPageContent, postPageContent
+from app_functions import getPageID, pageNav, getPageInfo, getPageContent, getPageCode, postPageContent, postJSCode
 
 import db_functions
 from db_functions import fatal, readPgpass, getPgDBnames, getSchemas, getTables, getTableNetwork
@@ -29,7 +29,7 @@ import network_functions
 from network_functions import createNetworkFromDB
 
 import forms
-from forms import ContactForm, RegistrationForm, AddPage, UpdateContent, DelPage
+from forms import ContactForm, RegistrationForm, AddPage, UpdateContent, UpdateJSCode, DelPage
 
 #===========================================================================        
 ##Set Application-Level Static Variables Defined When the Server is Started
@@ -159,6 +159,7 @@ def del_page():
 def content():
    #Define the WTF form used
    contentform = UpdateContent(request.form)
+   jsform = UpdateJSCode(request.form)
    pageform = AddPage(request.form)
 
    #Get Page Id
@@ -169,12 +170,6 @@ def content():
    engine = create_engine(dbURL)
    conn = engine.connect()
 
-   #Determine the that page has been requested
-   #If no page, go back to home
-   #if request.args.get('page_id') is None:
-   #    return redirect(url_for('index'))
-   #Otherwise...
-   #else:
    #=======Get the Page Info as a DataFrame
    pageInfo = getPageInfo(page_id, conn)
    tocInfo = getPageInfo(0, conn)
@@ -182,13 +177,22 @@ def content():
    #======Get Page Contents (Text) as DataFrame
    pageContent = getPageContent(page_id, conn)
 
-   #====Get content that has been submitted via the form and post it
+   #====Post the Content (if it exists) and refresh the page
    didPost = postPageContent(page_id, contentform, conn)
 
    if (didPost):
 	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
-   #else:
-	   #flash("Not adding content ")
+
+   #=======Get the Page JS Code text as a DataFrame
+   pageCode = getPageCode(page_id, conn)
+
+   #====Post the Code (if it exists) and refresh the page
+   didPostJS = postJSCode(page_id, jsform, conn)
+
+   if (didPostJS):
+	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
+
+
 
    #=============================================
    #Find out if you have a new page to write back
@@ -216,6 +220,7 @@ def content():
                            pageInfo=pageInfo,
 			   tocInfo=tocInfo,
                            pageContent = pageContent,
+                           pageCode = pageCode,
                            dbname='',
 			   pageform=pageform,
                            contentform=contentform,
