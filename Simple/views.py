@@ -58,6 +58,7 @@ app.config['DEFAULT_PARSERS'] = [
 #Define the home (index) page with a single slash, and define the page as a render function 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+        return redirect(url_for('content', page_id = 1 ))
         #Define the form used on the page
         pageform = AddPage(request.form)
 
@@ -108,7 +109,8 @@ def index():
             new_page_title = pageform.new_page_title.data
             if (len(new_page_name.strip()) > 0):
                 newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
-                newsql += "Values ('%s', '%s', '%s', 1) ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_name.strip(), new_page_title.strip(), 'content', new_page_title.strip());  
+                newsql += "Values ('%s', '%s', '%s', 1) " % (new_page_name.strip(), new_page_title.strip(), 'content') ;  
+		newsql += " ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_title.strip());  
                 conn.execute(newsql)
 		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
                 conn.execute(usql)		
@@ -169,22 +171,43 @@ def content():
 
    #Determine the that page has been requested
    #If no page, go back to home
-   if request.args.get('page_id') is None:
-       return redirect(url_for('index'))
+   #if request.args.get('page_id') is None:
+   #    return redirect(url_for('index'))
    #Otherwise...
-   else:
-        #=======Get the Page Info as a DataFrame
-        pageInfo = getPageInfo(page_id, conn)
-	tocInfo = getPageInfo(0, conn)
+   #else:
+   #=======Get the Page Info as a DataFrame
+   pageInfo = getPageInfo(page_id, conn)
+   tocInfo = getPageInfo(0, conn)
 
-        #======Get Page Contents (Text) as DataFrame
-        pageContent = getPageContent(page_id, conn)
+   #======Get Page Contents (Text) as DataFrame
+   pageContent = getPageContent(page_id, conn)
 
-        #====Get content that has been submitted via the form and post it
-        didPost = postPageContent(page_id, contentform, conn)
+   #====Get content that has been submitted via the form and post it
+   didPost = postPageContent(page_id, contentform, conn)
 
-        if (didPost):
-            return redirect(url_for(contentform.page_template.data, page_id = page_id ))
+   if (didPost):
+	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
+   #else:
+	   #flash("Not adding content ")
+
+   #=============================================
+   #Find out if you have a new page to write back
+   #flash('Hey what?')
+   #flash(request.method)
+   if request.method == 'POST':
+	   new_page_name = pageform.new_page_name.data
+	   #flash("Page name out of form "+ new_page_name)
+           new_page_title = pageform.new_page_title.data
+           if (len(new_page_name.strip()) > 0):
+                newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
+                newsql += "Values ('%s', '%s', '%s', 1) " % (new_page_name.strip(), new_page_title.strip(), 'content') ;
+		newsql += " ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_title.strip());  
+		#flash(newsql)
+                conn.execute(newsql)
+		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
+                conn.execute(usql)		
+                #Refresh Page so you can see what you have just done
+                return redirect(url_for('content', page_id = page_id))
 
    #All done?  Open the web page!                                                         
    return render_template('content.html', 

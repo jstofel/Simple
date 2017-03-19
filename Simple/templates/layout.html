@@ -88,14 +88,13 @@
    {% from "_formhelpers.html" import render_field %}
 
    <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
-    <form id = "addPage" action="{{url_for('index')}}" method=POST>
+
+    <form id = "addPage" action="{{url_for('content')}}" method=POST>
        <div style='float:left'>  {{ pageform.submit }} </div>
        <br>
        <dl>
        {{ render_field(pageform.new_page_name) }}
        {{ render_field(pageform.new_page_title) }}
-       {{ render_field(pageform.new_page_after) }}
-       {{ render_field(pageform.new_page_level) }}
        </dl>
        <input type = "hidden" name="page_id" value="{{page_id}}" >
     </form>
