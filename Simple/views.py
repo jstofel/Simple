@@ -219,9 +219,9 @@ def content():
                            dbname='',
 			   pageform=pageform,
                            contentform=contentform,
-			   content_width=75,
-			   code_width=0,
-			   viz_width = 0
+			   content_width=30,
+			   code_width=20,
+			   viz_width = 30
                            )
 
 #http://adilmoujahid.com/posts/2015/01/interactive-data-visualization-d3-dc-python-mongodb/

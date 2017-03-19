@@ -130,28 +130,28 @@
 
 
 <!--Word Content on Left -->
-<div class='' style='float:left; width:{{content_width}}%; margin-bottom:5rem; padding:0.5rem;'>
+<div id="blockbody" class='border' style='float:left; width:{{content_width}}%; margin-bottom:5rem; padding:0.5rem;'>
    {% block body %}
 
-   {% endblock %}
+   {% endblock body %}
 </div>
 
 <!-- Code Content in Middle -->
-<div class='' style='float:left; width:{{code_width}}%; padding:0.5rem;'>
+<div id="blockcodex" class='border' style='float:left; width:{{code_width}}%; padding:0.5rem;'>
    {% block codex %}
 
-   {% endblock %}
+   {% endblock codex %}
 </div>
 
 
 
 
 <!--Picture Content on Right --> 
-<div class='' style='float:right; width:{{viz_width}}%; margin:0; padding:0'>
+<div id="blockviz" class='' style='float:right; width:{{viz_width}}%; margin:0; padding:0'>
    {% block viz %}
 
 
-   {% endblock %}
+   {% endblock viz %}
 </div>
 
 

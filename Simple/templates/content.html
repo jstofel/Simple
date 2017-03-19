@@ -26,9 +26,9 @@
 </div>
 
 <!--This div is where content is written. It is hidden by default, and shown when the Edit Content button is activated-->
-<div id="INSTRUCTIONS"  class="" style='float:left; width:45% ; height:3rem; display:none; margin-left:3rem;  '>
+<div id="INSTRUCTIONS"  class="" style='float:left; width:30% ; height:3rem; display:none; margin-left:3rem;  '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
-<textarea id="sourceTA" name="content_md" rows="120" cols="100"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
+<textarea id="sourceTA" name="content_md" rows="120" cols="80"   onInput="runConverter()">{{pageContent['content_md'][0]}}</textarea>
 </div>
 </form>
 
@@ -44,17 +44,25 @@
              $('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
                  $(this).val('Edit Content');
+                 $('#blockbody').width('30%');
                  $('#targetDiv').width('100%');
                  $('#saveit').hide()
              } else {
                  $(this).val('Close Editor');
-                 $('#targetDiv').width('48%');
+                 $('#blockbody').width('70%');
+                 $('#targetDiv').width('50%');
                  $('#saveit').show()
             }
    });
   });
 </script>
 
-{% endblock %}
+{% endblock body %}
+
+{% block codex %}
+
+Hey this is the code block.
+
+{% endblock codex %}
 
 
