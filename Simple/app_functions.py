@@ -122,7 +122,7 @@ def postPageContent(page_id, form, conn):
                 contsql = "update public.content set "
                 contsql += "content_md = '%s' where content_id = %s " % (esc_content, str(content_id));
                 xsql = ''
-                flash(contsql)
+                #flash(contsql)
                 conn.execute(contsql)
             else:
                 contsql = "insert into public.content (content_md) VALUES ";

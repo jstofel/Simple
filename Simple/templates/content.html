@@ -25,6 +25,7 @@
 
 </div>
 
+
 <!--This div is where content is written. It is hidden by default, and shown when the Edit Content button is activated-->
 <div id="INSTRUCTIONS"  class="" style='float:left;width:45%; height:3rem; display:none; margin-left:3rem;  '>
  Edit the content in the textarea below using markdown styling, and see how it renders on the left.
@@ -52,7 +53,7 @@
                  $(this).val('Close Editor');
                  $('#blockcodex').toggle();
                  $('#blockbody').width('70%');
-                 $('#targetDiv').width('50%');
+                 $('#targetDiv').width('48%');
                  $('#saveit').show()
             }
    });
@@ -117,13 +118,6 @@
    });
   });
 </script>
-
-<script>
-{{pageCode['jscode'][0]|safe}}   
-</script>
-
-
-
 
 {% endblock codex %}
 
