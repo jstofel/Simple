@@ -151,14 +151,14 @@ def postJSCode(page_id, form, conn):
     if new_jscode is not None:
         if (len(new_jscode.strip()) > 0):
             #Excape ' and % by doubling them
-            esc_jscode = new_jscode.replace("'", "''").replace("%","%%")
-            flash("Escaped code "+esc_jscode)
+            esc_jscode = new_jscode.strip().replace("'", "''").replace("%","%%")
+            #flash("Escaped code "+esc_jscode)
             if jscode_id > '0':
                 contsql = "update public.jscode set "
                 contsql += "jscode = '%s' where jscode_id = %s " % (esc_jscode, str(jscode_id));
                 xsql = ''
-                flash(contsql)
-                #conn.execute(contsql)
+                #flash(contsql)
+                conn.execute(contsql)
             else:
                 contsql = "insert into public.jscode (jscode) VALUES ";
                 contsql += "('%s')" % (esc_jscode);
@@ -167,10 +167,10 @@ def postJSCode(page_id, form, conn):
 
                 #Note: not the most ironclad process to insert on content table, then insert on linking table
                 #  using the new jscode_id that was just created by the insert, but it works in dev
-                flash(contsql)
-                flash(xsql)
-                #conn.execute(contsql)
-                #conn.execute(xsql)
+                #flash(contsql)
+                #flash(xsql)
+                conn.execute(contsql)
+                conn.execute(xsql)
 
             #Return True: the update was run                                                  
             return True

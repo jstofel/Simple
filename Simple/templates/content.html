@@ -87,9 +87,8 @@
 <!--This div is where new script content is written. It is hidden by default, and shown when the Edit JS button is activated-->
 <div id="JS_INSTRUCTIONS"  class="" style='float:left; width:80% ; height:3rem; display:none; margin-left:3rem;  '>
  Edit the JS in the textarea below and see how it renders on the left.
-<textarea id="sourceJSTA" name="jscode" rows="50" cols="50" >  
-   {#   onInput="runJSConverter()"    #}
-   {#  {{pageCode['jscode'][0]}}   #}
+<textarea id="sourceJSTA" name="jscode" rows="50" cols="50" >     {#   onInput="runJSConverter()"    #}
+{{pageCode['jscode'][0]}}   
 </textarea>
 </div>
 </form>
@@ -119,6 +118,9 @@
   });
 </script>
 
+<script>
+{{pageCode['jscode'][0]|safe}}   
+</script>
 
 
 
