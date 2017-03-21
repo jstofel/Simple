@@ -73,7 +73,9 @@ def getPageContent(page_id, conn):
 def getPageCode(page_id, conn):
     if (page_id is None) or (int(page_id) == 0) :
         fatal("getPageCode function requires a numeric page_id argument > 0")
-    csql = "select p.page_id, c.jscode_id, c.jscode, "
+    csql = "select p.page_id, ";
+    csql += "case when c.jscode_id is null then 0 else c.jscode_id end as jscode_id, " ;
+    csql += "case when c.jscode is null then '' else c.jscode end as jscode, "
     csql += "case when pc.jscode_show = 1 then 'block' else 'none' end as jscode_display, "
     csql += "case when pc.jscode_show = 1 then 'none' else 'block' end as jscode_edit "
     csql += "from public.page p ";
@@ -83,7 +85,7 @@ def getPageCode(page_id, conn):
     result = conn.execute(csql);
     fetchall = result.fetchall();
 
-    flash(csql);
+    #flash(csql);
 
     import pandas as pd
     pageCode = pd.DataFrame(fetchall, columns=['page_id', 'jscode_id','jscode', 'jscode_display', 'jscode_edit'] )
