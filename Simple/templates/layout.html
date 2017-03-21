@@ -62,15 +62,15 @@
 <!-- Put the page content between the jinja2 block tags -->
 
 <!-- Top Bar for Editing Buttons -->
-<DIV style='border-style:solid; border-width:0px;float:left; width:80%'  >
+<DIV style='border-style:solid; border-width:0px;float:left; width:100%'  >
 
 {% if pageInfo['prev_page_id'][0] > 0  %}
-<input type="button" value="Prev Page" style='float:left; margin-top:10px;' 
+<input type="button" value="Prev Page" style='float:left; margin-top:5px;' 
  onclick='window.location.href="/{{pageInfo['prev_page_template'][0]}}?page_id={{pageInfo['prev_page_id'][0]}}"' >
 {% endif %}
 
 {% if pageInfo['next_page_id'][0] > 0  %}
-<input type="button" value="Next Page" style='float:right; margin-top:10px; '
+<input type="button" value="Next Page" style='float:right; margin-top:5px; '
  onclick='window.location.href="/{{pageInfo['next_page_template'][0]}}?page_id={{pageInfo['next_page_id'][0]}}"' >
 {% endif %}
 
