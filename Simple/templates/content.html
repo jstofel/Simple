@@ -71,14 +71,16 @@
 <form id="codexForm"
       action="/{{pageInfo['page_template'][0]}}?page_id={{pageInfo['page_id'][0]}}&dbname={{dbname}}"
       method="POST" >
-<div id="BUTTONS" class=""  style='float:left; width:98%; height:3rem '>
+
+
+<!--div id="BUTTONS" class=""  style='float:left; width:98%; height:3rem '>
  <input type="button" id="showJSEditContent" value="Edit JS" style="width:8rem" >
  <input type="submit" id="saveJS" value="Save JS"  style="display:{{pageCode['jscode'][0]}}" >
  <input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
  <input type = "hidden" name="page_template" value="{{pageInfo['page_template'][0]}}" >
  <input type = "hidden" name="database" value="{{dbname}}" >
  <input type = "hidden" name="jscode_id" value="{{pageCode['jscode_id'][0]}}" > 
-</div>
+</div-->
 
 <!--This div appears empty, but it is populated from pageCode['jscode'] by .... script -->
 <div id="targetJSDiv" class=""  style='float:left; width:100%;'>
@@ -90,9 +92,20 @@
 <!-- If jscode_show == 1 then it is not hidden (display:block).  -->
 <!-- Note that display (none/block) is defined in Python function getPageCode in app_function.py -->
 
-<div id="JS_INSTRUCTIONS"  class="" style="float:left; width:80% ; height:3rem; display:{{pageCode['jscode'][0]}}; margin-left:3rem;" >
- Edit the JS in the textarea below and see how it renders on the left.
-<textarea id="sourceJSTA" name="jscode" rows="50" cols="50" > 
+<div id="JS_INSTRUCTIONS"  class="border" style="float:left; width:700px; 
+   /*height:3rem;*/ display:{{pageCode['jscode'][0]}}; /*margin-left:3rem;*/ " >
+ Edit the JS below and save to see how it renders on the left.
+<div id="BUTTONS2" class=""  style='float:right; width:30%; /* height:3rem*/ '>
+ <input type="button" id="showJSEditContent" value="Edit JS" style="display:{{pageCode['jscode_edit'][0]}}" >
+ <input type="submit" id="saveJS" value="Save JS"  style="display:{{pageCode['jscode_display'][0]}}" >
+ <input type = "hidden" name="page_id" value="{{pageInfo['page_id'][0]}}" >
+ <input type = "hidden" name="page_template" value="{{pageInfo['page_template'][0]}}" >
+ <input type = "hidden" name="database" value="{{dbname}}" >
+ <input type = "hidden" name="jscode_id" value="{{pageCode['jscode_id'][0]}}" > 
+</div>
+
+
+<textarea id="sourceJSTA" name="jscode" rows="50" cols="80" > 
 {{pageCode['jscode'][0]}}   
 </textarea>
 </div>
