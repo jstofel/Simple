@@ -24,7 +24,7 @@
 
 <div id="header">
   <h1><a href="{{url_for('index')}}"> {{project_name}} </a> </h1>
-     <div id="subheader" style='float:left; width:70%;'>
+     <div id="subheader" style='display:inline-block; text-align:center; width:100%; border-style:solid; border-width:0px; '>
        {{pageInfo['page_title'][0]}}
     </div>
 
@@ -62,7 +62,7 @@
 <!-- Put the page content between the jinja2 block tags -->
 
 <!-- Top Bar for Editing Buttons -->
-<DIV style='border-style:solid; border-width:0px;float:left; width:100%'  >
+<DIV style='border-style:solid; border-width:0px;float:left; width:100%; margin-bottom:0.5rem; '  >
 
 {% if pageInfo['prev_page_id'][0] > 0  %}
 <input type="button" value="Prev Page" style='float:left; margin-top:5px;' 
@@ -77,7 +77,7 @@
 </DIV>
 
 <!--Table of Contents - Left Nav -->
-<div class='' style='float:left; width:20%; margin:10px'>
+<div class='' style='float:left; width:18%; margin-right:5px; border-style:solid; border-width:0px;'>
 
 <div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
    <div style='float:left; width=90%'>
@@ -130,8 +130,9 @@
 
 
 <!--Word Content on Left -->
-  <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
-<div id="blockbody" class='border' style='float:left; width:{{content_width}}%; margin-bottom:5rem; padding:0.5rem;'>
+<script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
+
+<div id="blockbody" class='' style='float:left; width:{{pageCode['content_width'][0]}}%; margin:0rem; padding:0.5rem;'>
    {% block body %}
 
    {% endblock body %}
@@ -145,10 +146,8 @@
 </div>
 
 
-
-
 <!--Picture Content on Right --> 
-<div id="blockviz" class='' style='float:right; width:{{viz_width}}%; margin:0; padding:0'>
+<div id="blockviz" class='' style='float:left; width:{{viz_width}}%; margin:0; padding:0.5rem'>
    {% block viz %}
 
 
@@ -182,13 +181,11 @@
      //The runConverter function is a local function in scripts.js. 
      // It takes the input content, translates it, and writes it to the target div
        runConverter();
+
+     //This runs whatever code has been saved for this page
        {{pageCode['jscode'][0]|safe}}
 
-     //This is a testing fnction to write a circle on an svg canvas 
-      //showSampleD3({{radius}});
 
-    //Show the Table network. This is also a local function in scripts.js
-     // showNetworkD3({{network_dict|safe}})
                     
    } //end of window onload functions
 </script>

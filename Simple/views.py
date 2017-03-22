@@ -224,9 +224,9 @@ def content():
                            dbname='',
 			   pageform=pageform,
                            contentform=contentform,
-			   content_width=30,
+			   content_width=60,
 			   code_width=20,
-			   viz_width = 30
+			   viz_width = 10
                            )
 
 #http://adilmoujahid.com/posts/2015/01/interactive-data-visualization-d3-dc-python-mongodb/
@@ -257,11 +257,12 @@ def seemedb():
     engine = create_engine(dbURL)
     conn = engine.connect()
 
-    #Define the WTF form used
+    #Define the WTF forms used
     contentform = UpdateContent(request.form)
     pageform = AddPage(request.form)
- 
-   #Get the page id
+    jsform = UpdateJSCode(request.form)
+
+    #Get the page id
     page_id = getPageID(contentform, request)
 
     #Get the dbname - selected by user or default
@@ -270,7 +271,7 @@ def seemedb():
     elif contentform.database.data is not None:
         dbname = contentform.database.data
     else:
-        dbname = 'postgres'
+        dbname = 'Adventureworks'
 
 
     #=======Get Page Info as DataFrame
@@ -284,6 +285,15 @@ def seemedb():
     didPost = postPageContent(page_id, contentform, conn)
     if (didPost):
         return redirect(url_for(contentform.page_template.data, page_id = page_id, database=dbname ))
+
+    #=======Get the Page JS Code text as a DataFrame
+    pageCode = getPageCode(page_id, conn)
+
+    #====Post the Code (if it exists) and refresh the page
+    didPostJS = postJSCode(page_id, jsform, conn)
+
+    if (didPostJS):
+	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
 
     #======================================
     #The code for showing Database info
@@ -353,6 +363,7 @@ def seemedb():
                            pageInfo = pageInfo,
 			   tocInfo = tocInfo,
                            pageContent=pageContent,
+			   pageCode=pageCode,
                            pageform=pageform,
                            dbname=dbname, 
                            username=user, numschema=numschema,
@@ -366,8 +377,8 @@ def seemedb():
 			   network_str = json_dump,
 			   radius=radius,
 			   schema_id_list = schema_id_list,
-			   content_width=38,
-			   viz_width=38
+			   content_width=60,
+			   viz_width=60
 			   
 
                            )

@@ -77,7 +77,8 @@ def getPageCode(page_id, conn):
     csql += "case when c.jscode_id is null then 0 else c.jscode_id end as jscode_id, " ;
     csql += "case when c.jscode is null then '' else c.jscode end as jscode, "
     csql += "case when pc.jscode_show = 1 then 'block' else 'none' end as jscode_display, "
-    csql += "case when pc.jscode_show = 1 then 'none' else 'block' end as jscode_edit "
+    csql += "case when pc.jscode_show = 1 then 'none' else 'block' end as jscode_edit, "
+    csql += "case when pc.jscode_show = 1 then 30 else 70 end as content_width "
     csql += "from public.page p ";
     csql += "left join public.page_jscode pc on p.page_id = pc.page_id ";
     csql += "left join public.jscode c on c.jscode_id = pc.jscode_id ";
@@ -88,7 +89,7 @@ def getPageCode(page_id, conn):
     #flash(csql);
 
     import pandas as pd
-    pageCode = pd.DataFrame(fetchall, columns=['page_id', 'jscode_id','jscode', 'jscode_display', 'jscode_edit'] )
+    pageCode = pd.DataFrame(fetchall, columns=['page_id', 'jscode_id','jscode', 'jscode_display', 'jscode_edit', 'content_width'] )
     return pageCode
 
 
