@@ -80,22 +80,24 @@ function showSampleD3(radius=50) {
 }
 
 
-function showNetworkD3(graph,ormtgt="#show_network",width=0,height=0,radius=10,markerht=10,markerwth=10) {
-  if (typeof graph != "undefined") {
+function showNetworkD3(graph
+		       ,ormtgt="#show_network"
+		       ,width=$(ormtgt).width()
+		       ,height=$(ormtgt).height()
+		       ,radius=10
+		       ,markerht=10
+		       ,markerwth=10) {
 
+    //alert("ht "+height+" wth:"+width)
+
+  if (typeof graph != "undefined") {
       if ((width > 0) && (height == 0)) {
 	  var height = width;
       } else if ((width == 0) && (height > 0)) {
 	  var height = width;
       } else if ((width == 0) && (height==0))  {
-       //Count nodes in graph to get an idea of size
-	var gsize = graph.nodes.length;
-       //Set height & wdth based on graph size
-	if (gsize > 20) {
-	    var width = 500, height = 500;
-	} else {
-	    var width = 250, height = 250;
-	}
+	  var width =  $(ormtgt).width(),
+	      height = $(ormtgt).height() ;
       }
 
       //alert("ht "+height+" wth:"+width)

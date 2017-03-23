@@ -182,14 +182,15 @@
      // It takes the input content, translates it, and writes it to the target div
        runConverter();
 
+     //Show network if it was sent. This is a local function in local_scripts.js
+       showNetworkD3({{network_dict|safe}})
+
+
      //This runs whatever code has been saved for this page
        {{pageCode['jscode'][0]|safe}}
-
-
                     
    } //end of window onload functions
 </script>
- 
  
 </body>
 </html>

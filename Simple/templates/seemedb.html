@@ -8,7 +8,7 @@
  <!-- Right Side: Define the Block Viz (graphic content) here -->
 {% block viz %}
 
-<div class="" style="float:left; width:45%; border-style:solid;border-width:0px; ">
+<div class="" style="float:left; width:25%; border-style:solid;border-width:0px; ">
   <!--Show Form to Choose a Database--> 
     <form id="ChooseDatabase"  action="{{ url_for('seemedb', page_id=page_id) }}" method="GET">
       <input type = "hidden" name = "page_id" value = {{page_id}} >
@@ -25,7 +25,7 @@
     <!-- If A Database with at Least one Schema with Tables Has Been Chosen, then Show Info About it --> 
     {% if numschema > 0 %}      
        <h2 style="font-style:normal" > {{dbname}} </h2>
-          <p>Found {{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
+          <p>{{numschema}} schemas, {{num_tables}} tables, and {{num_allFK}} relations</p>
 
 	<!-- Show schemas as accordian. Schemas are in a pandas dataframe -->
 	<div class="" style="width:10rem; float:left" >
@@ -50,20 +50,10 @@
    {% endif %}
 </div>
 
-<div class="" style="float:left; width:45%; border-style:solid; border-width:0px">
-       <!--This is the div where the network is attached-->
-	<div id="show_network"  class="" style="float:left">  </div> 
+<!--This is the div where the network is attached-->
+<div id="show_network" class="" style="float:left; width:73%; height:500px; border-style:solid; border-width:0px">
+
 </div>
-
-
-
-<!-- local scripts for this app-->
-  <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
-
-  <script>
-    //Show the Table network. This is a local function in local_scripts.js
-      showNetworkD3({{network_dict|safe}})
-  </script>
 
 
 {% endblock %}

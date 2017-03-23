@@ -194,18 +194,20 @@ def content():
 	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
 
 
-   #Get a Dict Showing the Network of pages
-   page_dict = createNetworkFromDB(conn
+   #Get a Dict Showing the Network of pages - note that src & tgt are purposefully reversed
+   page_dict = "undefined"
+   if (page_id == '1'):
+      #flash(page_dict)
+      #flash(type(page_dict))
+      page_dict = createNetworkFromDB(conn
                         , node_tbl = 'public.page'
                         , node_id_var = 'page_id'
                         , node_name_var = 'page_name'
                         , node_grp_var = 'page_level'
                         , node_order_var = 'page_order'
                         , link_tbl = 'page_relation'
-                        , link_src_id_var = 'src_page_id' 
-                        , link_tgt_id_var = 'tgt_page_id')
-   flash(page_dict)
-
+                        , link_src_id_var = 'tgt_page_id' 
+                        , link_tgt_id_var = 'src_page_id')
 
    #=============================================
    #Find out if you have a new page to write back
@@ -237,6 +239,7 @@ def content():
                            dbname='',
 			   pageform=pageform,
                            contentform=contentform,
+			   network_dict = page_dict,
 			   content_width=60,
 			   code_width=20,
 			   viz_width = 10
@@ -348,6 +351,9 @@ def seemedb():
     network_dict = output_list[4] #a dictionary-- the same thing you get with json.loads the string
     json_dump = output_list[5]    #a string
     schema_id_list = output_list[6]
+
+    json_dump = []
+
     #flash(schema_id_list)
 
     #flash(type(network_dict))
@@ -391,7 +397,7 @@ def seemedb():
 			   radius=radius,
 			   schema_id_list = schema_id_list,
 			   content_width=60,
-			   viz_width=60
+			   viz_width=80
 			   
 
                            )
