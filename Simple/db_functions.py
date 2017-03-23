@@ -129,24 +129,6 @@ def fatal(*L):
      print >>sys.stderr, ''.join(L)
      raise SystemExit
 
-##=====================================
-##  Page Navigation : note - moved this to app_functions.py
-##=====================================
-#def pageNav(a):
-#    #Determine what page has been requested
-#    from flask import url_for 
-#    if a.get('page_title') is None:
-#        page_title=''; page_name='index';
-#        url = url_for('index');
-#    else:
-#        page_title = a.get('page_title');
-#        if a.get('page_name') is None:
-#            page_name = page_title;
-#        else:
-#            page_name = a.get('page_name')
-#        url = url_for('index')+"?page_title="+page_title+"&page_name="+page_name;
-#    return(page_name, page_title, url)
-
 
 #=======================================
 ##  Read database password out of .pgpass

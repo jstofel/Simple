@@ -59,6 +59,7 @@ app.config['DEFAULT_PARSERS'] = [
 @app.route('/', methods=['GET', 'POST'])
 def index():
         return redirect(url_for('content', page_id = 1 ))
+
         #Define the form used on the page
         pageform = AddPage(request.form)
 
@@ -71,7 +72,7 @@ def index():
         conn = engine.connect()
 
 	#====Get List of Pages as A Node List ==#
-	tnq = "select page_name as name, 1 as group from page order by page_order; "
+	tnq = "select page_name as name, page_level as group from page order by page_order; "
 	node_proxy = conn.execute(tnq)
 	node_list = [dict(r) for r in node_proxy]
 
@@ -192,6 +193,18 @@ def content():
    if (didPostJS):
 	   return redirect(url_for(contentform.page_template.data, page_id = page_id ))
 
+
+   #Get a Dict Showing the Network of pages
+   page_dict = createNetworkFromDB(conn
+                        , node_tbl = 'public.page'
+                        , node_id_var = 'page_id'
+                        , node_name_var = 'page_name'
+                        , node_grp_var = 'page_level'
+                        , node_order_var = 'page_order'
+                        , link_tbl = 'page_relation'
+                        , link_src_id_var = 'src_page_id' 
+                        , link_tgt_id_var = 'tgt_page_id')
+   flash(page_dict)
 
 
    #=============================================
