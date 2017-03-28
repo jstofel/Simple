@@ -35,9 +35,11 @@ def getPageInfo(page_id, conn):
         psql += " case when length(s.content_md) > 1 then 1 else 0 end as has_content, ";
         psql += "p1.page_id as next_page_id , p1.page_template as next_page_template, ";
         psql += "case when p2.page_template != 'index' then p2.page_id end as prev_page_id, " ;
-        psql += "case when p2.page_template != 'index' then p2.page_template else '\' end  as prev_page_template from " ;
+        psql += "case when p2.page_template != 'index' then p2.page_template else '\' end  as prev_page_template, ";
+        psql += "0 as max_page " ;  
+        psql += " from " ;
         psql += "(select p.*, c.content_md, p.page_order + 1 as next_page_order, p.page_order - 1 as prev_page_order " ;
-        psql += "from page p left join page_content pc on p.page_id = pc.page_id left join content c on pc.content_id = c.content_id  "
+        psql += "from page p left join page_content pc on p.page_id = pc.page_id left join content c on pc.content_id = c.content_id  " ;
         psql += "where p.page_id = %s ) s " % (page_id) ;
         psql += "left join page p1  on p1.page_order = s.next_page_order "; 
         psql += "left join page p2 on p2.page_order = s.prev_page_order ";
@@ -46,13 +48,14 @@ def getPageInfo(page_id, conn):
     else:
         psql = "select page_id, page_name, page_title, page_template, page_level, 0 as has_content , " ;
         psql += "0 as next_page_id, 'content' as next_page_template, ";
-        psql += "0 as prev_page_id, 'content' as prev_page_template ";
+        psql += "0 as prev_page_id, 'content' as prev_page_template , ";
+        psql += "(select max(page_id) from page)  as max_page " ;  
         psql += "from public.page order by page_order";
 
     result = conn.execute(psql);
     fetchall = result.fetchall()
     import pandas as pd
-    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template', 'page_level', 'has_content', 'next_page_id', 'next_page_template',  'prev_page_id', 'prev_page_template'])
+    pageInfo = pd.DataFrame(fetchall, columns=['page_id', 'page_name', 'page_title', 'page_template', 'page_level', 'has_content', 'next_page_id', 'next_page_template',  'prev_page_id', 'prev_page_template', 'max_page'])
     return pageInfo
 
 def getPageContent(page_id, conn):

@@ -56,81 +56,14 @@ app.config['DEFAULT_PARSERS'] = [
 ##Define the Functions that Render the Views (HTML pages) 
 #===========================================================================        
 #Define the home (index) page with a single slash, and define the page as a render function 
+#Note: this just redirects to the 'first' content page
+#But, to allow re-ordering of pages, you will want to change this from page_id to page_order...
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
         return redirect(url_for('content', page_id = 1 ))
-
-        #Define the form used on the page
-        pageform = AddPage(request.form)
-
-        #Get Page Id
-        page_id = getPageID(pageform, request)
-
-        #Connect to app database for information on pages and content out of the database
-        dbURL = readPgpass(app_name, user)
-        engine = create_engine(dbURL)
-        conn = engine.connect()
-
-	#====Get List of Pages as A Node List ==#
-	tnq = "select page_name as name, page_level as group from page order by page_order; "
-	node_proxy = conn.execute(tnq)
-	node_list = [dict(r) for r in node_proxy]
-
-	#===Get List of Relationships as Link List ==#
-	#   Assign index number to ordered pages 
-	iq = "select row_number() over (order by page_order nulls last) - 1 as idx"
-	iq += ", page_id , page_name from page"
-
-	#   Assign the source and targets by index number
-	lq = "select s.idx as source, t.idx as target, 1 as weight from "
-	lq += " page_relation r"
-	lq += " join ("+iq+") as s on s.page_id = r.src_page_id " 
-	lq += " join ("+iq+") as t on t.page_id = r.tgt_page_id " 
-
-	link_proxy = conn.execute(lq)
-	link_list = [dict(r) for r in link_proxy]
-
-	from collections import defaultdict
-	d = defaultdict(list)
-	for n in node_list:
-		d["nodes"].append(n)
-	for l in link_list:
-		d["links"].append(l)
-
-	network_dict = json.dumps(d)
-	#flash(d)
-
-        #=======Get the Page Info as a DataFrame-- Used to Show Pages as Table of Contents
-        pageInfo = getPageInfo(page_id, conn)
-
-        #=============================================
-        #Find out if you have any results ("add new page") to write backk
-        if request.method == 'POST':
-            new_page_name = pageform.new_page_name.data
-            new_page_title = pageform.new_page_title.data
-            if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
-                newsql += "Values ('%s', '%s', '%s', 1) " % (new_page_name.strip(), new_page_title.strip(), 'content') ;  
-		newsql += " ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_title.strip());  
-                conn.execute(newsql)
-		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
-                conn.execute(usql)		
-                #Refresh Page so you can see what you have just done
-                return redirect(url_for('index'))
-        #==============
-
-    #No results to write back?  Open the web page !                                                         
-        return render_template('index.html', 
-                           project_name = app_name, 
-                           page_id=page_id,
-                           pageInfo = pageInfo,
-			   tocInfo = pageInfo,
-			   network_dict = network_dict,
-                           pageform=pageform,
-			   content_width=75,
-			   viz_width=0
-                           )
-#Define the delete page 
+                           
+#Define the delete page - delete a page with no content
 @app.route('/del_page', methods=['POST'])
 def del_page():
         #Define the form used on the page
@@ -171,7 +104,7 @@ def content():
    engine = create_engine(dbURL)
    conn = engine.connect()
 
-   #=======Get the Page Info as a DataFrame
+   #=======Get the Page and Table of Contents (TOC) Info as DataFrames
    pageInfo = getPageInfo(page_id, conn)
    tocInfo = getPageInfo(0, conn)
 
@@ -211,20 +144,36 @@ def content():
 
    #=============================================
    #Find out if you have a new page to write back
-   #flash('Hey what?')
-   #flash(request.method)
+
    if request.method == 'POST':
 	   new_page_name = pageform.new_page_name.data
-	   #flash("Page name out of form "+ new_page_name)
            new_page_title = pageform.new_page_title.data
+	   new_page_content_id = pageform.new_page_content_id.data
+	   new_page_code_id = pageform.new_page_code_id.data
+	   max_page = pageform.max_page.data
+	   new_page = int(max_page) + 1
+	   flash("Max Page is " + str(max_page) + "New Page is " + str(new_page))
+
            if (len(new_page_name.strip()) > 0):
                 newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
                 newsql += "Values ('%s', '%s', '%s', 1) " % (new_page_name.strip(), new_page_title.strip(), 'content') ;
 		newsql += " ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_title.strip());  
-		#flash(newsql)
                 conn.execute(newsql)
 		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
                 conn.execute(usql)		
+		#If there is a content_id, copy the content into the new page
+		if (len(new_page_content_id.strip()) > 0):
+			newcsql = "insert into public.content (content_md) VALUES (";
+			newcsql += "(select content_md from content where content_id = %s)) " % (new_page_content_id.strip());
+			flash(newcsql)
+			conn.execute(newcsql)
+			newpcsql = "insert into page_content (page_id, content_id) VALUES ( ";
+			newpcsql += "(select max(page_id) from page) , ";
+			newpcsql += "(select max(content_id) from content) ) ";
+			flash(newpcsql)
+			conn.execute(newpcsql)
+			return redirect(url_for('content', page_id = page_id))
+
                 #Refresh Page so you can see what you have just done
                 return redirect(url_for('content', page_id = page_id))
 
