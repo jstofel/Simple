@@ -20,6 +20,8 @@ class RegistrationForm(Form):
 
 class AddPage(Form):
   page_id = HiddenField("Page_id")
+  new_page_content_id = HiddenField("content_id")
+  new_page_code_id = HiddenField("jscode_id")
   new_page_name = TextField("Page Name")
   new_page_title = TextField("Page Title")
   submit = SubmitField("Save")

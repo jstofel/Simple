@@ -205,7 +205,7 @@ def content():
                         , node_name_var = 'page_name'
                         , node_grp_var = 'page_level'
                         , node_order_var = 'page_order'
-                        , link_tbl = 'page_relation'
+                        , link_tbl = 'public.page_relation'
                         , link_src_id_var = 'tgt_page_id' 
                         , link_tgt_id_var = 'src_page_id')
 

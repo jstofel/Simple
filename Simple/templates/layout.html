@@ -77,18 +77,21 @@
 </DIV>
 
 <!--Table of Contents - Left Nav -->
-<div class='' style='float:left; width:18%; margin-right:5px; border-style:solid; border-width:0px;'>
+<div class='border' style='float:left; width:18%; margin-right:5px; border-style:solid; border-width:0px;'>
 
-<div id="addPageSectionDiv" class=""  style='float:left; width:90%;'>
-   <div style='float:left; width=90%'>
-    <input type='button' id='showAddPage' value='Add Page' style='width:9rem'
-           onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle()" >
+<div id="addPageSectionDiv" class=""  style='float:left; width:100%;'>
+   <div style='float:left; width:47%'>
+    <input type='button' id='showAddPage' value='Add Page' style='width:6rem'
+           onClick="$('#addPageFormDiv').toggle(); $('#showAddPage').toggle(); $('#showDupPage').toggle()" >
    </div>
-
+   <div style='float:left; width:48%'>
+    <input type='button' id='showDupPage' value='Copy Page' style='width:7rem'
+           onClick="$('#dupPageFormDiv').toggle(); $('#showDupPage').toggle(); $('#showAddPage').toggle()" >
+   </div>
+   <div class="border" style="clear:both"> </div>
    {% from "_formhelpers.html" import render_field %}
 
    <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
-
     <form id = "addPage" action="{{url_for('content')}}" method=POST>
        <div style='float:left'>  {{ pageform.submit }} </div>
        <br>
@@ -97,6 +100,20 @@
        {{ render_field(pageform.new_page_title) }}
        </dl>
        <input type = "hidden" name="page_id" value="{{page_id}}" >
+    </form>
+   </div>
+
+   <div id="dupPageFormDiv" class="" style='float:right;width:90%; display:none' >
+    <form id = "dupPage" action="{{url_for('content')}}" method=POST>
+       <div style='float:left'>  {{ pageform.submit }} </div>
+       <br>
+       <dl>
+       {{ render_field(pageform.new_page_name) }}
+       {{ render_field(pageform.new_page_title) }}
+       </dl>
+       <input type = "hidden" name="page_id" value="{{page_id}}" >
+       <input type = "hidden" name="new_page_content_id" value="{{pageContent['content_id'][0]}}" >
+       <input type = "hidden" name="new_page_code_id" value="{{pageCode['jscode_id'][0]}}" >
     </form>
    </div>
  </div>
