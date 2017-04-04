@@ -70,3 +70,33 @@ psql -U postgres
 This will allow you to interact with PostgreSQL as the administrative superuser, which is what you want in this case.
 
 You now have the framework set up to load and run the app, which you can download from [Github](https://github.com/jstofel/Simple).
+
+Once you have downloaded the code from [Simple](https://github.com/jstofel/Simple), download the two database backup files Adventureworks.backup and Simple.backup from [SimpleDB](https://github.com/jstofel/SimpleDB).   Create the two databases on PostgreSQL by first creating each named empty database, then "restoring" from the backup files.
+
+Your code download should produce a directory structure of the form 
+Simple/
+   runserver.py
+   Simple/
+	__init__.py
+	views.py
+	forms.py
+	app_functions.py
+	db_functions.py
+	network_functions.py
+	static/
+		styles.css
+		local_scripts.js
+		img/	
+			*.png
+		html/
+			*.html
+	templates/
+		layout.html
+		content.html
+		....
+
+Run the app in the top level of Simple:
+python runserver.py
+
+Find the application at localhost:5000.
+			
