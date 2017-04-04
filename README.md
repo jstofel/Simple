@@ -74,6 +74,7 @@ You now have the framework set up to load and run the app, which you can downloa
 Once you have downloaded the code from [Simple](https://github.com/jstofel/Simple), download the two database backup files Adventureworks.backup and Simple.backup from [SimpleDB](https://github.com/jstofel/SimpleDB).   Create the two databases on PostgreSQL by first creating each named empty database, then "restoring" from the backup files.
 
 Your code download should produce a directory structure of the form 
+```
 Simple/
    runserver.py
    Simple/
@@ -94,7 +95,7 @@ Simple/
 		layout.html
 		content.html
 		....
-
+```
 Run the app in the top level of Simple:
 python runserver.py
 
