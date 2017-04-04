@@ -61,7 +61,17 @@ app.config['DEFAULT_PARSERS'] = [
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-        return redirect(url_for('content', page_id = 1 ))
+	#Get the page_id from the first page
+	osql = "select page_id from page where page_order = 1"
+	p = 0
+        #Connect to app database 
+	dbURL = readPgpass(app_name, user)
+	engine = create_engine(dbURL)
+	conn = engine.connect()
+	page_result = conn.execute(osql)
+	for r in page_result:
+		p = r[0]
+        return redirect(url_for('content', page_id = p ))
                            
 #Define the delete page - delete a page with no content
 @app.route('/del_page', methods=['POST'])
@@ -96,7 +106,7 @@ def content():
    jsform = UpdateJSCode(request.form)
    pageform = AddPage(request.form)
 
-   #Get Page Id
+   #Get Page Id and Page Order
    page_id = getPageID(contentform, request)
 
    #Connect to app database so you can get the page content out of the database
@@ -136,7 +146,7 @@ def content():
                         , node_tbl = 'public.page'
                         , node_id_var = 'page_id'
                         , node_name_var = 'page_name'
-                        , node_grp_var = 'page_level'
+                        , node_grp_var = 'page_indent'
                         , node_order_var = 'page_order'
                         , link_tbl = 'public.page_relation'
                         , link_src_id_var = 'tgt_page_id' 
@@ -151,31 +161,48 @@ def content():
 	   new_page_content_id = pageform.new_page_content_id.data
 	   new_page_code_id = pageform.new_page_code_id.data
 	   max_page = pageform.max_page.data
-	   new_page = int(max_page) + 1
-	   flash("Max Page is " + str(max_page) + "New Page is " + str(new_page))
 
            if (len(new_page_name.strip()) > 0):
-                newsql = "insert into public.page (page_name, page_title, page_template, page_level)";
+                newsql = "insert into public.page (page_name, page_title, page_template, page_indent)";
                 newsql += "Values ('%s', '%s', '%s', 1) " % (new_page_name.strip(), new_page_title.strip(), 'content') ;
 		newsql += " ON CONFLICT (page_name) DO UPDATE SET page_title = '%s'" % (new_page_title.strip());  
                 conn.execute(newsql)
 		usql = "UPDATE public.page set page_order = (select max(page_order) + 1 from page)  where page_order is null";
                 conn.execute(usql)		
+		#Get the new page_id
+		new_page_result = conn.execute("select max(page_id) from page")
+		for r in new_page_result:
+			new_page = r[0]
+
 		#If there is a content_id, copy the content into the new page
 		if (len(new_page_content_id.strip()) > 0):
 			newcsql = "insert into public.content (content_md) VALUES (";
 			newcsql += "(select content_md from content where content_id = %s)) " % (new_page_content_id.strip());
-			flash(newcsql)
+
 			conn.execute(newcsql)
 			newpcsql = "insert into page_content (page_id, content_id) VALUES ( ";
 			newpcsql += "(select max(page_id) from page) , ";
 			newpcsql += "(select max(content_id) from content) ) ";
-			flash(newpcsql)
+
 			conn.execute(newpcsql)
-			return redirect(url_for('content', page_id = page_id))
+		        #If there is a content_id, copy the content into the new page
+			if (len(new_page_code_id.strip()) > 0):
+				newc2sql = "insert into public.jscode (jscode) VALUES (";
+				newc2sql += "(select jscode from jscode where jscode_id = %s)) " % (new_page_code_id.strip());
+				conn.execute(newc2sql)
+
+				newpc2sql = "insert into page_jscode (page_id, jscode_id, jscode_show) VALUES ( ";
+				newpc2sql += "(select max(page_id) from page) , ";
+				newpc2sql += "(select max(jscode_id) from jscode), ";
+				newpc2sql += "(select jscode_show from page_jscode where page_id = %s) " % (page_id.strip());
+				newpc2sql += ") ";
+
+				conn.execute(newpc2sql)
+
+			return redirect(url_for('content', page_id = new_page))
 
                 #Refresh Page so you can see what you have just done
-                return redirect(url_for('content', page_id = page_id))
+                return redirect(url_for('content', page_id = new_page))
 
    #All done?  Open the web page!                                                         
    return render_template('content.html', 
@@ -346,7 +373,7 @@ def seemedb():
 			   radius=radius,
 			   schema_id_list = schema_id_list,
 			   content_width=60,
-			   viz_width=80
+			   viz_width=70
 			   
 
                            )

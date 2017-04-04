@@ -8,7 +8,7 @@
  <!-- Right Side: Define the Block Viz (graphic content) here -->
 {% block viz %}
 
-<div class="" style="float:left; width:25%; border-style:solid;border-width:0px; ">
+<div class="border" style=" float:left; width:25%; border-style:solid;border-width:0px; ">
   <!--Show Form to Choose a Database--> 
     <form id="ChooseDatabase"  action="{{ url_for('seemedb', page_id=page_id) }}" method="GET">
       <input type = "hidden" name = "page_id" value = {{page_id}} >
@@ -51,7 +51,7 @@
 </div>
 
 <!--This is the div where the network is attached-->
-<div id="show_network" class="" style="float:left; width:73%; height:500px; border-style:solid; border-width:0px">
+<div id="show_network" class="border" style="float:left; width:70%; height:500px; border-style:solid; border-width:0px">
 
 </div>
 
