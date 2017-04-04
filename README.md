@@ -5,7 +5,7 @@ This application is run with Python, Flask, SQLAlchemy, and PostgreSQL.
 
 It was developed on Mac OS 10.11.6, using Python 2.7.10 (which is natively installed on Mac) and Mac Xcode 8 (available for [download](https://developer.apple.com/xcode/)) for command line tools (primarily git).
 
-To ensure that Flask, SQLAlchemy, and the other required Python modules are installed before installing GeekIllustrated, run the following (under ```sudo```):
+To ensure that Flask, SQLAlchemy, and the other required Python modules are installed before running this app, run the following (under ```sudo```):
 
 ```
 easy_install pip
