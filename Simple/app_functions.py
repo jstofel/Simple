@@ -3,6 +3,45 @@
 #  Application Functions                                                                         
 #===========================================================================                  
 from flask import flash;  #for debugging messages
+import pandas as pd
+
+def getTOCSections(data):
+    page_order  = data['page_order'].values
+    page_indent = data['page_indent'].values
+    num_of_rows = len(page_order)
+    s0 = 1
+    page_label = []
+    s0_l = []
+    s1_l = []
+    s2_l = []
+    for i in range(0, num_of_rows):
+        if page_indent[i] == 0:
+            if i == 0:
+               s0 = 1
+               s1 = 0
+               s2 = 0
+            else:
+               s0 = s0 + 1
+               s1 = 0
+               s2 = 0
+        elif page_indent[i] == 1:
+            s1 = s1 + 1 
+            s2 = 0
+        elif page_indent[i] == 2:
+            s2 = s2 +1
+
+        temp = str(s0) + '.' + str(s1) + '.' + str(s2)
+        page_label.append(temp)
+
+    out = pd.DataFrame({
+                'page_order': page_order, 'page_indent': page_indent,
+                's0': s0_l, 's1': s1_l, 's2': s2_l, 
+                'selection_label':page_label 
+                })
+
+    return(out)
+
+
 
 def getPageID(form, request):
     if request.args.get('page_id') is not None:
