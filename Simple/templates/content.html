@@ -23,9 +23,10 @@
  <input type = "hidden" name="content_id" value="{{pageContent['content_id'][0]}}" > 
 </div>
 
-<div id="BUTTONS" class=""  style='float:right; width:10rem; height:3rem '>
+<div id="BUTTONSJS" class=""  style='float:right; width:10rem; height:3rem '>
  <input type="button" id="showJSEditContent" value="Add JavaScript" style="width:10rem; display:{{pageCode['jscode_edit'][0]}}" >
 </div>
+<div style='float:right; width:10rem; height:3rem '> &nbsp </div>
 
 <!--This div appears empty, but it is populated from pageContent['content_md'] by the runConverter() script -->
 <div id="targetDiv" class=""  style='float:left; width:100%;'>
@@ -52,15 +53,17 @@
              $('#INSTRUCTIONS').toggle();
              if ( $(this).val() == 'Close Editor' ) {
                  $(this).val('Edit Content');
+                 $('#BUTTONSJS').show();
                  $('#blockcodex').toggle();
-                 $('#blockbody').width('30%');
+                 $('#blockbody').width('70%');
                  $('#targetDiv').width('100%');
                  $('#saveit').hide()
              } else {
                  $(this).val('Close Editor');
+                 $('#BUTTONSJS').hide();
                  $('#blockcodex').toggle();
                  $('#blockbody').width('70%');
-                 $('#targetDiv').width('48%');
+                 $('#targetDiv').width('42%');
                  $('#saveit').show()
             }
    });
@@ -130,11 +133,18 @@
                  $('#blockcodex').width('30%');
                  $('#targetJSDiv').width('100%');
                  $('#saveJS').hide()
+                 $('#showEditContent').show();
+                 $('#blockbody').width('70%');
+
              } else {
                  $(this).val('Close JS Editor');
                  $('#blockcodex').width('30%');
                  $('#targetJSDiv').width('50%');
                  $('#saveJS').show()
+                 $('#showEditContent').hide();
+                 $('#blockbody').width('30%');
+
+
             }
    });
   });

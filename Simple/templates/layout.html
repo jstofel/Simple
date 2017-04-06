@@ -77,7 +77,7 @@
 </DIV>
 
 <!--Table of Contents - Left Nav -->
-<div class='border' style='float:left; width:18%; margin-right:5px; border-style:solid; border-width:0px;'>
+<div class='' style='float:left; width:18%; margin-right:5px; border-style:solid; border-width:0px;'>
 
 <div id="addPageSectionDiv" class=""  style='float:left; width:100%;'>
    <div style='float:left; width:47%'>
@@ -88,7 +88,7 @@
     <input type='button' id='showDupPage' value='Copy Page' style='width:7rem'
            onClick="$('#dupPageFormDiv').toggle(); $('#showDupPage').toggle(); $('#showAddPage').toggle()" >
    </div>
-   <div class="border" style="clear:both"> </div>
+   <div class="" style="clear:both"> </div>
    {% from "_formhelpers.html" import render_field %}
 
    <div id="addPageFormDiv" class="" style='float:right;width:90%; display:none' >
@@ -152,7 +152,7 @@
 <!--Word Content on Left -->
 <script type="text/javascript" src="{{ url_for('static', filename='local_scripts.js') }}"></script>
 
-<div id="blockbody" class='border' style='float:left; width:{{pageCode['content_width'][0]}}%; margin:0rem; padding:0.5rem;'>
+<div id="blockbody" class='' style='float:left; width:{{pageCode['content_width'][0]}}%; margin:0rem; padding:0.5rem;'>
    {% block body %}
 
    {% endblock body %}
